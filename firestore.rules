@@ -6,3 +6,102 @@ service cloud.firestore {
     }
   }
 }
+
+//rules_version = '2';
+//service cloud.firestore {
+//  match /databases/{database}/documents {
+//
+//  function documentFieldsCheckOut(requiredFields, optionalFields) {
+//  let allFields = debug(requiredFields.concat(optionalFields));
+//return request.resource.data.keys().hasAll(requiredFields) &&
+//request.resource.data.keys().hasOnly(allFields);
+//}
+//
+//function documentFieldValuesCheckOut(value, allowedValues) {
+//  return value in allowedValues;
+//}
+//
+//  match /{document=**} {
+//  allow read, write: if false;
+//}
+//
+//match /users/{userId} {
+//
+//  allow read, update: if (request.auth.uid == userId) && documentFieldsCheckOut([],
+//["displayName", "phoneNumber", "searchZip"]);
+//allow create: if request.auth != null && (request.auth.uid == userId) && documentFieldsCheckOut([],
+//["displayName", "phoneNumber", "searchZip"]);
+//allow delete: if (request.auth.uid == userId);
+//
+//
+//match /addresses/{addressId} {
+//  allow create, update: if request.auth.uid == userId && documentFieldsCheckOut(["addressType", "streetAddress",
+//"city", "st", "zip"], [null]);
+//allow read, delete: if request.auth.uid == userId;
+//
+//}
+//}
+//
+//match /rentalItems/{itemId} {
+//
+//  function docEvaluateFieldsDataType() {
+//  return request.resource.data.itemName is string &&
+//request.resource.data.itemStatus is string &&
+//request.resource.data.itemDesc is string &&
+//request.resource.data.costHourly is int &&
+//request.resource.data.itemStatus in ["available", "draft", "rented"] &&
+//(!('deliveryCost' in request.resource.data.keys()) || request.resource.data.deliveryCost is int) &&
+//(!('meetupCost' in request.resource.data.keys()) || request.resource.data.meetupCost is int) &&
+//(!('pickupCost' in request.resource.data.keys()) || request.resource.data.pickupCost is int) &&
+//(!('deliveryAvailable' in request.resource.data.keys()) || request.resource.data.deliveryAvailable is bool) &&
+//(!('meetupAvailable' in request.resource.data.keys()) || request.resource.data.meetupAvailable is bool) &&
+//(!('pickupAvailable' in request.resource.data.keys()) || request.resource.data.pickupAvailable is bool);
+//}
+//
+//allow read: if ((resource.data.itemStatus == "available") || (resource.data.ownerId == request.auth.uid));
+//allow create, update: if docEvaluateFieldsDataType() &&
+//documentFieldsCheckOut(["itemName", "itemStatus", "itemDesc", "costHourly", "ownerId"],
+//["deliveryAvailable", "deliveryCost", "meetupAvailable", "meetupCost", "pickupAvailable", "pickupCost"]) &&
+//(request.resource.data.ownerId == request.auth.uid);
+//allow delete: if (resource.data.ownerId == request.auth.uid) &&
+//documentFieldValuesCheckOut(resource.data.itemStatus, ["available", "draft"]);
+//}
+//
+//match /rentalTransactions/{transactionId} {
+//
+//  //      function docEvaluateFieldsDataType() {
+//  //        return request.resource.data.borrowerId is string &&
+//  //        request.resource.data.ownerId is string &&
+//  //        request.resource.data.itemId is string &&
+//  //        request.resource.data.reserveBeginDateTime is timestamp &&
+//  //        request.resource.data.reserveEndDateTime is timestamp &&
+//  //        (!('cancellationDateTime' in request.resource.data.keys()) || (request.resource.data.cancellationDateTime is timestamp)) &&
+//  //        (!('checkoutDateTime' in request.resource.data.keys()) || (request.resource.data.checkoutDateTime is timestamp)) &&
+//  //        (!('returnDateTime' in request.resource.data.keys()) || (request.resource.data.returnedDateTime is timestamp)) &&
+//  //        documentFieldValuesCheckOut(resource.data.transportType, ["delivery", "meetup", "pickup"]);
+//  //      }
+//
+//  function docEvaluateFieldsDataType(docData) {
+//  return docData.borrowerId is string &&
+//  docData.ownerId is string &&
+//docData.itemId is string &&
+//docData.reserveBeginDateTime is timestamp &&
+//docData.reserveEndDateTime is timestamp &&
+//docData.get('cancellationDateTime', request.time) is timestamp &&
+//docData.get('checkoutDateTime', request.time) is timestamp &&
+//docData.get('returnedDateTime', request.time) is timestamp &&
+//documentFieldValuesCheckOut(resource.data.transportType, ["delivery", "meetup", "pickup"]);
+//}
+//
+//allow read: if ((resource.data.borrowerId == request.auth.uid) || (resource.data.ownerId == request.auth.uid));
+//allow create: if (request.resource.data.borrowerId == request.auth.uid) &&
+////          documentFieldsCheckOut(["borrowerId", "ownerId", "itemId", "transportType", "reserveBeginDateTime", "reserveEndDateTime"],
+////            ["cancellationDateTime", "checkoutDateTime", "returnedDateTime"]) // &&
+//docEvaluateFieldsDataType(request.resource);
+//allow update: if (resource.data.borrowerId == request.auth.uid || resource.data.ownerId == request.auth.uid); // &&
+////          documentFieldsCheckOut([], ["cancellationDateTime", "checkoutDateTime", "returnedDateTime"]) &&
+////          docEvaluateFieldsDataType();
+//
+//}
+//}
+//}
