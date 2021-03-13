@@ -2,7 +2,9 @@
 import React, { Component } from 'react';
 // import UserUI from './components/userUI';
 import Login from './components/login';
-import './App.css';
+import RentItem from './components/rentItem'
+import './App.scss';
+import 'bootstrap';
 // import { db } from "./firebase";
 // db.doc("react/test/attributes/speed").set({speed:25});
 
@@ -25,7 +27,7 @@ class App extends Component {
 
   render() {
     return (
-        <Login/>
+        <RentItem costPerUnit="10" timeUnitType="hour"/>
     )
   }
 }
