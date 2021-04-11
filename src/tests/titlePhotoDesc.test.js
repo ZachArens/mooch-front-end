@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TitlePhotoDesc from '../components/titlePhotoDesc';
+import TitlePhotoDesc from '../components/titleDesc';
 
 import {render, cleanup} from '@testing-library/react';
 import "@testing-library/jest-dom/extend-expect";
 
 import renderer from "react-test-renderer";
 import Login from "../components/login";
+import RentItem from "../components/rentItem";
 
 afterEach(cleanup);
 
@@ -17,10 +18,14 @@ describe('Displays the titlePhotoDesc component correctly', () => {
     });
 
     it('Displays the title passed in', () => {
-        expect(false).toBe(true);
+        const {getByText} = render(<TitlePhotoDesc title="The Correct Title"/>);
+        expect(getByText('The Correct Title')).toBeInTheDocument();
     });
 
-    it.todo('Displays the description passed in');
+    it('Displays the description passed in', () => {
+        const {getByText} = render(<TitlePhotoDesc description="Lorem Ipsum Data Data"/>);
+        expect(getByText('Lorem Ipsum Data Data')).toBeInTheDocument();
+    });
 
     it.todo('Displays each photo for the urls passed in');
 

@@ -1,11 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import RentItem from '../components/rentItem';
+import Enzyme from 'enzyme';
+import {shallow} from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 
-import {render, cleanup} from '@testing-library/react';
+import {render, fireEvent, cleanup} from '@testing-library/react';
 import "@testing-library/jest-dom/extend-expect";
 
 import renderer from "react-test-renderer";
+
+Enzyme.configure({ adapter: new Adapter() });
 
 afterEach(cleanup);
 
@@ -32,7 +37,35 @@ describe('RentItem - R#9 The app shall provide users with the ability to select 
     //
     // it('Displays the correct total-price in the total box');
 
-    it.todo('Updates the state of the delivery type when changing the value of the delivery type dropdown');
+    it('Should return the initial state', () => {
+        let {container} = render(<RentItem/>);
+
+        expect(container.state).toEqual({exchangeMethod: ''});
+    });
+
+    it('Should update the state on clicking the exchange method button set', () => {
+        fireEvent.click(getByText('Delivery'));
+        expect(RentItem.state).toEqual({exchangeMethod: 'delivery'});
+    });
+
+    it('Updates the state of the delivery type when changing the value of the delivery type dropdown', () => {
+        let {container, getByText} = render(<RentItem/>);
+
+        // const setExchangeMethod = jest.fn();
+        // const handleClick = jest.spyOn(React, "useState");
+        // handleClick.mockImplementation(exchangeMethod => [exchangeMethod, setExchangeMethod] )
+
+        expect(getByText(/State is/i).textContent).toBe("State is ");
+
+        fireEvent.click(getByText("Delivery"))
+
+        expect(getByText(/State is/i).textContent).toBe("State is delivery");
+
+
+        // wrapper.find('#delivery').simulate('click');
+        // expect(setExchangeMethod).toBeTruthy();
+        //expect(wrapper.state()).toEqual({exchangeMethod: 'delivery'});
+    });
 
 
 
@@ -43,8 +76,9 @@ describe('RentItem - R#9 The app shall provide users with the ability to select 
     it.todo('Updates the state of end date when a new end date is selected');
 
 
-    // it('matches snapshot', () => {
-    //     const tree = renderer.create(<RentItem/>).toJSON();
-    //     expect(tree).toMatchSnapshot();
-    // });
+    it('matches snapshot', () => {
+        //syntax via https://www.freecodecamp.org/news/testing-react-hooks/
+        const wrapper = shallow(<RentItem/>);
+        expect(toJSON(wrapper)).toMatchSnapshot();
+    });
 });

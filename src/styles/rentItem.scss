@@ -1,0 +1,32 @@
+
+
+.actionButtons * {
+  width: 100%;
+}
+
+.center_column * {
+  width: 100%;
+}
+//.carousel-item {
+//  object-fit: cover;
+//  object-position: 50% 50%;
+//}
+
+//TODO need to make photos scale to frame size not vice versa
+
+.carousel-item img {
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.photo_frame {
+  max-height: 500px;
+  max-width: 500px;
+  width: auto;
+
+}
+
+
+//.actionButtons input {
+//  width: 100%;
+//}
