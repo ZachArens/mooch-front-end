@@ -2,7 +2,6 @@ import React from 'react';
 import PhotoCarousel from "./photoCarousel.js";
 import TotalBox from "./totalBox"
 import TitleDesc from "./titleDesc.js";
-// import Firebase from '../firebase';
 
 class RentItem extends React.Component {
     constructor(props) {

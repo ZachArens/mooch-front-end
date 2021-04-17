@@ -5,7 +5,6 @@ const CarouselIndicators = (props) => {
 }
 
 const CarouselItems = (props) => {
-    //TODO-add alt text
     return(
             <div className={`carousel-item ${props.active ? props.active : ""}`} >
                 <img className="d-block w-100" src={props.photoURL} alt={props.altText}/>
@@ -25,7 +24,7 @@ const PhotoCarousel = (props) => {
         {key:3, photoURL: "https://cdn.shopify.com/s/files/1/0086/9128/6076/products/Untitled-48.png?v=1563914213", altText: "lifejacket"},
         {key:4, photoURL: "https://cdni.llbean.net/is/image/wim/506404_3525_41?hei=1092&wid=950&resMode=sharp2&defaultImage=llbstage/A0211793_2", altText: "something else"}]
     const listPhotos = photos.map((photo) =>
-        <CarouselItems key={photo.key} active={photo.active} photoURL={photo.photoURL} altText={photo.altText} />
+        <CarouselItems key={photo.key} active={photo.active} photoURL={photo.photoURL} altText={photo.altText} className="img-thumbnail"/>
     );
 
     return(
