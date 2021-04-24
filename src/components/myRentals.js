@@ -1,5 +1,5 @@
 import React from 'react';
-import Firebase from '../firebase';
+import MyRentedOutList from "./myRentedOutList";
 
 class MyRentals extends React.Component {
 
@@ -8,7 +8,7 @@ class MyRentals extends React.Component {
         return(
             <div>
                 <h1>Things I've Rented Out</h1>
-                {/*<MyRentedOutList/>*/}
+                <MyRentedOutList/>
 
                 <h1>My Items</h1>
                 <button>+</button>
