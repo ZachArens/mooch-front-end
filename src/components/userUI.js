@@ -1,5 +1,5 @@
 import React from 'react';
-import firebase from '../firebase';
+import firebase from '../utils/firebase';
 
 class UserUI extends React.Component {
 

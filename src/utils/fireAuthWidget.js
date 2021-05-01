@@ -1,5 +1,5 @@
 import React from 'react';
-import firebase from '../firebase';
+import firebase from './firebase';
 var firebaseui = require('firebaseui');
 
 var ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());

@@ -3,13 +3,12 @@ import React, { Component } from 'react';
 // import UserUI from './components/userUI';
 import Login from './components/login';
 import RentItem from './components/rentItem';
+import AddItem from './components/addItem';
 import Home from './components/home';
 import MyRentals from "./components/myRentals";
 import './App.scss';
 import 'bootstrap';
 import {BrowserRouter as Router, NavLink, Route, Switch} from "react-router-dom";
-// import { db } from "./firebase";
-// db.doc("react/test/attributes/speed").set({speed:25});
 
 class App extends Component {
   constructor(props) {
@@ -18,15 +17,6 @@ class App extends Component {
       // speed: 0
     };
   }
-
-  // componentDidMount() {
-  //   const speedRef = db.doc('react/test/attributes/speed');
-  //   speedRef.onSnapshot( snap => {
-  //     this.setState({
-  //       // speed:snap.data().speed
-  //     });
-  //   });
-  // }
 
   render() {
     return (
@@ -54,6 +44,9 @@ class App extends Component {
                                 <li className="nav-item">
                                     <NavLink to="/rentItems" className="nav-link">Temp-Rent Items</NavLink>
                                 </li>
+                                <li className="nav-item">
+                                    <NavLink to="/addItems" className="nav-link">Temp-Add Items</NavLink>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -64,6 +57,9 @@ class App extends Component {
                     </Route>
                     <Route path="/rentItems">
                         <RentItem/>
+                    </Route>
+                    <Route path="/addItems">
+                        <AddItem/>
                     </Route>
                     <Route path="/myRentals">
                         <MyRentals/>

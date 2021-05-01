@@ -1,7 +1,7 @@
 import React from 'react';
 // import FireAuthWidget from './fireAuthWidget';
 
-import firebase from '../firebase';
+import firebase from '../utils/firebase';
 
 class Login extends React.Component {
     constructor(props) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Firebase from '../firebase';
+import Firebase from '../utils/firebase';
 import RentalSummary from "./rentalSummary";
 
 class MyRentedOutList extends React.Component {

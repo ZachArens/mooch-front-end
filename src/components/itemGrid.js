@@ -1,11 +1,28 @@
 import React from 'react';
 import ItemCard from "./itemCard";
+import firebase from "../utils/firebase";
 
 class ItemGrid extends React.Component {
     constructor(props) {
         super(props);
 
     }
+
+    // componentDidMount() {
+    //     //TODO - need unsubscribe
+    //     firebase
+    //         .firestore()
+    //         .collection('rental')
+    //         .onSnapshot((snapshot) => {
+    //             const newItems=snapshot.docs.map((doc) => ({
+    //                 id: doc.id,
+    //                 ...doc.data()
+    //             }))
+    //         });
+    //
+    //     this.setState({newItems});
+    // }
+
     render() {
         const card_data = [{key: 1, title: "kayak", desc: "this kayak is nice.", photoURL:"https://oldtowncanoe.johnsonoutdoors.com/sites/johnsonoutdoors-store/files/assets/images/10/1/1099627_primary/1099627_primary.jpg", altText: "kayak"},
             {key:2, title: "2nd kayak", desc: "this kayak is also nice.", photoURL: "https://oldtowncanoe.johnsonoutdoors.com/sites/johnsonoutdoors-store/files/assets/images/10/1/1099627_primary/1099627_primary.jpg", altText:"paddle"},
