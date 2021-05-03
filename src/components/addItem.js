@@ -10,22 +10,6 @@ class AddItem extends React.Component {
         this.state = {title: "", description: "", itemRate: ""};
     }
 
-    // componentDidMount() {
-    //     firebase
-    //         .firestore()
-    //         .collection('rental')
-    //         .onSnapshot((snapshot) => {
-    //             const newItems=snapshot.docs.map((doc) => ({
-    //                 id: doc.id,
-    //                 ...doc.data()
-    //             }))
-    //         });
-    //
-    //     this.setState({newItems});
-    // }
-
-
-
     updateFields = (e) => {
         const value = e.target.value;
         const name = e.target.name;
@@ -46,6 +30,7 @@ class AddItem extends React.Component {
                 this.setState({title: "", description: "", itemRate: ""});
             })
             .catch((error) => {
+                //TODO - Security - don't print error to console
                 console.log("failed to add: ", error);
             });
     }
