@@ -46,9 +46,11 @@ class ItemGrid extends React.Component {
         //     {key:4, title: "lifejacket", desc: "lifejacket necessary for watersports", photoURL: "https://cdni.llbean.net/is/image/wim/506404_3525_41?hei=1092&wid=950&resMode=sharp2&defaultImage=llbstage/A0211793_2", altText: "something else"},
         // {key:5, title: "backpack", desc: "daypack for single day outings", photoURL: "https://www.rei.com/media/0fdebe35-6fae-416c-ac70-4272a14cbd1a", altText: "backpack"}];
 
+
+        //JACK LOOK HERE :)
         const gridItems = async () => {
             try {
-                this.state.rentalItemsList.map((card) =>
+                const gridItems = await this.state.rentalItemsList.map((card) =>
                     <ItemCard key={card.id}
                               url="/Users/zacharyarens/WebstormProjects/mooch-rental-app-front/src/img/sea-5621150_1920.jpg"
                               title={card.itemName} desc={card.itemDesc} altText="sea"/>
