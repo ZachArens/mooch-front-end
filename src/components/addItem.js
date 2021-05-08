@@ -46,7 +46,6 @@ class AddItem extends React.Component {
                     this.setState({title: "", description: "", itemRate: "", message: "success"});
                 })
                 .catch((error) => {
-                    //TODO - Security - don't print error to console
                     this.setState({message: "fbIssue"})
                 });
         } else {
@@ -63,28 +62,29 @@ class AddItem extends React.Component {
     render() {
         return(
             <form className="container" onSubmit={this.onSubmit}>
-                <div className="row errorMessage">
-                    {this.validator.message('title', this.state.title, 'required|alpha_space')}
-                    {this.validator.message('description', this.state.description, 'required|string|max:500')}
-                    {this.validator.message('itemRate', this.state.itemRate, 'required|numeric|min:0,num')}
-                    <Message/>
-                </div>
+
                 <div className="row">
                     {/*//TODO - fix reference to add photo img*/}
                     <div className="photo_frame col-md-5">
-                        <img src="../img/missing-photo-icon-14.jpg" alt="photo needed"/>
+                        <img src="../img/missing-photo-icon-14.jpg" alt="photo needed" />
                         <h1>+</h1>
                     </div>
                     <div className="col-md-5 center_column">
+                        <div className="errorMessage">
+                            <p>{this.validator.message('title', this.state.title, 'required|alpha_space')}</p>
+                            <p>{this.validator.message('description', this.state.description, 'required|string|max:500')}</p>
+                            <p>{this.validator.message('itemRate', this.state.itemRate, 'required|numeric|min:0,num')}</p>
+                            <Message/>
+                        </div>
                         <EditTitleDesc title={this.state.title} desc={this.state.description}
                                        itemRate={this.state.itemRate} updateFields={this.updateFields.bind(this)}/>
                     </div>
-                    <div>
-                        <p>test</p>
-                        <p>title: {this.state.title}</p>
-                        <p>description: {this.state.description}</p>
-                        <p>itemRate: {this.state.itemRate}</p>
-                    </div>
+                    {/*<div>*/}
+                    {/*    <p>test</p>*/}
+                    {/*    <p>title: {this.state.title}</p>*/}
+                    {/*    <p>description: {this.state.description}</p>*/}
+                    {/*    <p>itemRate: {this.state.itemRate}</p>*/}
+                    {/*</div>*/}
                 </div>
                 <SubmitButtons submitTitle="Add" cancelTitle="Clear"
                                submitFn={this.onSubmit.bind(this)}

@@ -12,22 +12,17 @@ it ("renders without crashing", () => {
     ReactDOM.render(<AddItem />, div);
 });
 
-it ("renders button correctly", () => {
-    const {getByTestId} = render(<AddItem />, div);
-
-})
-
-describe('buttons', () => {
-    it('click Add', () => {
-        const { getByText } = render(<AddItem />)
-        const addButton = getByText('Add');
-        fireEvent.click(addButton);
-        // expect
-    })
-});
-
 describe('addItem validates and sanitizes all values for text inputs', () => {
-    test.todo('allows a value for title with only alphabet and space characters');
+
+    it('allows a value for title with only alphabet and space characters', () => {
+        const addItemComponent = render(<AddItem />);
+        const title = addItemComponent.getAllByPlaceholderText('Title');
+
+        title.
+        expect()
+    });
+
+    test.todo('can add an item to the database');
 
     test.todo('displays an error for a title that is a number or symbol');
 
