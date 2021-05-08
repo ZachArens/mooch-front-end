@@ -35,7 +35,6 @@ class ItemGrid extends React.Component {
 
         this.setState({rentalItemsList, loading: false});
 
-
         console.log(this.state.rentalItemsList);
     }
 
@@ -47,26 +46,24 @@ class ItemGrid extends React.Component {
         // {key:5, title: "backpack", desc: "daypack for single day outings", photoURL: "https://www.rei.com/media/0fdebe35-6fae-416c-ac70-4272a14cbd1a", altText: "backpack"}];
 
 
+        console.log(`state is ${this.state.rentalItemsList}`)
+
         //JACK LOOK HERE :)
-        const gridItems = async () => {
-            try {
-                const gridItems = await this.state.rentalItemsList.map((card) =>
-                    <ItemCard key={card.id}
-                              url="/Users/zacharyarens/WebstormProjects/mooch-rental-app-front/src/img/sea-5621150_1920.jpg"
-                              title={card.itemName} desc={card.itemDesc} altText="sea"/>
-                );
-            } catch (err) {
-                //TODO - security - fix print to console
-                console.error(err);
-            }
+        const gridItems = () => {
+            this.state.rentalItemsList.map((card) =>
+                <ItemCard key={card.id}
+                          url="/Users/zacharyarens/WebstormProjects/mooch-rental-app-front/src/img/sea-5621150_1920.jpg"
+                          title={card.itemName} desc={card.itemDesc} altText="sea"/>
+            );
         }
+
 
 
 
         return(
             <div className="row row-cols-lg-4 row-cols-md-3 row-cols-1 row-cols-sm-2">
                 {/*{this.state.loading && <div className="loader"/>}*/}
-                {!this.state.loading && this.state.rentalItemsList && (gridItems) }
+                { !this.state.loading && gridItems }
             </div>
         );
     }
