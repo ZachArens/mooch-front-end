@@ -3,6 +3,7 @@ import EditTitleDesc from "./editTitleDesc";
 import SubmitButtons from './submitButtons';
 import firebase from "../utils/firebase";
 import SimpleReactValidator from 'simple-react-validator';
+import '../styles/addItem.scss';
 
 function Message(props) {
     if (props.message === 'success') {
@@ -61,34 +62,29 @@ class AddItem extends React.Component {
 
     render() {
         return(
-            <form className="container" onSubmit={this.onSubmit}>
+            <form className="container" >
 
                 <div className="row">
                     {/*//TODO - fix reference to add photo img*/}
-                    <div className="photo_frame col-md-5">
-                        <img src="../img/missing-photo-icon-14.jpg" alt="photo needed" />
+                    <div className="photo_frame col-md-4">
+                        <img src="https://www.publicdomainpictures.net/pictures/370000/velka/2-seater-kayak-canoe.jpg" alt="kayak inflatable" />
                         <h1>+</h1>
                     </div>
                     <div className="col-md-5 center_column">
                         <div className="errorMessage">
-                            <p>{this.validator.message('title', this.state.title, 'required|alpha_space')}</p>
-                            <p>{this.validator.message('description', this.state.description, 'required|string|max:500')}</p>
-                            <p>{this.validator.message('itemRate', this.state.itemRate, 'required|numeric|min:0,num')}</p>
+                            <div>{this.validator.message('title', this.state.title, 'required|alpha_space')}</div>
+                            <div>{this.validator.message('description', this.state.description, 'required|string|max:500')}</div>
+                            <div>{this.validator.message('itemRate', this.state.itemRate, 'required|numeric|min:0,num')}</div>
                             <Message/>
                         </div>
                         <EditTitleDesc title={this.state.title} desc={this.state.description}
                                        itemRate={this.state.itemRate} updateFields={this.updateFields.bind(this)}/>
                     </div>
-                    {/*<div>*/}
-                    {/*    <p>test</p>*/}
-                    {/*    <p>title: {this.state.title}</p>*/}
-                    {/*    <p>description: {this.state.description}</p>*/}
-                    {/*    <p>itemRate: {this.state.itemRate}</p>*/}
-                    {/*</div>*/}
-                </div>
-                <SubmitButtons submitTitle="Add" cancelTitle="Clear"
+                    <SubmitButtons submitTitle="Add" cancelTitle="Clear"
                                submitFn={this.onSubmit.bind(this)}
                                cancelFn={this.clearForm.bind(this)}/>
+                </div>
+                
             </form>
         );
     }

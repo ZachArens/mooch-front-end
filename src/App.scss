@@ -1,7 +1,11 @@
-@import "App.css";
-@import "~bootstrap/scss/bootstrap";
-@import "styles/rentItem";
-@import "styles/home";
-@import "styles/myRentals";
+@import "./utils/customBootstrap.scss";
 
-//TODO- Import fonts
+$nav-background-color: #343a40 ;
+$text-color-on-dark: white;
+
+.App {
+  text-align: center;
+}
+
+
+

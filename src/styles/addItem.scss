@@ -1,0 +1,28 @@
+.photo_frame h1 {
+    font-size: 5em;
+    color: #52ffc9;
+    z-index: 1;
+    position: relative;
+    left: 225px;
+    top: -100px;
+    text-shadow:  10px 5px dark-gray;
+    
+}
+
+.photo_frame {
+    display: block;
+    height: 150px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 0 0;
+}
+
+.photo_frame img {
+    max-height: 100%;
+    max-width: 100%;
+    
+}
+
+.errorMessage div {
+    font-size: 8px;
+}

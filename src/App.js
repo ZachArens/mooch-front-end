@@ -22,7 +22,7 @@ class App extends Component {
     return (
         <div>
             <Router>
-                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container-fluid">
                         <a className="navbar-brand" href="#">Mooch</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
