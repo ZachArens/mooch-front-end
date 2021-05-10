@@ -1,6 +1,6 @@
-import puppeteer from 'puppeteer';
-import firebase from '../utils/firebase';
-import Faker from 'faker';
+//import puppeteer from 'puppeteer';
+// import firebase from '../utils/firebase';
+// import Faker from 'faker';
 
 // describe('e2e test for addItem', async () => {
 //     it('loads the page title correctly', () => {
@@ -15,23 +15,23 @@ import Faker from 'faker';
 //     });
 // })
 
-describe('Enter new item', () => {
+describe.skip('Enter new item', () => {
     let browser;
     let page;
     // const db = firebase.firestore();
     // const collection = db.collection('rentalItems');
 
 
-    beforeAll(async () => {
-        browser = await puppeteer.launch({
-            headless:false,
-            slowMo:20
-        });
-        page = await browser.newPage();
-        await page.goto('http://localhost:3000/addItems');
+    // beforeAll(async () => {
+    //     browser = await puppeteer.launch({
+    //         headless:false,
+    //         slowMo:20
+    //     });
+    //     page = await browser.newPage();
+    //     await page.goto('http://localhost:3000/addItems');
 
-        // await db.
-    });
+    //     // await db.
+    // });
 
     afterAll( async () => {
         // browser.close();

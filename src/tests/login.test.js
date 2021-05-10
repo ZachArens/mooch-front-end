@@ -11,7 +11,7 @@ afterEach(cleanup);
 
 //tutorial provided by techsith at https://www.youtube.com/watch?v=3e1GHCA3GP0&t=4s
 
-describe('renders Login component correctly', () => {
+describe.skip('renders Login component correctly', () => {
     it('renders without crashing', () => {
         const div = document.createElement("div");
         ReactDOM.render(<Login/>, div);

@@ -14,12 +14,9 @@ it ("renders without crashing", () => {
 
 describe('addItem validates and sanitizes all values for text inputs', () => {
 
-    it('allows a value for title with only alphabet and space characters', () => {
+    test.skip('allows a value for title with only alphabet and space characters', () => {
         const addItemComponent = render(<AddItem />);
         const title = addItemComponent.getAllByPlaceholderText('Title');
-
-        title.
-        expect()
     });
 
     test.todo('can add an item to the database');

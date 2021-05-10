@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import '../styles/bannerTitle.scss';
 
-export default class bannerTitle extends Component {
+export default class BannerTitle extends Component {
     render() {
         return (
             <div className="title-banner">
