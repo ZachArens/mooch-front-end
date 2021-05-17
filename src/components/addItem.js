@@ -1,7 +1,8 @@
 import React from 'react';
 import EditTitleDesc from "./editTitleDesc";
 import SubmitButtons from './submitButtons';
-import firebase from "../utils/firebase";
+// import firebase from "../utils/firebase";
+import { AddRentalItem as AddToDB} from "../utils/firebaseFunctions";
 import SimpleReactValidator from 'simple-react-validator';
 import '../styles/addItem.scss';
 
@@ -36,19 +37,9 @@ class AddItem extends React.Component {
         e.preventDefault();
 
         if (this.validator.allValid()) {
-            await firebase
-                .firestore()
-                .collection('rentalItems')
-                .add({
-                    itemName: this.state.title, itemDesc: this.state.description, costHourly: this.state.itemRate
-                })
-                .then((docRef) => {
-                    console.log("success writing document:", docRef.id);
-                    this.setState({title: "", description: "", itemRate: "", message: "success"});
-                })
-                .catch((error) => {
-                    this.setState({message: "fbIssue"})
-                });
+            
+            this.setState(AddToDB(this.state.title, this.state.description, this.state.itemRate));
+
         } else {
             this.validator.showMessages();
             this.forceUpdate();
@@ -66,10 +57,10 @@ class AddItem extends React.Component {
 
                 <div className="row">
                     {/*//TODO - fix reference to add photo img*/}
-                    <div className="photo_frame col-md-4">
+                    {/* <div className="photo_frame col-md-4">
                         <img src="https://www.publicdomainpictures.net/pictures/370000/velka/2-seater-kayak-canoe.jpg" alt="kayak inflatable" />
                         <h1>+</h1>
-                    </div>
+                    </div> */}
                     <div className="col-md-5 center_column">
                         <div className="errorMessage">
                             <div>{this.validator.message('title', this.state.title, 'required|alpha_space')}</div>

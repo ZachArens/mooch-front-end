@@ -2,8 +2,9 @@
 import React, { Component } from 'react';
 // import UserUI from './components/userUI';
 import Login from './components/login';
-import RentItem from './components/rentItem';
+import RentItem from './components/reserveItem';
 import AddItem from './components/addItem';
+import ReserveItem from './components/reserveItem';
 import Home from './components/home';
 import MyRentals from "./components/myRentals";
 import './App.scss';
@@ -42,10 +43,10 @@ class App extends Component {
                                     <NavLink to="/login" className="nav-link">Login</NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to="/rentItems" className="nav-link">Temp-Rent Items</NavLink>
+                                    <NavLink to="/addItems" className="nav-link">Temp-Add Items</NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to="/addItems" className="nav-link">Temp-Add Items</NavLink>
+                                    <NavLink to="/reserveItem" className="nav-link">Temp-Reserve Items</NavLink>
                                 </li>
                             </ul>
                         </div>
@@ -55,11 +56,11 @@ class App extends Component {
                     <Route path="/login">
                         <Login/>
                     </Route>
-                    <Route path="/rentItems">
-                        <RentItem/>
-                    </Route>
                     <Route path="/addItems">
                         <AddItem/>
+                    </Route>
+                    <Route path="/reserveItem">
+                        <ReserveItem/>
                     </Route>
                     <Route path="/myRentals">
                         <MyRentals/>

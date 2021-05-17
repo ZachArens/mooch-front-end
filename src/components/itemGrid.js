@@ -1,22 +1,21 @@
 import React from 'react';
 import ItemCard from "./itemCard";
 import firebase from "../utils/firebase";
+import {Link} from 'react-router-dom';
+// import {GetRentalItems} from '../utils/firebaseFunctions'
 
 class ItemGrid extends React.Component {
     constructor(props) {
         super(props);
 
         //TODO - Add loader;
-        this.state = {rentalItemsList: null, loading: true}
+        this.state = {rentalItemsList: [], loading: true}
 
     }
 
 
 
     componentDidMount() {
-        //TODO - need unsubscribe
-        console.log('did mount');
-
         const rentalItems = firebase.firestore().collection("rentalItems");
 
         let rentalItemsList = [];
@@ -36,22 +35,30 @@ class ItemGrid extends React.Component {
             //TODO - security, do not publish error details to console
             console.log("Error getting documents:" + error);
         });
+
+        // return GetRentalItems().then(() => {
+        //     this.setState({
+        //         rentalItemsList: rentalItemsList, loading: false
+        //     })
+        // })
+        
     }
 
     render() {
 
-        console.log(`render state is ${this.state.rentalItemsList}`)
-
         let gridItems;
 
         if (!this.state.loading) {
+            console.log(this.state.rentalItemsList);
             gridItems = this.state.rentalItemsList.map((card) =>
-                <ItemCard key={card.id}
-                          url="/Users/zacharyarens/WebstormProjects/mooch-rental-app-front/src/img/sea-5621150_1920.jpg"
-                          title={card.itemName} desc={card.itemDesc} altText="sea"/>
+            <Link to="/reserveItems" >
+                <ItemCard key={card.id} title={card.itemName} 
+                description={card.itemDesc} itemRate={card.costHourly} />
+            </Link>
             );
         } else {
             gridItems = <ItemCard />;
+            console.log('no rental items present');
         }
 
         return(
