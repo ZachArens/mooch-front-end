@@ -2,15 +2,26 @@ import firebase from '../utils/firebase';
 
 import React from "react"; 
 import ReactDOM from "react-dom";   
-import {render} from '@testing-library/react';
+
+import {render, cleanup, queryByTestId} from '@testing-library/react';
+// import {render, waitForElement} from 'react-testing-library';
+import { MemoryRouter } from 'react-router-dom';
 
 import ItemGrid from "../components/ItemGrid";
+import { GetRentalItems } from '../utils/firebaseFunctions';
 
-beforeAll(async() => {
-    
-    const rentalItems = await firebase.firestore().collection("rentalItems");
+afterEach(() => {
+    cleanup();
 
-    const allItems = [{itemName: "Kayak", zip: "49464", costHourly: 13,
+    console.error.mockClear();
+});
+
+
+
+//spy on console error
+console.error = jest.fn();
+
+const allItems = [{itemName: "Kayak", zip: "49464", costHourly: 13,
             itemStatus: "available", itemDesc: "beginner river kayak", ownerId: "15a" }, 
             {itemName: "Life Jacket", zip: "49505", costHourly: 4,
             itemStatus: "draft", itemDesc: "coast guard approved for test example", ownerId: "16b" },
@@ -20,29 +31,24 @@ beforeAll(async() => {
             itemStatus: "rented", itemDesc: "2 person 8lbs, sticky zipper", ownerId: "18d"  },
             {itemName: "paddle board", zip: "49426", costHourly: 5,
             itemStatus: "available", itemDesc: "stand up paddle board, good for flat water and minor waves, good learner", ownerId: "19e"  }
-        ]
-        
-        for (let i=0; i<allItems.length; i++) {
-            await rentalItems.add(allItems[i]);
-        }
-    
-});
+        ];
 
-describe.skip("<ItemGrid />", () => {
+GetRentalItems = jest.fn()
+
+describe("<ItemGrid /> ", () => {
     test("renders without crashing", () => {
-        const div = document.createElement("div");
-        ReactDOM.render(<ItemGrid />, div);
+        render(<ItemGrid />);
     });
 
     test("displays rental items correctly", async() => {
-        const ItemGrid = render( <ItemGrid /> );
-        expect(ItemGrid.getByDisplayValue("Kayak")).toBeTruthy;
-        expect(ItemGrid.getByDisplayValue("Life Jacket")).toBeTruthy;
-        expect(ItemGrid.getByDisplayValue("Tent")).toBeTruthy;
-        expect(ItemGrid.getByDisplayValue("paddle board")).toBeTruthy;
+        const {getAllByTestId} = render( <ItemGrid /> );
 
-        expect(ItemGrid.getByDisplayValue("beginner river kayak")).toBeTruthy;
-        expect(ItemGrid.getByDisplayValue("coast guard approved for test example")).toBeTruthy;
+        expect(GetRentalItems).toHaveBeenCalled();
+        
+        // expect(getAllByTestId('rentalItemCard').length).toBe(allItems.length);
+
+        // expect(getAllByTestId('rentalItemCard')[0].itemName).toBe(allItems[0].itemName);
+        
     });
 });
 

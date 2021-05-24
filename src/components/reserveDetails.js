@@ -12,6 +12,11 @@ export default class ReserveDetails extends Component {
 
         //TODO - set date fields min
 
+        let defaultStartDate = () => {
+            const today = new Date();
+            return today.toString();
+        }
+
         return (
             <div>
                 <div className="dropdown show">
@@ -20,19 +25,27 @@ export default class ReserveDetails extends Component {
                         Exchange Method
                     </button>
                     <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <button id="delivery" className="dropdown-item" value="delivery" onClick={(e) => this.props.setExMeth(e)}>Delivery</button>
-                        <button id="pickup" className="dropdown-item" value="pickup" onClick={(e) => this.props.setExMeth(e)}>Pick-up</button>
-                        <button id="meetup" className="dropdown-item" value="meetup" onClick={(e) => this.props.setExMeth(e)}>Public Meet-up</button>
+                        <button id="delivery" className="dropdown-item" value="delivery" 
+                        data-testid="deliveryButton" onClick={(e) => this.props.setExMeth(e)}>Delivery</button>
+                        <button id="pickup" className="dropdown-item" value="pickup" 
+                        data-testid="pickupButton" onClick={(e) => this.props.setExMeth(e)}>Pick-up</button>
+                        <button id="meetup" className="dropdown-item" value="meetup" data-testid="meetupButton" 
+                        onClick={(e) => this.props.setExMeth(e)}>Public Meet-up</button>
                         {/* {exchangeOptDisplay} */}
                     </div>
+                </div>
+                <div>
+                    <h3>{this.props.exchangeMethod}</h3>
                 </div>
                 <div className="scheduler">
                     <label htmlFor="startDate">Start Date</label>
                     <input type="datetime-local" id="startDate" data-testid="startDateInput" 
-                    defaultValue={this.props.startDate} onChange={(e) => {this.props.updateStartDate(e)}}/>
+                    min={new Date()}
+                    // this.props.startDate ? this.props.startDate : 
+                    defaultValue={defaultStartDate} onChange={(e) => {this.props.updateStartDateTime(e)}}/>
                     <label htmlFor="endDate">End Date</label>
                     <input type="datetime-local" id="endDate" data-testid="endDateInput" 
-                    defaultValue={this.props.endDate} onChange={(e) => {this.props.updateEndDate(e)}}/>
+                    defaultValue={this.props.endDate} min={this.props.startDate} onChange={(e) => {this.props.updateEndDateTime(e)}}/>
                 </div>
             </div>
         )

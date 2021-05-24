@@ -1,4 +1,4 @@
-import {rentalTimeAsString, msTimeDifference, hoursTimeDifference} from "../utils/rentalFunctions";
+import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator} from "../utils/rentalFunctions";
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -58,4 +58,31 @@ describe('hoursTimeDifference functions correctly when', () => {
 
         expect(hoursTimeDifference(startDate1, endDate1)).toBe(hrs1);
     });
-})
+});
+
+describe('textAbbreviator', () => {
+    test('should not abbreviate text under 32 characters', () => {
+        let okText = ['asdfsdbf   &*#)(%sdfafasdf', 'somethingelse23423tdfsf', 'abcdefghijklmnopqrstuvABCDEF']
+        
+        for (let item in okText) {
+            expect(textAbbreviator(okText[item])).toBe(okText[item]);
+        }
+        
+    });
+
+    test('should abbreviate text at least 32 characters', () => {
+        let notOkText = ['abcdefghijklmnopqrstuvwxyzABCDEFG', 'This should not be more 30 characters long. If it is it should be abbrev', '!#423%$)Y%*NFGDSLFBDSFLDGNLSDSABLDSFLGfdksnfelrkasdlfnsl']
+        
+        for (let item in notOkText) {
+            expect(textAbbreviator(notOkText[item])).toBe(`${notOkText[item].substr(0,29)}...`);
+        }
+    });
+
+    test('should throw an error for a non string description', () => {
+        let notOkText = [23543634, () => {console.log('this is a function')}, ['this', 'is', 'an', 'array']];
+        
+        for (let item in notOkText) {
+            expect(textAbbreviator(notOkText[item])).toThrowError();
+        }
+    });
+});

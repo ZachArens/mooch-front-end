@@ -33,7 +33,7 @@ var uiConfig = {
     privacyPolicyUrl: '<your-privacy-policy-url>'
 };
 
-class FireAuthWidget extends React.Component {
+export default class FireAuthWidget extends React.Component {
     render() {
         ui.start('#firebaseui-auth-container', uiConfig);
 

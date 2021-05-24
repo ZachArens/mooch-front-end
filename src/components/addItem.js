@@ -39,7 +39,7 @@ class AddItem extends React.Component {
         if (this.validator.allValid()) {
             
             this.setState(AddToDB(this.state.title, this.state.description, this.state.itemRate));
-
+            this.setState({title: "", description: "", itemRate: "", message: ""});
         } else {
             this.validator.showMessages();
             this.forceUpdate();

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PhotoCarousel from "./photoCarousel.js";
 import TotalBox from "./totalBox"
 import DisplayTitleDesc from "./displayTitleDesc";
@@ -6,153 +6,169 @@ import SubmitButtons from './submitButtons';
 import ReserveDetails from './reserveDetails';
 import {hoursTimeDifference} from '../utils/rentalFunctions';
 import '../styles/reserveItem.scss';
+import { useParams } from 'react-router-dom';
+import { getItemFromDB, AddReservation } from '../utils/firebaseFunctions';
 
-class ReserveItem extends React.Component {
-    constructor(props) {
-        super(props);
+function ReserveItem() {
+    
+    const [exchangeMethod, setExchangeMethod] = useState('');
+    const [totalTime, setTotalTime] = useState('');
+    const [unitCost, setUnitCost] = useState(10);
+    const [rentalCost, setRentalCost] = useState(0);
+    const [totalCost, setTotalCost] = useState(0);
+    const [deliveryCost, setDeliveryCost] = useState(0);
+    const [deliveryOptions, setDeliveryOptions] = useState({delivery: 5, pickup: 1, meetup: 15 });
+    const [itemId, setItemId] = useState('');
+    const [startDateTime, setStartDateTime] = useState(null);
+    const [endDateTime, setEndDateTime] = useState(null);
+
+    const defaultDates = () => {
+       //FIXME 
 
         let today = new Date();
         let tomorrow = new Date(today)
         tomorrow.setDate(today.getDate() + 1);
-
-        //FIXME - lower priority, set state from rentalItem 
-        //TODO - set user details
-        this.state = {
-            exchangeMethod: '', 
-            startDate: today, 
-            endDate: tomorrow,
-            total_time: 0,
-            unit_cost: 5,
-            rental_cost: 0,
-            total_cost: 0,
-            delivery_cost: 0,
-            delivery_options: {delivery: 5, pickup: 1, meetup: 15 }
-        };
+        
+        setStartDateTime(today);
+        setEndDateTime(tomorrow);
+        
     }
 
-    setExchangeMethod = (e) => {
+
+    const updateExchangeMethod = (e) => {
         const value = e.target.value;
-        let delivery_cost = 0;
         switch (value) {
             case "delivery": 
-                delivery_cost = this.state.delivery_options.delivery;
+                setDeliveryCost(deliveryOptions.delivery);
                 break;
             case "pickup":
-                delivery_cost = this.state.delivery_options.pickup;
+                setDeliveryCost(deliveryOptions.pickup);
                 break;
             case "meetup":
-                delivery_cost = this.state.delivery_options.meetup;
+                setDeliveryCost(deliveryOptions.meetup);
                 break;
             default:
-                delivery_cost = 0;
+                setDeliveryCost(0);
+            
         }
-        this.setState({
-            exchangeMethod: value, 
-            delivery_cost,
-            total_cost: (delivery_cost + this.state.rental_cost)
-        });
-    }
-
-    updateStartDate = (e) => {
-
-        const incomingStartDate = new Date(e.target.value);
-        let newEndDate = null;
-        
-        //set default endDate to be equal or greater to new start date
-        if (incomingStartDate > this.state.endDate) {
-            newEndDate = incomingStartDate;
-        } else {
-            newEndDate = this.state.endDate;
-        }
-
-        let total_time = hoursTimeDifference(incomingStartDate, newEndDate);
-        let rental_cost = total_time * this.state.unit_cost;
-        let total_cost = rental_cost + this.state.delivery_cost;
-        
-        this.setState({
-            startDate: incomingStartDate, 
-            endDate: newEndDate,
-            total_time,
-            rental_cost,
-            total_cost
-        });
+        setExchangeMethod(value);
+        setTotalCost(deliveryCost + rentalCost);
 
     }
 
-    updateEndDate = (e) => {
+    const updateStartDateTime = (e) => {
 
-        const incomingEndDate = new Date(e.target.value);
-        const startDate = this.state.startDate;
+        const incomingStartDateTime = new Date(e.target.value);
         
-        //check that endDate is greater than startDate and setState
+        //set default endDateTime to be equal or greater to new start date
+        if (incomingStartDateTime > endDateTime) {
+            //FIXME
+        } 
+
+        setEndDateTime(incomingStartDateTime);
+
+        setStartDateTime(incomingStartDateTime);
+
+        setTotalTime(hoursTimeDifference(startDateTime, endDateTime));
+        setRentalCost(totalTime * unitCost);
+        console.log("rentalCost: " + rentalCost);
+        setTotalCost(rentalCost + deliveryCost);
+
+    }
+
+    const updateEndDateTime = (e) => {
+
+        const incomingEndDateTime = new Date(e.target.value);
+        
+        //check that endDateTime is greater than startDateTime and setState
         //compare milliseconds (+)
-        if (+startDate < +incomingEndDate) {
-            let total_time = hoursTimeDifference(this.state.startDate, incomingEndDate);
-            let rental_cost = total_time * this.state.unit_cost;
-            let total_cost = rental_cost + this.state.delivery_cost;
-        
-            this.setState({
-                endDate: incomingEndDate,
-                total_time,
-                rental_cost,
-                total_cost
-            });
+        if (+startDateTime < +incomingEndDateTime) {
+            //FIXME
+            
         } else {
             //FIXME - send error message instead
-            console.log('The end date must be later than the start date.');
+            //console.log('The end date must be later than the start date.');
         }
         
+        setTotalTime(hoursTimeDifference(startDateTime, incomingEndDateTime));
+        console.log("unitCost: " + unitCost);
+        console.log("totalTime: " + totalTime);
+        setRentalCost(totalTime * unitCost);
+
+        console.log("rentalCost: " + rentalCost)
+
+        setTotalCost(rentalCost + deliveryCost);
+        setEndDateTime(incomingEndDateTime);
     }
 
-    reserveItem = (e) => {
+    const reserveItem = (e) => {
         //TODO - set reserveDetails to state and firebase
-        console.log('reserve Item');
+        console.log(`startDateTime: ${startDateTime}`, `endDateTime: ${endDateTime}`,
+         `exchangeMethod: ${exchangeMethod}`, `totalCost: ${totalCost}`, 
+         `rentalCost: ${rentalCost}`, `totalTime: ${totalTime}` );
+        
+        const reservation = {
+            startDateTime, 
+            endDateTime, 
+            exchangeMethod, 
+            totalCost, 
+            deliveryCost, 
+            rentalCost
+        };
+
+        AddReservation(reservation);
     }
 
-    quitReservation = (e) => {
+    const quitReservation = (e) => {
         //TODO - clear reserveDetails and return to main page
         console.log('quit Reservation');
     }
 
+    // let { rentalItemId } = useParams();
 
-    render() {
-        // const photos = [{key: 1, active: "active", photoURL:"https://oldtowncanoe.johnsonoutdoors.com/sites/johnsonoutdoors-store/files/assets/images/10/1/1099627_primary/1099627_primary.jpg", altText: "kayak"},
-        //     {key:2, photoURL: "https://oldtowncanoe.johnsonoutdoors.com/sites/johnsonoutdoors-store/files/assets/images/10/1/1099627_primary/1099627_primary.jpg", altText:"paddle"},
-        //     {key:3, photoURL: "https://cdn.shopify.com/s/files/1/0086/9128/6076/products/Untitled-48.png?v=1563914213", altText: "lifejacket"},
-        //     {key:4, photoURL: "https://cdni.llbean.net/is/image/wim/506404_3525_41?hei=1092&wid=950&resMode=sharp2&defaultImage=llbstage/A0211793_2", altText: "something else"}];
-        // const numbers = [1,2,3,4];
-        return(
-            <div className="form">
-                <div className="row top-row">
-                    {/* <div className="photo_frame col-md-5">
-                        <PhotoCarousel numbers={numbers}/>
-                    </div> */}
+    const loadItemDetails = () => {
 
+        
 
-                    
-                    <DisplayTitleDesc title="Sample" desc="This is the description of the item"
-                    itemRate="$7.99" />
-
-                    <SubmitButtons submitTitle="Rent" cancelTitle="Clear"
-                            submitFn={this.reserveItem.bind(this)}
-                            cancelFn={this.quitReservation.bind(this)}
-                            />
-                </div>
-                <div className="row">
-                        <ReserveDetails setExMeth={this.setExchangeMethod.bind(this)} startDate={this.state.startDate} endDate={this.state.endDate}
-                        updateStartDate={this.updateStartDate.bind(this)} updateEndDate={this.updateEndDate.bind(this)} />
-
-                        <TotalBox 
-                            total_cost={this.state.total_cost} 
-                            delivery_cost={this.state.delivery_cost} 
-                            rental_time={this.state.total_time} 
-                            rental_cost={this.state.rental_cost}
-                        />
-
-                </div>
-            </div>
-        );
+        // console.log ('using effect to load Item Details');
+        //     // const itemId = this.props.params.itemId;
+        // console.log("itemId: " + itemId);
+        // const item = getItemFromDB(itemId);
     }
+
+    useEffect(() => {
+        loadItemDetails();
+    }, []);
+
+    
+        
+    return(
+        <div className="form">
+            <div className="row top-row">
+                
+                <DisplayTitleDesc title="Sample" desc="This is the description of the item"
+                itemRate="$7.99" />
+
+                <SubmitButtons submitTitle="Reserve" cancelTitle="Clear"
+                        submitFn={reserveItem.bind(this)}
+                        cancelFn={quitReservation.bind(this)}
+                        />
+            </div>
+            <div className="row">
+                    <ReserveDetails setExMeth={updateExchangeMethod.bind(this)} exchangeMethod={exchangeMethod} 
+                    startDateTime={startDateTime} endDateTime={endDateTime}
+                    updateStartDateTime={updateStartDateTime.bind(this)} updateEndDateTime={updateEndDateTime.bind(this)} />
+
+                    <TotalBox 
+                        total_cost={totalCost} 
+                        delivery_cost={deliveryCost} 
+                        rental_time={totalTime} 
+                        rental_cost={rentalCost}
+                    />
+
+            </div>
+        </div>
+    );
 }
 
 export default ReserveItem;

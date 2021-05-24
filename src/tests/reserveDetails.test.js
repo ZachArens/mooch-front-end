@@ -12,7 +12,20 @@ describe('<ReserveDetails />', () => {
         render(<ReserveDetails />);
     });
 
-    test('displays date values correctly', () => {
+    test.skip('displays default date values correctly', () => {
+
+        const defaultStartDate =  new Date();
+            
+        const {queryByTestId, debug} = render (<ReserveDetails />);
+        
+        // debug();
+
+        //FIXME - need to finish this testing series and fix/understand the date inputs and displays
+        expect(queryByTestId('startDateInput').defaultValue).toBe(defaultStartDate.toString());
+        expect(queryByTestId(data.endDate)).toBeTruthy();
+    });
+
+    test.skip('displays passed-in date values correctly', () => {
 
         const {queryByDisplayValue, debug} = render (<ReserveDetails startDate={data.startDate} 
             endDate={data.endDate} />);

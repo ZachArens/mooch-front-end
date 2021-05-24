@@ -1,12 +1,18 @@
 import React from 'react';
-// import FireAuthWidget from './fireAuthWidget';
+// import FireAuthWidget from '../utils/fireAuthWidget';
 
-import firebase from '../utils/firebase';
+import firebase from '../../utils/firebase';
+import ReserveItem from '../reserveItem';
+import SubmitButtons from '../submitButtons';
+import LoginForm from './loginForm';
+import CreateLogin from './createLogin';
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {email: '', password: '', errMsg: ''};
+        this.state = {email: '', password: '', errMsg: '',
+            hasLogin: true,
+            buttonText: "Don't have a login? Click here."};
 
         this.submitEmailPass = this.submitEmailPass.bind(this);
         this.updateFields = this.updateFields.bind(this);
@@ -15,7 +21,7 @@ class Login extends React.Component {
     updateFields = (e) => {
         const value = e.target.value;
         const name = e.target.name;
-        this.setState({[name]: value})
+        this.setState({name: value})
         document.getElementById('loginError').setAttribute('hidden', false);
         this.setState({errMsg: ""});
     }
@@ -40,36 +46,56 @@ class Login extends React.Component {
         // console.log(`email: ${this.state.email} \n password: ${this.state.password}`);
         // alert('The link was clicked');
     }
+    
+    cancelFn = (e) => {
+        this.setState = {email: '', password: '', errMsg: ''};
+    }
+
+    changeHasLogin = (e) => {
+        e.preventDefault();
+
+        this.setState(prevState => ({hasLogin: !prevState.hasLogin}));
+        console.log('updated state to: ' + this.state.hasLogin)
+        if (!this.state.hasLogin) {
+            this.setState = {buttonText: "Don't have a login? Click here."}
+        } else if (!this.state.hasLogin) {
+            this.setState = {buttonText: "Already have a login? Click here."}
+        }
+
+    }
 
     render() {
 
         // ui.start('#firebaseui-auth-container', uiConfig);
+
+        const haveOrCreateLogin = () => {
+            if (this.state.hasLogin) {
+                return <LoginForm updateFields={this.updateFields.bind(this)} />
+            } else {
+                return <CreateLogin updateFields={this.updateFields.bind(this)} />
+            }
+        };
 
         return (
             <div data-testid="login">
                 <div id="loginError" hidden ><h2>{this.state.errMsg}</h2></div>
                 <form>
                     <title>Login</title>
-                    <label data-testid="email">Email
-                        <input type="text" placeholder="email" name="email" onChange={this.updateFields}/>
-                    </label>
-                    <label data-testid="password">Password
-                        <input type="password" name="password" placeholder="********" onChange={this.updateFields}/>
-                    </label>
-                    <div className="submitButtons">
-                        <input type="submit" value="Submit" data-testid="submit" onClick={(e) => this.submitEmailPass(e)}/>
-                        <input type="button" value="Cancel" data-testid="cancel"/>
-                    </div>
+                    {haveOrCreateLogin()}
+                    
+                    <SubmitButtons submitTitle="Submit" cancelTitle="Cancel"
+                        submitFn={this.submitEmailPass.bind(this)}
+                        cancelFn={this.cancelFn.bind(this)} />
 
 
                     {/*TODO: link to create account page*/}
-                    <a href="https://www.google.com" data-testid="createAccount"><p>Don't have an account?  Create one.</p></a>
+                    <button type="button" onClick={this.changeHasLogin} data-testid="createAccount">{this.state.buttonText}</button>
 
                     {/*<div id="firebaseui-auth-container"/>*/}
                     {/*<div id="loader">Loading...</div>*/}
 
                 </form>
-                {/*<FireAuthWidget/>*/}
+                {/* <FireAuthWidget/> */}
             </div>
 
         );

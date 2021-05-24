@@ -1,10 +1,57 @@
 import React from 'react';
-import {fireEvent,  render} from '@testing-library/react';
+import {fireEvent, cleanup, render} from '@testing-library/react';
 import ReserveItem from '../components/reserveItem';
+import {AddReservation} from '../utils/firebaseFunctions.js';
+
+// const mockAddReservation = jest.fn();
+// jest.mock('../utils/firebaseFunctions', () => {
+//     return jest.fn().mockImplementation(() => {
+//         return {AddReservation: mockAddReservation};
+//     })
+// })
+
+
+afterEach(() => {
+    cleanup();
+});
 
 describe('<ReserveItem />', () => {
     test('renders without crashing', () => {
         render(<ReserveItem />);
+    });
+
+    test('clicking Reserve fires the AddReservation function to add the res. the db', () => {
+        let start = new Date(2021, 0, 17);
+        let end = new Date(2021, 0, 19);
+        const reservation = {
+            startDateTime: start, 
+            endDateTime: end, 
+            exchangeMethod: "meetup",
+            totalCost: 25,
+            deliveryCost: 5, 
+            rentalCost: 20
+        }        
+
+        const {getByText, getByTestId, debug}  = render(<ReserveItem />);
+
+        fireEvent.click(getByText('Exchange Method'));
+        fireEvent.click(getByTestId('deliveryButton'));
+
+        fireEvent.change(getByTestId('startDateInput'), {
+            target: {defaultValue: start},
+        });
+
+        fireEvent.change(getByTestId('endDateInput'), {
+            target: {defaultValue: end},
+        });
+
+        // debug();
+
+        fireEvent.click(getByText('Reserve'));
+
+        expect(mockAddReservation.mock.calls).toBe(1);
+        // expect(mockAddReservation.mockRe).toHaveBeenCalledWith(reservation);
+
     });
 
     test.skip('displays default date values correctly', () => {
@@ -23,7 +70,7 @@ describe('<ReserveItem />', () => {
         expect(queryByTestId('endDateInput').nodeValue).toEqual(tomorrow);
     });
 
-    test('updates startDate values when startDate is updated', () => {
+    test.skip('updates startDate values when startDate is updated', () => {
         
         const {getByTestId, debug} = render (<ReserveItem />);
         
@@ -37,14 +84,17 @@ describe('<ReserveItem />', () => {
 
         expect(startDateField.defaultValue).toEqual(todayStr);
 
-        const dateText = "2020-05-24"
-        let newDate = new Date(dateText);
+        let newDate = new Date();
         let newDateStr = newDate.toString();
-        startDateField.defaultValue = newDate.toDateString;
-        fireEvent.change(startDateField);
+        console.log(newDateStr);
+        console.log(startDateField.defaulValue);
+
+        fireEvent.change(startDateField, {
+            target: {defaulValue: newDateStr},
+        });
         
         debug();
-        expect(startDateField.defaultValue).toBe(newDateStr);
+        expect(startDateField.defaultValue).toEqual(newDateStr);
         //expect(fireEvent.change(startDateField, { target: { value: dateText } })).toBeTruthy();
 
         //console.log(startDateField.target.value);
@@ -52,7 +102,7 @@ describe('<ReserveItem />', () => {
 
     });
 
-    test('updates endDate values when endDate is updated', () => {
+    test.skip('updates endDate values when endDate is updated', () => {
         const {getByTestId} = render(<ReserveItem />);
         
         let tomorrow = new Date();

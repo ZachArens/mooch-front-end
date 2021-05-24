@@ -1475,6 +1475,16 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.4.1.tgz#600f2275ff54739ad5ac0102f1467b8963cd5f71"
   integrity sha512-0yPjzuzGMkW1GkrC8yWsiN7vt1OzkMIi9HgxRmKREZl2wnNPOKo/yScTjXf/O57HM8dltqxPF6jlNLFVtc2qdw==
 
+"@google-cloud/firestore@^4.12.0":
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/firestore/-/firestore-4.12.0.tgz#52d36eb1621387cc9b7291f93162fa38e58fb016"
+  integrity sha512-0xB0frnMNllInoqhvCBhuFJsslcD5/oTDyBc0QzoEW8QzH6RxneSjTxDRXQAH9q9+FxcvGjJA4WiffjptU4q/w==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    functional-red-black-tree "^1.0.1"
+    google-gax "^2.12.0"
+    protobufjs "^6.8.6"
+
 "@google-cloud/paginator@^3.0.0":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@google-cloud/paginator/-/paginator-3.0.5.tgz#9d6b96c421a89bd560c1bc2c197c7611ef21db6c"
@@ -6419,6 +6429,11 @@ firebaseui@^4.7.3:
     dialog-polyfill "^0.4.7"
     material-design-lite "^1.2.0"
 
+firestore-jest-mock@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/firestore-jest-mock/-/firestore-jest-mock-0.13.0.tgz#f9a8bbcbe8517a6e2a27ece1960464c3d2b1b0da"
+  integrity sha512-LKgNu9PYyRQIq7cx513KdOfnLjvT7eiOzLX36tV6QVDenc4VYnksQskmAqENrdmFFgud0N+Apul59oQMO4ME1w==
+
 flat-arguments@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flat-arguments/-/flat-arguments-1.0.2.tgz#9baa780adf0501f282d726c9c6a038dba44ea76f"
@@ -6928,6 +6943,24 @@ google-auth-library@^7.0.0, google-auth-library@^7.0.2:
     gtoken "^5.0.4"
     jws "^4.0.0"
     lru-cache "^6.0.0"
+
+google-gax@^2.12.0:
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/google-gax/-/google-gax-2.13.0.tgz#404bb9df62c3a0a414e2f5339eda4d751f540304"
+  integrity sha512-aKNJy2+Vv2I7flyNYbwpq0aYBHp6Qv32HZn+wr6ZhZ8xlSCLS9K9k7izfh2nd1rCJQcsqB6KMxHV0Vwny6Rc1g==
+  dependencies:
+    "@grpc/grpc-js" "~1.3.0"
+    "@grpc/proto-loader" "^0.6.1"
+    "@types/long" "^4.0.0"
+    abort-controller "^3.0.0"
+    duplexify "^4.0.0"
+    fast-text-encoding "^1.0.3"
+    google-auth-library "^7.0.2"
+    is-stream-ended "^0.1.4"
+    node-fetch "^2.6.1"
+    object-hash "^2.1.1"
+    protobufjs "^6.10.2"
+    retry-request "^4.0.0"
 
 google-gax@^2.9.2:
   version "2.12.0"
@@ -11808,6 +11841,11 @@ react-test-renderer@^17.0.2:
     react-is "^17.0.2"
     react-shallow-renderer "^16.13.1"
     scheduler "^0.20.2"
+
+react-testing-library@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/react-testing-library/-/react-testing-library-8.0.1.tgz#b3dd43bce3fa88423cf0a23292fb819023c227cc"
+  integrity sha512-Gq4JC9r3prA4hYwo7afcbHHMFckO29+5Nrh2KblAEPuK/DWaU0bJE1vtpAgLhzhY9bBirmcgjjIHljHEwGAXKw==
 
 react@^17.0.1:
   version "17.0.2"

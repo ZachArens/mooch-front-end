@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 // import UserUI from './components/userUI';
-import Login from './components/login';
+import Login from './components/Login/login';
 import RentItem from './components/reserveItem';
 import AddItem from './components/addItem';
 import ReserveItem from './components/reserveItem';
@@ -25,7 +25,7 @@ class App extends Component {
             <Router>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">Mooch</a>
+                        <NavLink to="/" className="navbar-brand" >Mooch</NavLink>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                                 aria-label="Toggle navigation">
@@ -33,9 +33,9 @@ class App extends Component {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav">
-                                <li className="nav-item">
+                                {/* <li className="nav-item">
                                     <NavLink to="/" className="nav-link active" aria-current="page">Find</NavLink>
-                                </li>
+                                </li> */}
                                 <li className="nav-item">
                                     <NavLink to="/myRentals" className="nav-link">My Rentals</NavLink>
                                 </li>
@@ -45,9 +45,9 @@ class App extends Component {
                                 <li className="nav-item">
                                     <NavLink to="/addItems" className="nav-link">Temp-Add Items</NavLink>
                                 </li>
-                                <li className="nav-item">
+                                {/* <li className="nav-item">
                                     <NavLink to="/reserveItem" className="nav-link">Temp-Reserve Items</NavLink>
-                                </li>
+                                </li> */}
                             </ul>
                         </div>
                     </div>
@@ -59,6 +59,9 @@ class App extends Component {
                     <Route path="/addItems">
                         <AddItem/>
                     </Route>
+                    <Route path="/reserveItem/:rentalItemId">
+                        <ReserveItem />
+                    </Route> 
                     <Route path="/reserveItem">
                         <ReserveItem/>
                     </Route>

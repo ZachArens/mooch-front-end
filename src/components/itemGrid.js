@@ -1,8 +1,12 @@
 import React from 'react';
 import ItemCard from "./itemCard";
 import firebase from "../utils/firebase";
-import {Link} from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
+// import ReserveItem from './reserveItem';
+import { GetRentalItems } from '../utils/firebaseFunctions';
+
 // import {GetRentalItems} from '../utils/firebaseFunctions'
+let unsubscribe = null;
 
 class ItemGrid extends React.Component {
     constructor(props) {
@@ -15,33 +19,25 @@ class ItemGrid extends React.Component {
 
 
 
-    componentDidMount() {
-        const rentalItems = firebase.firestore().collection("rentalItems");
-
-        let rentalItemsList = [];
-        rentalItems.get().then((querySnapshot) => {
-            console.log("queried")
-            const snapshot = querySnapshot.forEach((doc) => {
-                const entry = {"id": doc.id, ...doc.data()};
-                // console.log(entry);
-                rentalItemsList.push(entry);
-                // console.log(rentalItemsList);
-            });
-        }).then(()=> {
-            this.setState({rentalItemsList, loading: false});
-            console.log(`post setState is ${this.state.rentalItemsList}`);
-        })
-        .catch((error) => {
-            //TODO - security, do not publish error details to console
-            console.log("Error getting documents:" + error);
-        });
-
-        // return GetRentalItems().then(() => {
-        //     this.setState({
-        //         rentalItemsList: rentalItemsList, loading: false
-        //     })
-        // })
+    async componentDidMount() {
         
+        try {
+            await GetRentalItems().then(({unsubscribe, rentalItemsList}) => {
+                unsubscribe = unsubscribe;
+                this.setState({
+                    rentalItemsList: rentalItemsList, loading: false
+                });
+            });
+        } catch (e) {
+            console.log(e);
+        }
+
+        
+        
+    }
+
+    onComponentDidUnmount() {
+        unsubscribe();
     }
 
     render() {
@@ -49,16 +45,15 @@ class ItemGrid extends React.Component {
         let gridItems;
 
         if (!this.state.loading) {
-            console.log(this.state.rentalItemsList);
+            // console.log(this.state.rentalItemsList);
             gridItems = this.state.rentalItemsList.map((card) =>
-            <Link to="/reserveItems" >
-                <ItemCard key={card.id} title={card.itemName} 
+            
+            <ItemCard  key={card.id} url={card.id} title={card.itemName} 
                 description={card.itemDesc} itemRate={card.costHourly} />
-            </Link>
             );
         } else {
             gridItems = <ItemCard />;
-            console.log('no rental items present');
+            // console.log('no rental items present');
         }
 
         return(
@@ -68,8 +63,6 @@ class ItemGrid extends React.Component {
                     { !this.state.loading && gridItems }
                 </div>
             </div>
-
-            
         );
 
     }
