@@ -54,7 +54,7 @@ describe('<ReserveItem />', () => {
 
     });
 
-    test.skip('displays default date values correctly', () => {
+    test('displays default date values correctly', () => {
         
         const {queryByTestId, debug} = render (<ReserveItem />);
         
@@ -70,7 +70,7 @@ describe('<ReserveItem />', () => {
         expect(queryByTestId('endDateInput').nodeValue).toEqual(tomorrow);
     });
 
-    test.skip('updates startDate values when startDate is updated', () => {
+    test('updates startDate values when startDate is updated', () => {
         
         const {getByTestId, debug} = render (<ReserveItem />);
         
@@ -102,7 +102,7 @@ describe('<ReserveItem />', () => {
 
     });
 
-    test.skip('updates endDate values when endDate is updated', () => {
+    test('updates endDate values when endDate is updated', () => {
         const {getByTestId} = render(<ReserveItem />);
         
         let tomorrow = new Date();

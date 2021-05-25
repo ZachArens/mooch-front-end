@@ -10,10 +10,21 @@ import CreateLogin from './createLogin';
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {email: '', password: '', errMsg: '',
+        this.state = {
+            email: '', 
+            password: '', 
+            fullName: '',
+            streetAddress: '',
+            city: '',
+            st: '',
+            zip: '',
+            phone: '',
+            errMsg: '',
             hasLogin: true,
-            buttonText: "Don't have a login? Click here."};
+            buttonText: "Don't have a login? Click here."
+        };
 
+        this.changeHasLogin = this.changeHasLogin.bind(this);
         this.submitEmailPass = this.submitEmailPass.bind(this);
         this.updateFields = this.updateFields.bind(this);
     }
@@ -53,14 +64,14 @@ class Login extends React.Component {
 
     changeHasLogin = (e) => {
         e.preventDefault();
-
-        this.setState(prevState => ({hasLogin: !prevState.hasLogin}));
+        let buttonText = !this.state.hasLogin ? "Don't have a login? Click here." : "Already have a login? Click here.";
+        
+        this.setState((prevState) => ({
+            hasLogin: !prevState.hasLogin,
+            buttonText
+        }));
         console.log('updated state to: ' + this.state.hasLogin)
-        if (!this.state.hasLogin) {
-            this.setState = {buttonText: "Don't have a login? Click here."}
-        } else if (!this.state.hasLogin) {
-            this.setState = {buttonText: "Already have a login? Click here."}
-        }
+        
 
     }
 
@@ -87,8 +98,6 @@ class Login extends React.Component {
                         submitFn={this.submitEmailPass.bind(this)}
                         cancelFn={this.cancelFn.bind(this)} />
 
-
-                    {/*TODO: link to create account page*/}
                     <button type="button" onClick={this.changeHasLogin} data-testid="createAccount">{this.state.buttonText}</button>
 
                     {/*<div id="firebaseui-auth-container"/>*/}
