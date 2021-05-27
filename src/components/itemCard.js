@@ -13,7 +13,9 @@ class ItemCard extends React.Component {
     render() {
       
         return(
-            <Link to={`/reserveItem/${this.props.url}`} className="card col-sm-3">
+            <Link to={`/reserveItem`} 
+                onClick={(e) => {this.props.updateCurrentItem(this.props.id)}} 
+                className="card col-sm-3">
 
                 {/* <img src={this.props.url} className="card-img-top" alt={this.props.altText}/> */}
                 <div className="card-body" data-testid="rentalItemCard">

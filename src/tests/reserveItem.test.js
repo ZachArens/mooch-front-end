@@ -3,12 +3,12 @@ import {fireEvent, cleanup, render} from '@testing-library/react';
 import ReserveItem from '../components/reserveItem';
 import {AddReservation} from '../utils/firebaseFunctions.js';
 
-// const mockAddReservation = jest.fn();
-// jest.mock('../utils/firebaseFunctions', () => {
-//     return jest.fn().mockImplementation(() => {
-//         return {AddReservation: mockAddReservation};
-//     })
-// })
+const mockAddReservation = jest.fn();
+jest.mock('../utils/firebaseFunctions', () => {
+    return jest.fn().mockImplementation(() => {
+        return {AddReservation: mockAddReservation};
+    })
+})
 
 
 afterEach(() => {

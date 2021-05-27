@@ -10,7 +10,7 @@ class Home extends React.Component {
         return(
             <div>
                 <BannerTitle />
-                <ItemGrid/>
+                <ItemGrid updateCurrentItem={this.props.updateCurrentItem} />
                 
             </div>
 

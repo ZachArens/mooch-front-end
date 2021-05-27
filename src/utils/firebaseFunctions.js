@@ -1,11 +1,20 @@
 import firebase, {db} from './firebase';
 
-export const AddRentalItem = async(title, description, itemRate) => {
+export const AddRentalItem = async(title, description, itemRate, exchangeOptions) => {
+    // console.log("add item to db: " + exchangeOptions.delivery);
+    
     await firebase
                 .firestore()
                 .collection('rentalItems')
                 .add({
-                    itemName: title, itemDesc: description, costHourly: itemRate
+                    itemName: title, 
+                    itemDesc: description, 
+                    costHourly: itemRate,
+                    exchangeOptions: {
+                        delivery: exchangeOptions.delivery,
+                        meetup: exchangeOptions.meetup,
+                        pickup: exchangeOptions.pickup
+                    }
                 })
                 .then((docRef) => {
                     console.log("success writing document:", docRef.id);
@@ -33,7 +42,7 @@ export const GetRentalItems = async() => {
     })
     .catch((error) => {
         //TODO - security, do not publish error details to console
-        console.error("Error getting documents:" + error);
+        console.log("Error getting documents:" + error);
     });
 
     return { unsubscribe, rentalItemsList };
@@ -43,6 +52,9 @@ export const GetRentalItems = async() => {
 }
 
 export const getItemFromDB = (itemId) => {
+    if (itemId.length < 1) {
+        return null;
+    }
     const item = db.collection('rentalItems').doc(itemId);
 
     return item.get().then((doc) => {
@@ -53,7 +65,7 @@ export const getItemFromDB = (itemId) => {
             return null;
         }
     }).catch((error) => {
-        console.error("Error getting document", error);
+        console.log("Error getting document", error);
     });
 }
 

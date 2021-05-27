@@ -14,9 +14,18 @@ import {BrowserRouter as Router, NavLink, Route, Switch} from "react-router-dom"
 class App extends Component {
   constructor(props) {
     super(props);
+
+    //TODO - persist state with useLocalStorage
     this.state = {
-      // speed: 0
+      currentUser: "",
+      currentRentalItem: "",
     };
+
+    this.updateCurrentItem = this.updateCurrentItem.bind(this);
+  }
+
+  updateCurrentItem = (rentalItemId) => {
+    this.setState({currentRentalItem: rentalItemId});
   }
 
   render() {
@@ -59,11 +68,8 @@ class App extends Component {
                     <Route path="/addItems">
                         <AddItem/>
                     </Route>
-                    <Route path="/reserveItem/:rentalItemId">
-                        <ReserveItem />
-                    </Route> 
                     <Route path="/reserveItem">
-                        <ReserveItem/>
+                        <ReserveItem currentRentalItem={this.state.currentRentalItem}/>
                     </Route>
                     <Route path="/myRentals">
                         <MyRentals/>
@@ -73,7 +79,7 @@ class App extends Component {
                         {/*<Find/>*/}
                     </Route>
                     <Route path="/">
-                        <Home/>
+                        <Home updateCurrentItem={this.updateCurrentItem.bind(this)} />
                     </Route>
                 </Switch>
             </Router>

@@ -6,12 +6,14 @@ import { AddRentalItem as AddToDB} from "../utils/firebaseFunctions";
 import SimpleReactValidator from 'simple-react-validator';
 import '../styles/addItem.scss';
 
+//TEMPLATE from SimpleReactValidator documentation
 function Message(props) {
     if (props.message === 'success') {
         return <p>Item added!</p>;
     } else if (props.message === 'cleared') {
         return <p>Data cleared.</p>;
     } else if (props.message === 'fbIssue') {
+        //FIXME - need to refactor this error message after AddToDB was updated.
         return <p>There was an issue with adding your item to our system. Please try again.</p>
     } else {
         return <p hidden>This is where messages will display</p>;
@@ -24,7 +26,14 @@ class AddItem extends React.Component {
 
         this.validator = new SimpleReactValidator();
 
-        this.state = {title: "", description: "", itemRate: "", message: ""};
+        this.state = {
+            title: "", 
+            description: "", 
+            itemRate: "",
+            exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, 
+            message: ""};
+
+        this.updateExchangeOptions = this.updateExchangeOptions.bind(this)
     }
 
     updateFields = (e) => {
@@ -33,13 +42,25 @@ class AddItem extends React.Component {
         this.setState({[name]: value, message: ""});
     }
 
+    updateExchangeOptions = (option, cost) => {
+        if (option === "delivery") {
+            this.setState((prevState) => ({exchangeOptions: {...prevState.exchangeOptions, delivery: cost }}));
+        } else if (option === "meetup") {
+            this.setState((prevState) => ({exchangeOptions: {...prevState.exchangeOptions, meetup: cost }}));
+        } else if (option === "pickup") {
+            this.setState((prevState) => ({exchangeOptions: {...prevState.exchangeOptions, pickup: cost }}));
+        }
+
+    }
+
     onSubmit = async (e) => {
         e.preventDefault();
 
         if (this.validator.allValid()) {
-            
-            this.setState(AddToDB(this.state.title, this.state.description, this.state.itemRate));
-            this.setState({title: "", description: "", itemRate: "", message: ""});
+
+            //FIXME - need test to display correct error message
+            AddToDB(this.state.title, this.state.description, this.state.itemRate, this.state.exchangeOptions);
+            this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
         } else {
             this.validator.showMessages();
             this.forceUpdate();
@@ -48,7 +69,7 @@ class AddItem extends React.Component {
     }
 
     clearForm = (e) => {
-        this.setState({title: "", description: "", itemRate: "", message: "cleared"} )
+        this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: "cleared"} )
     }
 
     render() {
@@ -68,8 +89,13 @@ class AddItem extends React.Component {
                             <div>{this.validator.message('itemRate', this.state.itemRate, 'required|numeric|min:0,num')}</div>
                             <Message/>
                         </div>
-                        <EditTitleDesc title={this.state.title} desc={this.state.description}
-                                       itemRate={this.state.itemRate} updateFields={this.updateFields.bind(this)}/>
+                        <EditTitleDesc 
+                            title={this.state.title} 
+                            desc={this.state.description}
+                            itemRate={this.state.itemRate}
+                            exchangeOptions={this.state.exchangeOptions}
+                            updateFields={this.updateFields.bind(this)}
+                            updateExchangeOptions={this.updateExchangeOptions}/>
                     </div>
                     <SubmitButtons submitTitle="Add" cancelTitle="Clear"
                                submitFn={this.onSubmit.bind(this)}

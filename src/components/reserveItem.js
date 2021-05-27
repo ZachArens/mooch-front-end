@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
 import PhotoCarousel from "./photoCarousel.js";
 import TotalBox from "./totalBox"
 import DisplayTitleDesc from "./displayTitleDesc";
@@ -6,19 +7,21 @@ import SubmitButtons from './submitButtons';
 import ReserveDetails from './reserveDetails';
 import {hoursTimeDifference} from '../utils/rentalFunctions';
 import '../styles/reserveItem.scss';
-import { useParams } from 'react-router-dom';
 import { getItemFromDB, AddReservation } from '../utils/firebaseFunctions';
 
-function ReserveItem() {
+function ReserveItem(currentRentalItem) {
     
+    const history = useHistory();
     const [exchangeMethod, setExchangeMethod] = useState('');
     const [totalTime, setTotalTime] = useState('');
     const [unitCost, setUnitCost] = useState(10);
     const [rentalCost, setRentalCost] = useState(0);
     const [totalCost, setTotalCost] = useState(0);
-    const [deliveryCost, setDeliveryCost] = useState(0);
+    const [deliveryCost, setDeliveryCost] = useState(-1);
     const [deliveryOptions, setDeliveryOptions] = useState({delivery: 5, pickup: 1, meetup: 15 });
-    const [itemId, setItemId] = useState('');
+    const [itemName, setItemName] = useState("")
+    const [itemDescription, setItemDescription] = useState("");
+    // const [itemId, setItemId] = useState('');
     const [startDateTime, setStartDateTime] = useState(null);
     const [endDateTime, setEndDateTime] = useState(null);
 
@@ -69,10 +72,13 @@ function ReserveItem() {
 
         setStartDateTime(incomingStartDateTime);
 
-        setTotalTime(hoursTimeDifference(startDateTime, endDateTime));
-        setRentalCost(totalTime * unitCost);
-        console.log("rentalCost: " + rentalCost);
-        setTotalCost(rentalCost + deliveryCost);
+        const calcTotalTime = hoursTimeDifference(incomingStartDateTime, endDateTime);
+        const calcRentalCost = calcTotalTime * unitCost;
+
+        console.log("calc time difference: " + calcTotalTime, "state time difference: " + totalTime, "calcRentalCost: " + calcRentalCost);
+        setTotalTime(calcTotalTime);
+        setRentalCost(calcRentalCost);
+        setTotalCost(calcRentalCost + deliveryCost);
 
     }
 
@@ -103,6 +109,11 @@ function ReserveItem() {
 
     const reserveItem = (e) => {
         //TODO - set reserveDetails to state and firebase
+
+        if (!startDateTime || !endDateTime || deliveryCost < 0 || totalTime < 1) {
+            return null;
+        }
+
         console.log(`startDateTime: ${startDateTime}`, `endDateTime: ${endDateTime}`,
          `exchangeMethod: ${exchangeMethod}`, `totalCost: ${totalCost}`, 
          `rentalCost: ${rentalCost}`, `totalTime: ${totalTime}` );
@@ -117,18 +128,28 @@ function ReserveItem() {
         };
 
         AddReservation(reservation);
+        history.push('/myRentals');
     }
 
     const quitReservation = (e) => {
         //TODO - clear reserveDetails and return to main page
-        console.log('quit Reservation');
+        history.push('/');
     }
 
     // let { rentalItemId } = useParams();
 
-    const loadItemDetails = () => {
+    const loadItemDetails = async () => {
 
+        const itemDetails = await getItemFromDB(currentRentalItem.currentRentalItem);
+
+        if (itemDetails) {
+            setItemName(itemDetails.itemName);
+            setItemDescription(itemDetails.itemDesc);
+            setUnitCost(itemDetails.costHourly);
+        }
         
+        
+        // console.log("name: " + itemName, "desc: " + itemDescription, "cost: " + unitCost);
 
         // console.log ('using effect to load Item Details');
         //     // const itemId = this.props.params.itemId;
@@ -146,8 +167,8 @@ function ReserveItem() {
         <div className="form">
             <div className="row top-row">
                 
-                <DisplayTitleDesc title="Sample" desc="This is the description of the item"
-                itemRate="$7.99" />
+                <DisplayTitleDesc title={itemName} desc={itemDescription}
+                itemRate={unitCost} />
 
                 <SubmitButtons submitTitle="Reserve" cancelTitle="Clear"
                         submitFn={reserveItem.bind(this)}

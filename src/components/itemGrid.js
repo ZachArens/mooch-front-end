@@ -32,6 +32,7 @@ class ItemGrid extends React.Component {
             console.log(e);
         }
 
+        //console.log(this.state.rentalItemsList);
         
         
     }
@@ -48,7 +49,7 @@ class ItemGrid extends React.Component {
             // console.log(this.state.rentalItemsList);
             gridItems = this.state.rentalItemsList.map((card) =>
             
-            <ItemCard  key={card.id} url={card.id} title={card.itemName} 
+            <ItemCard  key={card.id} id={card.id} updateCurrentItem={this.props.updateCurrentItem} title={card.itemName} 
                 description={card.itemDesc} itemRate={card.costHourly} />
             );
         } else {
@@ -59,7 +60,7 @@ class ItemGrid extends React.Component {
         return(
             <div className="container">
                 <div className="row row-cols-lg-4 row-cols-md-3 row-cols-1 row-cols-sm-2">
-                    {/*{this.state.loading && <div className="loader"/>}*/}
+                    { this.state.loading && <div className="loader">Loading...</div> }
                     { !this.state.loading && gridItems }
                 </div>
             </div>
