@@ -1,17 +1,14 @@
 import React from 'react';
-import {fireEvent, cleanup, render} from '@testing-library/react';
+import {fireEvent, cleanup, render, act} from '@testing-library/react';
 import ReserveItem from '../components/reserveItem';
-import {AddReservation} from '../utils/firebaseFunctions.js';
+import {AddReservation, getItemFromDB} from '../utils/firebaseFunctions.js';
+import { JsxEmit } from 'typescript';
 
-const mockAddReservation = jest.fn();
-jest.mock('../utils/firebaseFunctions', () => {
-    return jest.fn().mockImplementation(() => {
-        return {AddReservation: mockAddReservation};
-    })
-})
-
+// const mockAddReservation = jest.fn();
+jest.mock('../utils/firebaseFunctions');
 
 afterEach(() => {
+    jest.clearAllMocks();
     cleanup();
 });
 
@@ -20,7 +17,57 @@ describe('<ReserveItem />', () => {
         render(<ReserveItem />);
     });
 
+    //thanks Dr. Kurmas!
+    test('the mock setup', () => {
+
+        
+
+        // console.log("Testing the mock setup.");
+
+        // console.log(AddReservation);
+
+        AddReservation('Tokyo');
+
+
+        expect(AddReservation).toHaveBeenCalled();
+
+        expect(AddReservation).toHaveBeenLastCalledWith("Tokyo");
+
+    });
+
+    test('renders and calls getItemfromDB', () => {
+
+        jest.mock('../utils/firebaseFunctions');
+        
+        const itemId = "12345678"
+        render(<ReserveItem currentRentalItem={itemId} />);
+
+        expect(getItemFromDB).toHaveBeenCalled();
+        expect(getItemFromDB).toHaveBeenLastCalledWith(itemId);
+    });
+
+    test('renders and sets the itemName, itemDesc, itemCost, and exchangeMethodCosts', () => {
+        const fakeItemId = "12345678"
+
+        const fakeItemDetails = {
+            ownerId: "", 
+            itemName: "Stand Up Paddle Board", 
+            costHourly: "8", 
+            itemDesc: "11' Board with Paddle and leash.  Excellent beginner and all around board", 
+            exchangeMethod: {pickup: 4, meetup: 6, delivery: 8}}
+        
+        getItemFromDB
+        //.mockImplementation(() => fakeItemDetails);
+
+        render(<ReserveItem currentRentalItem={fakeItemId} />);
+
+        expect(getItemFromDB).toHaveBeenCalled();
+        expect(getItemFromDB).toHaveBeenLastCalledWith(fakeItemId);
+        expect(getItemFromDB).toHaveReturnedWith(fakeItemDetails);
+    });
+
     test('clicking Reserve fires the AddReservation function to add the res. the db', () => {
+        
         let start = new Date(2021, 0, 17);
         let end = new Date(2021, 0, 19);
         const reservation = {
@@ -32,7 +79,7 @@ describe('<ReserveItem />', () => {
             rentalCost: 20
         }        
 
-        const {getByText, getByTestId, debug}  = render(<ReserveItem />);
+        const {getByText, getByTestId, debug}  = render(<ReserveItem currentRentalItem=""/>);
 
         fireEvent.click(getByText('Exchange Method'));
         fireEvent.click(getByTestId('deliveryButton'));
@@ -47,10 +94,20 @@ describe('<ReserveItem />', () => {
 
         // debug();
 
+
+        // console.log(getByTestId('rentalTimeLabel').innerText);
+        // console.log(getByTestId('rentalCostLabel').innerText);
+        // console.log(getByTestId('exchangeCost').innerText);
+        // console.log(getByTestId('exchangeCostLabel').innerText);
+        // console.log(getByTestId('totalCost').innerText);
+
         fireEvent.click(getByText('Reserve'));
 
-        expect(mockAddReservation.mock.calls).toBe(1);
-        // expect(mockAddReservation.mockRe).toHaveBeenCalledWith(reservation);
+        // debug();
+
+        expect(AddReservation).toHaveBeenCalled();
+
+        expect(AddReservation).toHaveBeenLastCalledWith(reservation);
 
     });
 

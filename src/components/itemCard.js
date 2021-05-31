@@ -4,11 +4,6 @@ import { textAbbreviator } from '../utils/rentalFunctions';
 
 
 class ItemCard extends React.Component {
-    constructor(props) {
-        super(props);
-
-        
-    }
 
     render() {
       

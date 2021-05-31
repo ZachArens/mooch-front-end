@@ -1,4 +1,3 @@
-import { render } from '@testing-library/react';
 import React, {Component} from 'react';
 import {rentalTimeAsString} from "../utils/rentalFunctions";
 
@@ -18,12 +17,12 @@ export default class TotalBox extends Component {
                             <td data-testid="rentalCostLabel">{`$${this.props.rental_cost}`}</td>
                         </tr>
                         <tr>
-                            <td data-testid="deliveryCostLabel">Delivery</td>
-                            <td>{`$${this.props.delivery_cost}`}</td>
+                            <td data-testid="exchangeCostLabel">Delivery</td>
+                            <td data-testid="exchangeCost">{`$${this.props.delivery_cost}`}</td>
                         </tr>
                         <tr>
                             <td>Total</td>
-                            <td data-testid="totalCostLabel">{`$${this.props.total_cost}`}</td>
+                            <td data-testid="totalCost">{`$${this.props.total_cost}`}</td>
                         </tr>
                     </tbody>
                 </table>

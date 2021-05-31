@@ -1,8 +1,8 @@
 import React from 'react';
 // import FireAuthWidget from '../utils/fireAuthWidget';
 
-import firebase from '../../utils/firebase';
-import ReserveItem from '../reserveItem';
+// import firebase, { auth } from '../../utils/firebase';
+import {createUserWithEmailandPass, loginWithEmailAndPass} from '../../utils/firebaseFunctions';
 import SubmitButtons from '../submitButtons';
 import LoginForm from './loginForm';
 import CreateLogin from './createLogin';
@@ -12,7 +12,9 @@ class Login extends React.Component {
         super(props);
         this.state = {
             email: '', 
-            password: '', 
+            password: '',
+            verifyEmail: '',
+            verifyPassword: '',
             fullName: '',
             streetAddress: '',
             city: '',
@@ -26,37 +28,74 @@ class Login extends React.Component {
 
         this.changeHasLogin = this.changeHasLogin.bind(this);
         this.submitEmailPass = this.submitEmailPass.bind(this);
+        this.signUp = this.signUp.bind(this);
         this.updateFields = this.updateFields.bind(this);
     }
 
     updateFields = (e) => {
         const value = e.target.value;
         const name = e.target.name;
-        this.setState({name: value})
-        document.getElementById('loginError').setAttribute('hidden', false);
-        this.setState({errMsg: ""});
+
+        this.setState({[name]: value, errMsg: ''});
+        // console.log("update: " + name + " - " + value);
+        
+    }
+
+    submitOrSignup = (e) => {
+        if(this.state.hasLogin) {
+            this.submitEmailPass(e);
+        } else {
+            this.signUp(e);
+        }
     }
 
     submitEmailPass = (e) => {
         e.preventDefault();
-        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then((userCredential) => {
-                //Signed in
-                var user = userCredential.user;
-            })
-            .catch((error) => {
-                this.setState({
-                    errMsg: error.message
-                });
-                let errorBox = document.getElementById('loginError');
-                errorBox.removeAttribute("hidden");
-                console.log(error.message);
-                // errorBox.getElementsByTagName('h2')[0].innerText = this.state.
-            });
-        //TODO - delete this comment for production
-        // console.log(`email: ${this.state.email} \n password: ${this.state.password}`);
-        // alert('The link was clicked');
+        // console.log("email: " + this.state.email);
+        // console.log("password: " + this.state.password);
+
+        loginWithEmailAndPass(this.state.email, this.state.password)
     }
+
+    signUp = (e) => {
+        e.preventDefault();
+        console.log("signUp running...")
+
+        //check if email and passwords match
+        const emailIsMatch = this.state.email === this.state.verifyEmail;
+        const passwordIsMatch = this.state.password === this.state.verifyPassword;
+
+        if (!emailIsMatch) {
+           this.setState({
+               errMsg: "Your emails do not match. Please re-enter your email address and try again."
+           });
+           return null;
+        } else if(!passwordIsMatch){
+            this.setState({
+                errMsg: "Your passwords do not match. Please re-enter your email address and try again."
+            });
+            return null;
+        }
+
+        createUserWithEmailandPass(this.state.email, this.state.password);
+
+        // this.setState({currentUser: user});
+        // console.log(`logged in as ${this.state.user}`); //.displayName} - ${user.uid}`);
+        //Add display name to auth token
+        //FIXME - need to test if working
+        // firebase.auth().currentUser.updateProfile({
+        //     displayName: this.state.fullName,
+
+        // })
+        // .catch((error) => {
+        //     this.setState({errMsg: error.message});
+        // });
+
+        //TODO - need to add additional user info to database and abstract to firebaseAuthFunctions
+
+        // console.log(`logged in as ${user.displayName} - ${user.uid}`);
+        
+    };
     
     cancelFn = (e) => {
         this.setState = {email: '', password: '', errMsg: ''};
@@ -64,7 +103,7 @@ class Login extends React.Component {
 
     changeHasLogin = (e) => {
         e.preventDefault();
-        let buttonText = !this.state.hasLogin ? "Don't have a login? Click here." : "Already have a login? Click here.";
+        let buttonText = this.state.hasLogin ? "Already have a login? Click here." : "Don't have a login? Click here.";
         
         this.setState((prevState) => ({
             hasLogin: !prevState.hasLogin,
@@ -75,30 +114,33 @@ class Login extends React.Component {
 
     }
 
+
+
     render() {
 
         // ui.start('#firebaseui-auth-container', uiConfig);
 
-        const haveOrCreateLogin = () => {
-            if (this.state.hasLogin) {
-                return <LoginForm updateFields={this.updateFields.bind(this)} />
-            } else {
-                return <CreateLogin updateFields={this.updateFields.bind(this)} />
-            }
-        };
+        // const haveOrCreateLogin = () => {
+        //     if (this.state.hasLogin) {
+        //         return <LoginForm updateFields={this.updateFields.bind(this)} />
+        //     } else {
+        //         return <CreateLogin updateFields={this.updateFields.bind(this)} />
+        //     }
+        // };
 
         return (
             <div data-testid="login">
-                <div id="loginError" hidden ><h2>{this.state.errMsg}</h2></div>
+                {this.state.errMsg && <div id="loginError" ><h4>{this.state.errMsg}</h4></div>}
                 <form>
                     <title>Login</title>
-                    {haveOrCreateLogin()}
+                    <LoginForm emailName="email" passwordName="password" updateFields={this.updateFields} />
+                    {!this.state.hasLogin && <CreateLogin updateFields={this.updateFields.bind(this)} />}
                     
                     <SubmitButtons submitTitle="Submit" cancelTitle="Cancel"
-                        submitFn={this.submitEmailPass.bind(this)}
+                        submitFn={this.submitOrSignup.bind(this)}
                         cancelFn={this.cancelFn.bind(this)} />
 
-                    <button type="button" onClick={this.changeHasLogin} data-testid="createAccount">{this.state.buttonText}</button>
+                    <button type="button" onClick={this.changeHasLogin} data-testid="loginOrCreateButton">{this.state.buttonText}</button>
 
                     {/*<div id="firebaseui-auth-container"/>*/}
                     {/*<div id="loader">Loading...</div>*/}

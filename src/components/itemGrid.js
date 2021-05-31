@@ -1,8 +1,6 @@
 import React from 'react';
 import ItemCard from "./itemCard";
-import firebase from "../utils/firebase";
-import { Route, withRouter } from 'react-router-dom';
-// import ReserveItem from './reserveItem';
+import { Route } from 'react-router-dom';
 import { GetRentalItems } from '../utils/firebaseFunctions';
 
 // import {GetRentalItems} from '../utils/firebaseFunctions'

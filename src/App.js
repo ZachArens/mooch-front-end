@@ -1,8 +1,6 @@
 
 import React, { Component } from 'react';
-// import UserUI from './components/userUI';
 import Login from './components/Login/login';
-import RentItem from './components/reserveItem';
 import AddItem from './components/addItem';
 import ReserveItem from './components/reserveItem';
 import Home from './components/home';
@@ -10,6 +8,9 @@ import MyRentals from "./components/myRentals";
 import './App.scss';
 import 'bootstrap';
 import {BrowserRouter as Router, NavLink, Route, Switch} from "react-router-dom";
+import { auth } from './utils/firebase';
+
+let unsubscribeAuthState = null;
 
 class App extends Component {
   constructor(props) {
@@ -17,18 +18,61 @@ class App extends Component {
 
     //TODO - persist state with useLocalStorage
     this.state = {
-      currentUser: "",
+      currentUser: "23546436",
       currentRentalItem: "",
     };
 
     this.updateCurrentItem = this.updateCurrentItem.bind(this);
+    this.setCurrentUser = this.setCurrentUser.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   updateCurrentItem = (rentalItemId) => {
     this.setState({currentRentalItem: rentalItemId});
   }
 
+  setCurrentUser = (userId) => {
+    this.setState({currentUser: userId});
+  }
+
+  //login tutorial provided by: https://medium.com/@650egor/react-30-day-challenge-day-3-firebase-user-authentication-879e484e5934
+  logout() {
+    auth.signOut().then((result) => {
+        this.setState({
+            currentUser: null
+        });
+        console.log("logged out");
+    })
+  }
+
+  componentDidMount() {
+    //set Observer on auth object to monitor if user is signed in out
+
+      unsubscribeAuthState = auth.onAuthStateChanged((currentUser) => {
+          if (currentUser) {
+              this.setState({currentUser});
+              console.log("App user logged in: " + this.state.currentUser)
+          }
+      })
+  }
+
+  componentWillUnmount() {
+
+    if (unsubscribeAuthState) {
+        unsubscribeAuthState();
+    }
+      
+  }
+
   render() {
+    const loginToggle = () => {
+        if (this.state.currentUser) {
+            <NavLink to="/login" className="nav-link">Login</NavLink>
+        } else {
+            <NavLink onClick={this.logout} className>Logout</NavLink>
+        }
+    }
+    
     return (
         <div>
             <Router>
@@ -49,7 +93,8 @@ class App extends Component {
                                     <NavLink to="/myRentals" className="nav-link">My Rentals</NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to="/login" className="nav-link">Login</NavLink>
+                                    {this.state.currentUser && <NavLink to="/" onClick={this.logout} className="nav-link">Logout</NavLink>}
+                                    {!this.state.currentUser && <NavLink to="/login" className="nav-link">Login</NavLink>}
                                 </li>
                                 <li className="nav-item">
                                     <NavLink to="/addItems" className="nav-link">Temp-Add Items</NavLink>
@@ -63,7 +108,7 @@ class App extends Component {
                 </nav>
                 <Switch>
                     <Route path="/login">
-                        <Login/>
+                        <Login />
                     </Route>
                     <Route path="/addItems">
                         <AddItem/>

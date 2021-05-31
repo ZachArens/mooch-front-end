@@ -54,7 +54,6 @@ const hoursTimeDifference = (startDate, endDate) => {
 }
 
 const textAbbreviator = (text) => {
-    let textLength;
     
     try {
         return text.length > 32 ? `${text.substr(0, 29)}...` : text ;

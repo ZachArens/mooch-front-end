@@ -18,16 +18,16 @@ firebase.initializeApp(firebaseConfig);
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-const db = firebase.firestore();
-const auth = firebase.auth;
-const functions = firebase.functions();
+export const db = firebase.firestore();
+export const auth = firebase.auth();
+export const functions = firebase.functions();
 
 
 // // eslint-disable-next-line no-restricted-globals
 // if (process.env.FIRESTORE_EMULATOR === true) {
 //     console.log('firestore emulator:', process.env.FIRESTORE_EMULATOR_HOST);
-    // db.useEmulator('localhost', process.env.FIRESTORE_EMULATOR_HOST);
-    // auth().useEmulator('http://localhost:9099/', { disableWarnings: true });
+    // db.useEmulator('localhost', 8085);
+    // auth.useEmulator('http://localhost:9099/', { disableWarnings: true });
     // functions.useEmulator('localhost', 5001);
 // } else {
 //     console.log(process.env.FIRESTORE_EMULATOR_HOST);
@@ -35,4 +35,3 @@ const functions = firebase.functions();
 // }
 
 export default firebase;
-export { db, auth, functions };

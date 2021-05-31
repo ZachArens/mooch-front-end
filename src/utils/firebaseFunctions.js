@@ -1,4 +1,4 @@
-import firebase, {db} from './firebase';
+import firebase, {db, auth} from './firebase';
 
 export const AddRentalItem = async(title, description, itemRate, exchangeOptions) => {
     // console.log("add item to db: " + exchangeOptions.delivery);
@@ -89,4 +89,33 @@ export const AddReservation = async(reservation) => {
                 .catch((error) => {
                     console.error(error);
                 });
+}
+
+export const loginWithEmailAndPass = (email, password) => {
+    //https://firebase.google.com/docs/auth/web/password-auth
+    auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+        //Signed in
+        var user = userCredential.user;
+
+        console.log(`logged in as ${user.displayName} - ${user.uid}`)
+    })
+    .catch((error) => {
+        this.setState({
+            errMsg: error.message
+        });
+        console.log(error.message);
+    });
+};
+
+export const createUserWithEmailandPass = (email, password) => {
+    let user = null;
+    //create user in firebase.auth
+    auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            return userCredential.user;
+        })
+        .catch((error) => {
+            this.setState({errMsg: error.message});
+        });
 }

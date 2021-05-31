@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CreateLogin /> matches snapshot 1`] = `
+<div>
+  <label>
+    Verify email and password
+    <div>
+      <label
+        data-testid="emailLabel"
+      >
+        Email
+        <input
+          data-testid="verifyEmail"
+          name="verifyEmail"
+          placeholder="email"
+          type="text"
+        />
+      </label>
+      <label
+        data-testid="passwordLabel"
+      >
+        Password
+        <input
+          data-testid="verifyPassword"
+          name="verifyPassword"
+          placeholder="********"
+          type="password"
+        />
+      </label>
+    </div>
+  </label>
+  <div
+    class="userDetails"
+  >
+    <label>
+      Full Name
+      <input
+        data-testid="fullName"
+        id="fullName"
+        name="fullName"
+        type="text"
+      />
+    </label>
+    <label>
+      Street Address
+      <input
+        data-testid="streetAddress"
+        id="streetAddress"
+        name="streetAddress"
+        type="text"
+      />
+    </label>
+    <label>
+      City
+      <input
+        data-testid="city"
+        id="city"
+        name="city"
+        type="text"
+      />
+    </label>
+    <label>
+      State (2 Letter)
+      <input
+        data-testid="st"
+        id="st"
+        name="st"
+        type="text"
+      />
+    </label>
+    <label>
+      Zip
+      <input
+        data-testid="zip"
+        id="zip"
+        name="zip"
+        type="text"
+      />
+    </label>
+    <label>
+      Phone
+      <input
+        data-testid="phone"
+        id="phone"
+        name="phone"
+        type="text"
+      />
+    </label>
+  </div>
+</div>
+`;

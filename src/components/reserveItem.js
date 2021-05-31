@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
-import PhotoCarousel from "./photoCarousel.js";
+// import PhotoCarousel from "./photoCarousel.js";
 import TotalBox from "./totalBox"
 import DisplayTitleDesc from "./displayTitleDesc";
 import SubmitButtons from './submitButtons';
@@ -25,17 +25,17 @@ function ReserveItem(currentRentalItem) {
     const [startDateTime, setStartDateTime] = useState(null);
     const [endDateTime, setEndDateTime] = useState(null);
 
-    const defaultDates = () => {
-       //FIXME 
+    // const defaultDates = () => {
+    //    //FIXME 
 
-        let today = new Date();
-        let tomorrow = new Date(today)
-        tomorrow.setDate(today.getDate() + 1);
+    //     let today = new Date();
+    //     let tomorrow = new Date(today)
+    //     tomorrow.setDate(today.getDate() + 1);
         
-        setStartDateTime(today);
-        setEndDateTime(tomorrow);
+    //     setStartDateTime(today);
+    //     setEndDateTime(tomorrow);
         
-    }
+    // }
 
 
     const updateExchangeMethod = (e) => {
@@ -142,24 +142,24 @@ function ReserveItem(currentRentalItem) {
 
         const itemDetails = await getItemFromDB(currentRentalItem.currentRentalItem);
 
+        console.log(itemDetails);
+
         if (itemDetails) {
             setItemName(itemDetails.itemName);
             setItemDescription(itemDetails.itemDesc);
             setUnitCost(itemDetails.costHourly);
+            setDeliveryOptions(itemDetails.deliveryOptions);
         }
         
         
         // console.log("name: " + itemName, "desc: " + itemDescription, "cost: " + unitCost);
 
         // console.log ('using effect to load Item Details');
-        //     // const itemId = this.props.params.itemId;
-        // console.log("itemId: " + itemId);
-        // const item = getItemFromDB(itemId);
     }
 
     useEffect(() => {
         loadItemDetails();
-    }, []);
+    });
 
     
         

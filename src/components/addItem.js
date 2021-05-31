@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import EditTitleDesc from "./editTitleDesc";
 import SubmitButtons from './submitButtons';
 // import firebase from "../utils/firebase";
@@ -66,10 +67,15 @@ class AddItem extends React.Component {
             this.forceUpdate();
         }
 
+        // this.props.history.push('/myRentals');
+
+        // this.props.history.push('/myRentals');
+
     }
 
     clearForm = (e) => {
-        this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: "cleared"} )
+        this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: "cleared"} );
+        // withRouter.props.history.push('/myRentals');
     }
 
     render() {
