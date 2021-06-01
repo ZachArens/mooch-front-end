@@ -49,15 +49,17 @@ class Login extends React.Component {
         }
     }
 
-    submitEmailPass = (e) => {
+    submitEmailPass = async (e) => {
         e.preventDefault();
         // console.log("email: " + this.state.email);
         // console.log("password: " + this.state.password);
 
-        loginWithEmailAndPass(this.state.email, this.state.password)
+        let userId = await loginWithEmailAndPass(this.state.email, this.state.password);
+
+        this.props.setCurrentUser(userId);
     }
 
-    signUp = (e) => {
+    signUp = async (e) => {
         e.preventDefault();
         console.log("signUp running...")
 
@@ -77,9 +79,9 @@ class Login extends React.Component {
             return null;
         }
 
-        createUserWithEmailandPass(this.state.email, this.state.password);
+       let userId = createUserWithEmailandPass(this.state.email, this.state.password);
 
-        // this.setState({currentUser: user});
+       this.props.setCurrentUser("user123");
         // console.log(`logged in as ${this.state.user}`); //.displayName} - ${user.uid}`);
         //Add display name to auth token
         //FIXME - need to test if working

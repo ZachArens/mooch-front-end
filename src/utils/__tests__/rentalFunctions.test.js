@@ -1,4 +1,4 @@
-import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator} from "../utils/rentalFunctions";
+import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator} from "../rentalFunctions";
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -78,11 +78,4 @@ describe('textAbbreviator', () => {
         }
     });
 
-    test('should throw an error for a non string description', () => {
-        let notOkText = [23543634, () => {console.log('this is a function')}, ['this', 'is', 'an', 'array']];
-        
-        for (let item in notOkText) {
-            expect(textAbbreviator(notOkText[item])).toThrowError();
-        }
-    });
 });

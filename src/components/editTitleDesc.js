@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class EditTitleDesc extends React.Component {
 
@@ -37,6 +38,14 @@ class EditTitleDesc extends React.Component {
             </div>
         );
     }
+}
+
+EditTitleDesc.propTypes = {
+    exchangeOptions: PropTypes.object.isRequired,
+    updateExchangeOptions: PropTypes.func,
+    title: PropTypes.string,
+    desc: PropTypes.string,
+    itemRate: PropTypes.number
 }
 
 export default EditTitleDesc;

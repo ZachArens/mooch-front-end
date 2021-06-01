@@ -80,7 +80,9 @@ export const AddReservation = async(reservation) => {
                     exchangeMethod: reservation.exchangeMethod, 
                     totalCost: reservation.totalCost,
                     deliveryCost: reservation.deliveryCost,
-                    rentalCost: reservation.rentalCost
+                    rentalCost: reservation.rentalCost,
+                    ownerId: reservation.ownerId,
+                    rentalItemId: reservation.rentalItemId
                 })
                 .then((docRef) => {
                     console.log("success writing document:", docRef.id);
@@ -91,14 +93,14 @@ export const AddReservation = async(reservation) => {
                 });
 }
 
-export const loginWithEmailAndPass = (email, password) => {
+export const loginWithEmailAndPass = async (email, password) => {
     //https://firebase.google.com/docs/auth/web/password-auth
-    auth.signInWithEmailAndPassword(email, password)
+    return auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
         //Signed in
-        var user = userCredential.user;
+        console.log(`logged in as ${userCredential.user.displayName} - ${userCredential.user.uid}`);
 
-        console.log(`logged in as ${user.displayName} - ${user.uid}`)
+        return userCredential.user.uid;
     })
     .catch((error) => {
         this.setState({
@@ -113,9 +115,19 @@ export const createUserWithEmailandPass = (email, password) => {
     //create user in firebase.auth
     auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-            return userCredential.user;
+            return userCredential.user.uid;
         })
         .catch((error) => {
             this.setState({errMsg: error.message});
         });
+}
+
+export const getCurrentUserId = () => {
+    let user = firebase.auth().currentUser;
+
+    if (user) {
+        return user.uid;
+    } else {
+        return null;
+    }
 }

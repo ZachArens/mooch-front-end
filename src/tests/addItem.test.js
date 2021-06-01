@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom';
 import AddItem from '../components/addItem';
 
 import {render, fireEvent} from '@testing-library/react';
-import '@testing-library/react/dont-cleanup-after-each';
+// import '@testing-library/react/dont-cleanup-after-each';
 
 //TODO - need more help or research on mocking to isolate from firebase and editTitleDesc
 
-it ("renders without crashing", () => {
-    const div = document.createElement("div");
-    ReactDOM.render(<AddItem />, div);
+test("renders without crashing", () => {
+    // const div = document.createElement("div");
+    // ReactDOM.render(<AddItem />, div);
+
+    render(<AddItem />);
 });
 
 describe('addItem validates and sanitizes all values for text inputs', () => {

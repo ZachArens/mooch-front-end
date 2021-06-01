@@ -1,8 +1,10 @@
 // import {db} from '../utils/firebase';
-import { AddRentalItem, AddReservation, getItemFromDB, GetRentalItems} from '../utils/firebaseFunctions';
+import { AddRentalItem, AddReservation, getItemFromDB, GetRentalItems } from '../firebaseFunctions';
 import faker from 'faker';
 // import { mockGoogleCloudFirestore } from 'firestore-jest-mock';
 
+
+test.todo('this file still needs a test');
 
 // mockGoogleCloudFirestore({
 //     database: {

@@ -30,7 +30,7 @@ class AddItem extends React.Component {
         this.state = {
             title: "", 
             description: "", 
-            itemRate: "",
+            itemRate: 0,
             exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, 
             message: ""};
 

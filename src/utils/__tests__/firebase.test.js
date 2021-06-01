@@ -1,4 +1,4 @@
-import firebase, {db} from '../utils/firebase';
+import firebase, {db} from '../firebase';
 
 // afterAll( async() => {
 

@@ -40,10 +40,8 @@ const rentalTimeAsString = (totalHours) => {
 }
 
 const msTimeDifference = (startDate, endDate) => {
-    const sDate = new Date(startDate);
-    const eDate = new Date(endDate);
 
-    return eDate.getTime() - sDate.getTime();
+    return endDate.getTime() - startDate.getTime();
 }
 
 const hoursTimeDifference = (startDate, endDate) => {
@@ -54,12 +52,12 @@ const hoursTimeDifference = (startDate, endDate) => {
 }
 
 const textAbbreviator = (text) => {
-    
     try {
         return text.length > 32 ? `${text.substr(0, 29)}...` : text ;
     } catch(error) {
         console.error = 'cannot abbreviate a non text description';
     }
+    
 };
 
 export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator};

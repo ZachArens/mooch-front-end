@@ -18,7 +18,7 @@ class App extends Component {
 
     //TODO - persist state with useLocalStorage
     this.state = {
-      currentUser: "23546436",
+      currentUser: "",
       currentRentalItem: "",
     };
 
@@ -32,6 +32,7 @@ class App extends Component {
   }
 
   setCurrentUser = (userId) => {
+    console.log(userId);
     this.setState({currentUser: userId});
   }
 
@@ -50,7 +51,7 @@ class App extends Component {
 
       unsubscribeAuthState = auth.onAuthStateChanged((currentUser) => {
           if (currentUser) {
-              this.setState({currentUser});
+              this.setState({currentUser: currentUser.uid});
               console.log("App user logged in: " + this.state.currentUser)
           }
       })
@@ -65,13 +66,6 @@ class App extends Component {
   }
 
   render() {
-    const loginToggle = () => {
-        if (this.state.currentUser) {
-            <NavLink to="/login" className="nav-link">Login</NavLink>
-        } else {
-            <NavLink onClick={this.logout} className>Logout</NavLink>
-        }
-    }
     
     return (
         <div>
@@ -93,7 +87,7 @@ class App extends Component {
                                     <NavLink to="/myRentals" className="nav-link">My Rentals</NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    {this.state.currentUser && <NavLink to="/" onClick={this.logout} className="nav-link">Logout</NavLink>}
+                                    {this.state.currentUser && <NavLink to="/" onClick={this.logout} className="nav-link">Signed in as {this.state.currentUser} - Logout</NavLink>}
                                     {!this.state.currentUser && <NavLink to="/login" className="nav-link">Login</NavLink>}
                                 </li>
                                 <li className="nav-item">
@@ -108,13 +102,14 @@ class App extends Component {
                 </nav>
                 <Switch>
                     <Route path="/login">
-                        <Login />
+                        <Login setCurrentUser={this.setCurrentUser}/>
                     </Route>
                     <Route path="/addItems">
                         <AddItem/>
                     </Route>
                     <Route path="/reserveItem">
-                        <ReserveItem currentRentalItem={this.state.currentRentalItem}/>
+                        <ReserveItem currentRentalItem={this.state.currentRentalItem} 
+                        currentUser={this.state.currentUser}/>
                     </Route>
                     <Route path="/myRentals">
                         <MyRentals/>

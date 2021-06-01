@@ -4,10 +4,6 @@ import LoginForm from './loginForm';
 //Call with props - updateFields function
 
 export default class CreateLogin extends Component {
-    constructor(props) {
-        super(props);
-
-    }
 
     render() {
         return (

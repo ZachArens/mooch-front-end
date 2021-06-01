@@ -9,72 +9,70 @@ import {hoursTimeDifference} from '../utils/rentalFunctions';
 import '../styles/reserveItem.scss';
 import { getItemFromDB, AddReservation } from '../utils/firebaseFunctions';
 
-function ReserveItem(currentRentalItem) {
+function ReserveItem(currentRentalItem, currentUser) {
     
+    const today = new Date();
+    let tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
     const history = useHistory();
     const [exchangeMethod, setExchangeMethod] = useState('');
     const [totalTime, setTotalTime] = useState('');
     const [unitCost, setUnitCost] = useState(10);
     const [rentalCost, setRentalCost] = useState(0);
     const [totalCost, setTotalCost] = useState(0);
-    const [deliveryCost, setDeliveryCost] = useState(-1);
+    const [deliveryCost, setDeliveryCost] = useState(0);
     const [deliveryOptions, setDeliveryOptions] = useState({delivery: 5, pickup: 1, meetup: 15 });
     const [itemName, setItemName] = useState("")
     const [itemDescription, setItemDescription] = useState("");
-    // const [itemId, setItemId] = useState('');
-    const [startDateTime, setStartDateTime] = useState(null);
-    const [endDateTime, setEndDateTime] = useState(null);
-
-    // const defaultDates = () => {
-    //    //FIXME 
-
-    //     let today = new Date();
-    //     let tomorrow = new Date(today)
-    //     tomorrow.setDate(today.getDate() + 1);
-        
-    //     setStartDateTime(today);
-    //     setEndDateTime(tomorrow);
-        
-    // }
+    const [itemId, setItemId] = useState(currentRentalItem);
+    const [startDateTime, setStartDateTime] = useState(today);
+    const [endDateTime, setEndDateTime] = useState(tomorrow);
 
 
     const updateExchangeMethod = (e) => {
         const value = e.target.value;
-        switch (value) {
-            case "delivery": 
-                setDeliveryCost(deliveryOptions.delivery);
-                break;
-            case "pickup":
-                setDeliveryCost(deliveryOptions.pickup);
-                break;
-            case "meetup":
-                setDeliveryCost(deliveryOptions.meetup);
-                break;
-            default:
-                setDeliveryCost(0);
+        if (deliveryOptions) {
+            switch (value) {
+                case "delivery": 
+                    setDeliveryCost(deliveryOptions.delivery);
+                    setTotalCost(deliveryOptions.delivery + rentalCost);
+                    break;
+                case "pickup":
+                    setDeliveryCost(deliveryOptions.pickup);
+                    setTotalCost(deliveryOptions.pickup + rentalCost);
+                    break;
+                case "meetup":
+                    setDeliveryCost(deliveryOptions.meetup);
+                    setTotalCost(deliveryOptions.meetup + rentalCost);
+                    break;
+                default:
+                    setDeliveryCost(0);
+                    setTotalCost(0);
+            }
+
+            setExchangeMethod(value);
             
         }
-        setExchangeMethod(value);
-        setTotalCost(deliveryCost + rentalCost);
-
     }
 
     const updateStartDateTime = (e) => {
 
         const incomingStartDateTime = new Date(e.target.value);
-        
+        let newEndDateTime = null;
         //set default endDateTime to be equal or greater to new start date
-        if (incomingStartDateTime > endDateTime) {
+        if (endDateTime > incomingStartDateTime ) {
             //FIXME
-        } 
-
-        setEndDateTime(incomingStartDateTime);
+            setEndDateTime(incomingStartDateTime);
+            newEndDateTime = incomingStartDateTime;
+        } else {
+            newEndDateTime = endDateTime;
+        }
 
         setStartDateTime(incomingStartDateTime);
 
-        const calcTotalTime = hoursTimeDifference(incomingStartDateTime, endDateTime);
+        const calcTotalTime = hoursTimeDifference(incomingStartDateTime, newEndDateTime);
         const calcRentalCost = calcTotalTime * unitCost;
-
+        console.log(incomingStartDateTime);
         console.log("calc time difference: " + calcTotalTime, "state time difference: " + totalTime, "calcRentalCost: " + calcRentalCost);
         setTotalTime(calcTotalTime);
         setRentalCost(calcRentalCost);
@@ -100,7 +98,7 @@ function ReserveItem(currentRentalItem) {
         console.log("unitCost: " + unitCost);
         console.log("totalTime: " + totalTime);
         setRentalCost(totalTime * unitCost);
-
+        console.log(endDateTime);
         console.log("rentalCost: " + rentalCost)
 
         setTotalCost(rentalCost + deliveryCost);
@@ -116,15 +114,17 @@ function ReserveItem(currentRentalItem) {
 
         console.log(`startDateTime: ${startDateTime}`, `endDateTime: ${endDateTime}`,
          `exchangeMethod: ${exchangeMethod}`, `totalCost: ${totalCost}`, 
-         `rentalCost: ${rentalCost}`, `totalTime: ${totalTime}` );
+         `rentalCost: ${rentalCost}`, `totalTime: ${totalTime}`, `currentUser: ${currentUser}`);
         
         const reservation = {
+            ownerId: currentUser,
             startDateTime, 
             endDateTime, 
             exchangeMethod, 
             totalCost, 
             deliveryCost, 
-            rentalCost
+            rentalCost,
+            rentalItemId: currentRentalItem,
         };
 
         AddReservation(reservation);
@@ -142,7 +142,7 @@ function ReserveItem(currentRentalItem) {
 
         const itemDetails = await getItemFromDB(currentRentalItem.currentRentalItem);
 
-        console.log(itemDetails);
+        // console.log(itemDetails);
 
         if (itemDetails) {
             setItemName(itemDetails.itemName);
@@ -179,7 +179,6 @@ function ReserveItem(currentRentalItem) {
                     <ReserveDetails setExMeth={updateExchangeMethod.bind(this)} exchangeMethod={exchangeMethod} 
                     startDateTime={startDateTime} endDateTime={endDateTime}
                     updateStartDateTime={updateStartDateTime.bind(this)} updateEndDateTime={updateEndDateTime.bind(this)} />
-
                     <TotalBox 
                         total_cost={totalCost} 
                         delivery_cost={deliveryCost} 
