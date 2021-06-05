@@ -17,21 +17,21 @@ class EditTitleDesc extends React.Component {
                         placeholder="Enter a description here" className="form-control" onChange={this.props.updateFields} />
                 </label>
                 <label htmlFor="itemRate">Hourly Rate
-                    <input type="number" id="itemRate" defaultValue={this.props.itemRate} name="itemRate"
+                    <input type="number" id="itemRate" data-testid="itemRate" defaultValue={this.props.itemRate} name="itemRate"
                         placeholder="rate ($/hr)" className="form-control" onChange={this.props.updateFields} />
                 </label>
                 <label htmlFor="deliveryCost">Delivery
-                    <input type="text" id="deliveryCost" 
+                    <input type="text" id="deliveryCost" data-testid="deliveryCost" 
                         defaultValue={exchangeOptions.delivery}
                         onChange={(e) => {this.props.updateExchangeOptions("delivery", e.target.value)}}/>
                 </label>
                 <label htmlFor="meetupCost">Public Meetup
-                    <input type="text" id="meetupCost" 
+                    <input type="text" id="meetupCost" data-testid="meetupCost" 
                         defaultValue={exchangeOptions.meetup}
                         onChange={(e) => {this.props.updateExchangeOptions("meetup", e.target.value)}}/>
                 </label>
                 <label htmlFor="pickupCost">Pickup
-                    <input type="text" id="pickupCost" 
+                    <input type="text" id="pickupCost" data-testid="pickupCost" 
                         defaultValue={exchangeOptions.pickup}
                         onChange={(e) => {this.props.updateExchangeOptions("pickup", e.target.value)}}/>
                 </label>
@@ -45,7 +45,7 @@ EditTitleDesc.propTypes = {
     updateExchangeOptions: PropTypes.func,
     title: PropTypes.string,
     desc: PropTypes.string,
-    itemRate: PropTypes.number
+    // itemRate: PropTypes.number
 }
 
 export default EditTitleDesc;

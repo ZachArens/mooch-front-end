@@ -86,3 +86,9 @@ describe.skip('Enter new item', () => {
 
     test.todo('should allow a user to clear the information and return to the home page by clicking the cancel button');
 });
+
+describe('e2e <Login /> ', () => {
+    test.todo('user can login with email and password');
+
+    test.todo('user can create a login with all user details ');
+})

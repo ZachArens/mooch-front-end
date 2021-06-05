@@ -1,8 +1,9 @@
 import React from 'react';
 import Login from '../login';
 
-import {render, cleanup, fireEvent} from '@testing-library/react';
-import {createUserWithEmailandPass, loginWithEmailAndPass} from '../../../utils/firebaseFunctions';
+import {render, cleanup, fireEvent, queryAllByAttribute, queryAllByTestId, queryAllByPlaceholderText} from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import {addUserDetails, createUserWithEmailandPass, loginWithEmailAndPass} from '../../../utils/firebaseFunctions';
 
 jest.mock('../../../utils/firebaseFunctions');
 
@@ -10,17 +11,42 @@ afterEach(cleanup);
 
 describe('<Login />', () => {
     test('renders without crashing', () => {
-        render(<Login/>);
+        render(
+            <MemoryRouter>
+                <Login/>
+            </MemoryRouter>
+        );
     });
 
     test('<Login /> with only LoginForm', () => {
-        const {queryAllByRole, debug} = render(<Login/>);
-        debug();
-        expect(queryAllByRole('input')).toBe(2);
+        const {queryAllByRole, queryAllByPlaceholderText} = render(
+            <MemoryRouter>
+                <Login/>
+            </MemoryRouter>
+        );
+        expect(queryAllByRole('textbox').length).toBe(1);
+        expect(queryAllByPlaceholderText('********').length).toBe(1);
+    });
+
+    test('<Login /> with createLogin', () => {
+        const {queryAllByRole, queryAllByPlaceholderText, queryByTestId} = render(
+            <MemoryRouter>
+                <Login/>
+            </MemoryRouter>
+        );
+        
+        fireEvent.click(queryByTestId('loginOrCreateButton'));
+
+        expect(queryAllByRole('textbox').length).toBe(8);
+        expect(queryAllByPlaceholderText('********').length).toBe(2);
     });
 
     test('<Login /> logs a user in', () => {
-        const {queryByTestId} = render(<Login />);
+        const {queryByTestId} = render(
+            <MemoryRouter>
+                <Login/>
+            </MemoryRouter>
+        );
 
         const email = "test@testemail.com";
         const password = "1234asdfas"
@@ -33,7 +59,7 @@ describe('<Login />', () => {
             target: {defaultValue: password},
         });
 
-        fireEvent.click(queryByTestId(submitButton));
+        fireEvent.click(queryByTestId('submitButton'));
 
         expect(loginWithEmailAndPass).toHaveBeenCalled();
         expect(loginWithEmailAndPass).toHaveBeenCalledWith(email, password);
@@ -41,27 +67,78 @@ describe('<Login />', () => {
     });
 
     test('<Login /> can create a new user login', () => {
-        const {queryByTestId} = render(<Login />);
+        const {queryByTestId, debug} = render(
+            <MemoryRouter>
+                <Login/>
+            </MemoryRouter>
+        );
 
-        const email = "test@testemail.com";
-        const password = "1234asdfas"
+        const fakeUser = {
+            uid: "user123",
+            email: "test@testemail.com",
+            password: "1234asdfas",
+            fullName: "Testy Testerson",
+            streetAddress: "123 Sample Data Dr.",
+            city: "Testerville",
+            st: "TX",
+            zip: "12345",
+            phone: "555-555-5555"
+        };
 
-        fireEvent.click(queryByTestId(loginOrCreateButton));
+        fireEvent.click(queryByTestId('loginOrCreateButton'));
+
 
         fireEvent.change(queryByTestId("email"), {
-            target: {defaultValue: email},
+            target: {defaultValue: fakeUser.email},
         });
 
         fireEvent.change(queryByTestId("password"), {
-            target: {defaultValue: password},
+            target: {defaultValue: fakeUser.password},
         });
 
-        fireEvent.click(queryByTestId(submit));
+        fireEvent.change(queryByTestId("verifyEmail"), {
+            target: {defaultValue: fakeUser.email},
+        });
 
-        expect(loginWithEmailAndPass).toHaveBeenCalled();
-        expect(loginWithEmailAndPass).toHaveBeenCalledWith(email, password);
+        fireEvent.change(queryByTestId("verifyPassword"), {
+            target: {defaultValue: fakeUser.password},
+        });
+
+        fireEvent.change(queryByTestId("fullName"), {
+            target: {defaultValue: fakeUser.fullName},
+        });
+
+        fireEvent.change(queryByTestId("streetAddress"), {
+            target: {defaultValue: fakeUser.streetAddress},
+        });
+
+        fireEvent.change(queryByTestId("city"), {
+            target: {defaultValue: fakeUser.city},
+        });
+
+        fireEvent.change(queryByTestId("st"), {
+            target: {defaultValue: fakeUser.st},
+        });
+
+        fireEvent.change(queryByTestId("zip"), {
+            target: {defaultValue: fakeUser.zip},
+        });
+
+        fireEvent.change(queryByTestId("phone"), {
+            target: {defaultValue: fakeUser.phone},
+        });
+
+        fireEvent.click(queryByTestId('submitButton'));
+
+        expect(createUserWithEmailandPass).toHaveBeenCalled();
+        expect(createUserWithEmailandPass).toHaveBeenCalledWith(fakeUser.email, fakeUser.password);
+        expect(addUserDetails).toHaveBeenCalled();
+        expect(addUserDetails).toHaveBeenCalledWith(fakeUser)
 
     });
+
+    test.todo('login returns to previous page after logging in');
+    
 
 
 

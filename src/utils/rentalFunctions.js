@@ -60,4 +60,11 @@ const textAbbreviator = (text) => {
     
 };
 
-export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator};
+const formatShortDate = (date) => {
+
+    //https://stackoverflow.com/questions/1043339/javascript-for-detecting-browser-language-preference
+    var language = window.navigator.userLanguage || window.navigator.language;
+    return date.toLocaleDateString(language);
+}
+
+export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, formatShortDate};

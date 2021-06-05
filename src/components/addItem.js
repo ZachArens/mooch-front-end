@@ -41,6 +41,9 @@ class AddItem extends React.Component {
         const value = e.target.value;
         const name = e.target.name;
         this.setState({[name]: value, message: ""});
+
+        console.log('updated: ' + name);
+
     }
 
     updateExchangeOptions = (option, cost) => {
@@ -58,18 +61,16 @@ class AddItem extends React.Component {
         e.preventDefault();
 
         if (this.validator.allValid()) {
-
             //FIXME - need test to display correct error message
-            AddToDB(this.state.title, this.state.description, this.state.itemRate, this.state.exchangeOptions);
+            AddToDB(this.props.currentUser, this.state.title, this.state.description, this.state.itemRate, this.state.exchangeOptions);
             this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
+
+            const { history } = this.props;
+            if (history) history.push('/myRentals');
         } else {
             this.validator.showMessages();
             this.forceUpdate();
         }
-
-        // this.props.history.push('/myRentals');
-
-        // this.props.history.push('/myRentals');
 
     }
 
@@ -89,8 +90,8 @@ class AddItem extends React.Component {
                         <h1>+</h1>
                     </div> */}
                     <div className="col-md-5 center_column">
-                        <div className="errorMessage">
-                            <div>{this.validator.message('title', this.state.title, 'required|alpha_space')}</div>
+                        <div className="errorMessage" data-testid='messageBox'>
+                            <div>{this.validator.message('title', this.state.title, 'required|string|max: 25')}</div>
                             <div>{this.validator.message('description', this.state.description, 'required|string|max:500')}</div>
                             <div>{this.validator.message('itemRate', this.state.itemRate, 'required|numeric|min:0,num')}</div>
                             <Message/>
@@ -113,4 +114,4 @@ class AddItem extends React.Component {
     }
 }
 
-export default AddItem;
+export default withRouter(AddItem);

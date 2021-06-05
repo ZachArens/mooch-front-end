@@ -1,4 +1,4 @@
-import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator} from "../rentalFunctions";
+import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, formatShortDate} from "../rentalFunctions";
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -79,3 +79,12 @@ describe('textAbbreviator', () => {
     });
 
 });
+
+describe('formatShortDate', () => {
+    test('accepts a js date type and returns date formatted MM/DD/YYYY for rentalSummary', () => {
+        let input = new Date(1621818840 * 1000);
+
+        expect(formatShortDate(input)).toBe("5/23/2021");
+
+    })
+})

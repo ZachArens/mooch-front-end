@@ -1,29 +1,94 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import AddItem from '../components/addItem';
-
+import { MemoryRouter } from 'react-router-dom';
 import {render, fireEvent} from '@testing-library/react';
+import { AddRentalItem } from '../utils/firebaseFunctions';
 // import '@testing-library/react/dont-cleanup-after-each';
 
 //TODO - need more help or research on mocking to isolate from firebase and editTitleDesc
 
-test("renders without crashing", () => {
-    // const div = document.createElement("div");
-    // ReactDOM.render(<AddItem />, div);
-
-    render(<AddItem />);
-});
+jest.mock('../utils/firebaseFunctions');
 
 describe('addItem validates and sanitizes all values for text inputs', () => {
+    test("renders without crashing", () => {
+        // const div = document.createElement("div");
+        // ReactDOM.render(<AddItem />, div);
 
-    test.skip('allows a value for title with only alphabet and space characters', () => {
-        const addItemComponent = render(<AddItem />);
-        const title = addItemComponent.getAllByPlaceholderText('Title');
+        render(
+            <MemoryRouter>
+                <AddItem />
+            </MemoryRouter>
+        );
     });
 
-    test.todo('can add an item to the database');
+    test('can call AddRentalItem to add an item to the database', () => {
+        const fakeItem = {
+            ownerId: "user123",
+            title: "Example Item",
+            description: "Item described as this fake item",
+            hourlyRate: 14,
+            deliveryFee: 2,
+            meetupFee: 4,
+            pickupFee: 12.5
+        }
 
-    test.todo('displays an error for a title that is a number or symbol');
+        const {getByPlaceholderText, getByTestId, debug} = render(
+            <MemoryRouter>
+                <AddItem currentUser={fakeItem.ownerId}/>
+            </MemoryRouter>
+        );
+
+        
+        fireEvent.change(getByPlaceholderText("Title"), { target: {defaultValue: fakeItem.title}});
+        fireEvent.change(getByPlaceholderText("Enter a description here"), { target: {defaultValue: fakeItem.description}});
+        fireEvent.change(getByTestId("itemRate"), { target: {defaultValue: fakeItem.hourlyRate}});
+        expect(getByTestId("itemRate")).toHaveValue(fakeItem.hourlyRate);
+        fireEvent.change(getByTestId("deliveryCost"), { target: {defaultValue: fakeItem.deliveryFee}});
+        fireEvent.change(getByTestId("meetupCost"), { target: {defaultValue: fakeItem.meetupFee}});
+        fireEvent.change(getByTestId("pickupCost"), { target: {defaultValue: fakeItem.pickupFee}});
+        fireEvent.click(getByTestId('submitButton'));
+
+        debug();
+
+        expect(AddRentalItem).toHaveBeenCalled();
+        expect(AddRentalItem).toHaveBeenCalledWith(fakeItem.ownerId, fakeItem.title, fakeItem.description, fakeItem.itemRate, 
+            {delivery: fakeItem.deliveryFee, meetup: fakeItem.meetupFee, pickup: fakeItem.pickupFee});
+
+    });
+
+    test('allows a value for title of 25 chars or less', () => {
+        const {getByPlaceholderText,getByTestId} = render(
+            <MemoryRouter>
+                <AddItem />
+            </MemoryRouter>
+        );
+        
+        const okText = ['Kayak', 'asdfasdfa - DFSDFS', '    sfsdfasfa  123asdfsadf asdfa'];
+        const notOkText = ["x".repeat(26)];
+
+        const title = getByPlaceholderText('Title');
+        const submit = getByTestId('submitButton');
+        const message = getByTestId('messageBox');
+
+        fireEvent.change(getByPlaceholderText("Enter a description here"), { target: {defaultValue: "something"}});
+
+
+        for (let text in okText) {
+            fireEvent.change(title, { target: {defaultValue: okText[text]}});
+            fireEvent.click(submit);
+            expect(message).not.toBeVisible;
+        }
+
+        for (let text in notOkText) {
+            fireEvent.change(title, { target: {defaultValue: notOkText[text] }});
+            expect(message.innerHTML).toContain('The title may not be greater than  25 characters.');
+        }
+
+
+    });
+
+
 
     test.todo('allows a value for description that is a string');
 

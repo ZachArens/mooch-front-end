@@ -4,7 +4,7 @@ import Login from './components/Login/login';
 import AddItem from './components/addItem';
 import ReserveItem from './components/reserveItem';
 import Home from './components/home';
-import MyRentals from "./components/myRentals";
+import MyRentals from "./components/MyRentals/myRentals";
 import './App.scss';
 import 'bootstrap';
 import {BrowserRouter as Router, NavLink, Route, Switch} from "react-router-dom";
@@ -105,7 +105,7 @@ class App extends Component {
                         <Login setCurrentUser={this.setCurrentUser}/>
                     </Route>
                     <Route path="/addItems">
-                        <AddItem/>
+                        <AddItem currentUser={this.state.currentUser}/>
                     </Route>
                     <Route path="/reserveItem">
                         <ReserveItem currentRentalItem={this.state.currentRentalItem} 

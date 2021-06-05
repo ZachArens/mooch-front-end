@@ -1,11 +1,10 @@
 import React from 'react';
-// import FireAuthWidget from '../utils/fireAuthWidget';
-
-// import firebase, { auth } from '../../utils/firebase';
-import {createUserWithEmailandPass, loginWithEmailAndPass} from '../../utils/firebaseFunctions';
+import { withRouter } from 'react-router-dom';
+import {addUserDetails, createUserWithEmailandPass, loginWithEmailAndPass} from '../../utils/firebaseFunctions';
 import SubmitButtons from '../submitButtons';
 import LoginForm from './loginForm';
 import CreateLogin from './createLogin';
+
 
 class Login extends React.Component {
     constructor(props) {
@@ -41,12 +40,17 @@ class Login extends React.Component {
         
     }
 
-    submitOrSignup = (e) => {
+    submitOrSignup = async (e) => {
         if(this.state.hasLogin) {
-            this.submitEmailPass(e);
+            await this.submitEmailPass(e);
         } else {
-            this.signUp(e);
+            await this.signUp(e);
         }
+
+        const { history } = this.props;
+
+        if (history) history.push('/myRentals');
+        
     }
 
     submitEmailPass = async (e) => {
@@ -61,7 +65,6 @@ class Login extends React.Component {
 
     signUp = async (e) => {
         e.preventDefault();
-        console.log("signUp running...")
 
         //check if email and passwords match
         const emailIsMatch = this.state.email === this.state.verifyEmail;
@@ -81,21 +84,22 @@ class Login extends React.Component {
 
        let userId = createUserWithEmailandPass(this.state.email, this.state.password);
 
-       this.props.setCurrentUser("user123");
-        // console.log(`logged in as ${this.state.user}`); //.displayName} - ${user.uid}`);
-        //Add display name to auth token
-        //FIXME - need to test if working
-        // firebase.auth().currentUser.updateProfile({
-        //     displayName: this.state.fullName,
+       this.props.setCurrentUser(userId);
 
-        // })
-        // .catch((error) => {
-        //     this.setState({errMsg: error.message});
-        // });
+       const userDetails = {
+        uid: userId,
+        email: this.state.email,
+        fullName: this.state.fullName, 
+        streetAddress: this.state.streetAddress,
+        city: this.state.city, 
+        st: this.state.st,
+        zip: this.state.zip, 
+        phone: this.state.phone,
+       }
 
-        //TODO - need to add additional user info to database and abstract to firebaseAuthFunctions
+       console.log("adding user details: " + userDetails);
 
-        // console.log(`logged in as ${user.displayName} - ${user.uid}`);
+       addUserDetails(userDetails);
         
     };
     
@@ -110,9 +114,7 @@ class Login extends React.Component {
         this.setState((prevState) => ({
             hasLogin: !prevState.hasLogin,
             buttonText
-        }));
-        console.log('updated state to: ' + this.state.hasLogin)
-        
+        }));        
 
     }
 
@@ -155,4 +157,4 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);

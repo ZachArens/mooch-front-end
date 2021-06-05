@@ -16,6 +16,7 @@ function ReserveItem(currentRentalItem, currentUser) {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const history = useHistory();
     const [exchangeMethod, setExchangeMethod] = useState('');
+    const [ownerId, setOwnerId] = useState('');
     const [totalTime, setTotalTime] = useState('');
     const [unitCost, setUnitCost] = useState(10);
     const [rentalCost, setRentalCost] = useState(0);
@@ -117,7 +118,9 @@ function ReserveItem(currentRentalItem, currentUser) {
          `rentalCost: ${rentalCost}`, `totalTime: ${totalTime}`, `currentUser: ${currentUser}`);
         
         const reservation = {
-            ownerId: currentUser,
+            itemName,
+            renterId: currentUser,
+            ownerId,
             startDateTime, 
             endDateTime, 
             exchangeMethod, 
@@ -145,6 +148,7 @@ function ReserveItem(currentRentalItem, currentUser) {
         // console.log(itemDetails);
 
         if (itemDetails) {
+            setOwnerId(itemDetails.ownerId);
             setItemName(itemDetails.itemName);
             setItemDescription(itemDetails.itemDesc);
             setUnitCost(itemDetails.costHourly);
