@@ -76,7 +76,9 @@ class AddItem extends React.Component {
 
     clearForm = (e) => {
         this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: "cleared"} );
-        // withRouter.props.history.push('/myRentals');
+
+        const { history } = this.props;
+        if (history) history.push('/myRentals');
     }
 
     render() {
@@ -104,7 +106,7 @@ class AddItem extends React.Component {
                             updateFields={this.updateFields.bind(this)}
                             updateExchangeOptions={this.updateExchangeOptions}/>
                     </div>
-                    <SubmitButtons submitTitle="Add" cancelTitle="Clear"
+                    <SubmitButtons submitTitle="Add" cancelTitle="Cancel"
                                submitFn={this.onSubmit.bind(this)}
                                cancelFn={this.clearForm.bind(this)}/>
                 </div>

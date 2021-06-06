@@ -102,21 +102,23 @@ class App extends Component {
                 </nav>
                 <Switch>
                     <Route path="/login">
-                        <Login setCurrentUser={this.setCurrentUser}/>
+                        <Login setCurrentUser={this.setCurrentUser} returnTo='/'/>
                     </Route>
                     <Route path="/addItems">
-                        <AddItem currentUser={this.state.currentUser}/>
+                        {this.state.currentUser && <AddItem currentUser={this.state.currentUser}/>}
+                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/addItems' />}
+
                     </Route>
                     <Route path="/reserveItem">
-                        <ReserveItem currentRentalItem={this.state.currentRentalItem} 
-                        currentUser={this.state.currentUser}/>
+                        {this.state.currentUser && <ReserveItem currentRentalItem={this.state.currentRentalItem} 
+                        currentUser={this.state.currentUser}/>}
+                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/reserveItem' />}
+
                     </Route>
                     <Route path="/myRentals">
-                        <MyRentals/>
-                    </Route>
-                    <Route path="/find">
-                        <div><p>This is page is not yet written</p></div>
-                        {/*<Find/>*/}
+                        {this.state.currentUser && <MyRentals currentUser={this.state.currentUser} />}
+                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/myRentals' />}
+                        
                     </Route>
                     <Route path="/">
                         <Home updateCurrentItem={this.updateCurrentItem.bind(this)} />

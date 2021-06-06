@@ -26,11 +26,18 @@ export const AddRentalItem = async(ownerId, title, description, itemRate, exchan
                 });
 }
 
-export const GetRentalItems = async() => {
+//TODO - need to remove unsubscribe from a firebase get - it does not need to be closed.
+export const GetRentalItems = async(userId) => {
 
+    let rentalItems;
     //TODO - need unsubscribe
+    if (!userId) {
+        rentalItems = db.collection("rentalItems").limit(24);
+    } else if (userId) {
+        rentalItems = db.collection("rentalItems").where('ownerId', '==', userId).limit(24);
+    }
 
-    const rentalItems = db.collection("rentalItems").limit(24);
+    // const rentalItems = db.collection("rentalItems").limit(24);
 
     let rentalItemsList = [];
     const unsubscribe = await rentalItems.get().then((querySnapshot) => {
@@ -40,13 +47,16 @@ export const GetRentalItems = async() => {
             // console.log(`entry: ${entry.id}`);
             rentalItemsList.push(entry);
         });
+
     })
     .catch((error) => {
         //TODO - security, do not publish error details to console
         console.log("Error getting documents:" + error);
+        // return { () => {}, [] };
     });
 
-    return { unsubscribe, rentalItemsList };
+
+    return [ unsubscribe, rentalItemsList ];
 
 
 }
@@ -118,6 +128,10 @@ export const getMyReservations = async (userId) => {
         //TODO - security, do not publish error details to console
         console.log("Error getting documents:" + error);
     });
+
+    const notes = {
+
+    
     // const observer = await query.onSnapshot(querySnapshot => {
     //     querySnapshot.docChanges().forEach(change => {
     //         console.log('change');
@@ -146,8 +160,7 @@ export const getMyReservations = async (userId) => {
     // }, err => {
     //     console.log(`Encountered error: ${err}`);
     // });
-
-    console.log('gMR...reservationList: ' + reservationList[0].id)
+    }
 
     for (let entry in reservationList) {
 
@@ -165,9 +178,11 @@ export const getMyReservations = async (userId) => {
         }
     }
 
-    return { unsubscribe, reservationList };
+    return [unsubscribe, reservationList];
 
 }
+
+
 
 export const loginWithEmailAndPass = async (email, password) => {
     //https://firebase.google.com/docs/auth/web/password-auth

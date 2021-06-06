@@ -20,7 +20,7 @@ class ItemGrid extends React.Component {
     async componentDidMount() {
         
         try {
-            await GetRentalItems().then(({unsubscribe, rentalItemsList}) => {
+            await GetRentalItems().then(([unsubscribe, rentalItemsList]) => {
                 unsubscribe = unsubscribe;
                 this.setState({
                     rentalItemsList: rentalItemsList, loading: false

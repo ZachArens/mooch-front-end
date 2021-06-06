@@ -49,7 +49,7 @@ class Login extends React.Component {
 
         const { history } = this.props;
 
-        if (history) history.push('/myRentals');
+        if (history) history.push(this.props.returnTo);
         
     }
 
