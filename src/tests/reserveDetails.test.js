@@ -4,8 +4,8 @@ import ReserveDetails from '../components/reserveDetails';
 
 describe('<ReserveDetails />', () => {
     const data = {
-        startDate: "2021-05-13",//new Date(2021,4,13),
-        endDate: "2021-05-27" //new Date(2021,4,27)
+        startDate: new Date(2021,4,13),
+        endDate: new Date(2021,4,27)
     }
     
     test('renders without crashing', () => {
@@ -21,18 +21,20 @@ describe('<ReserveDetails />', () => {
         // debug();
 
         //FIXME - need to finish this testing series and fix/understand the date inputs and displays
-        expect(queryByTestId('startDateInput').defaultValue).toBe(defaultStartDate.toString());
+        expect(queryByTestId('startDateInput')).toHaveValue(defaultStartDate.toString());
         expect(queryByTestId(data.endDate)).toBeTruthy();
     });
 
-    test.skip('displays passed-in date values correctly', () => {
+    test('displays passed-in date values correctly', () => {
 
-        const {queryByDisplayValue, debug} = render (<ReserveDetails startDate={data.startDate} 
-            endDate={data.endDate} />);
+        const {queryByTestId, getByLabelText, debug} = render (<ReserveDetails startDateTime={data.startDate} 
+            endDateTime={data.endDate} />);
+        // console.log('test start date: ', data.startDate);
+
         
-        // debug();
-        expect(queryByDisplayValue(data.startDate)).toBeTruthy();
-        expect(queryByDisplayValue(data.endDate)).toBeTruthy();
+        debug(queryByTestId('startDateInput'));
+        expect(queryByTestId('startDateInput')).toHaveValue(data.startDate.toISOString().substr(0,10));
+        expect(queryByTestId('endDateInput')).toHaveValue(data.endDate.toISOString().substr(0,10));
     });
 
     test('creates exchange options correctly', () => {

@@ -1,5 +1,8 @@
 import React from 'react';
 import {fireEvent, cleanup, render, queryAllByTestId} from '@testing-library/react';
+import { screen } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 
 import ReserveItem from '../components/reserveItem';
 import {AddReservation, getItemFromDB} from '../utils/firebaseFunctions.js';
@@ -75,17 +78,14 @@ describe('<ReserveItem />', () => {
         newDate.setDate(newDate.getDate() + 3);
         const newDateStr = newDate.toISOString().substr(0,10);
 
-        const startDateInput = queryByTestId('startDateInput');
         
-        fireEvent.mouseDown(startDateInput);
-        
-        
-        fireEvent.change(startDateInput, { target: {defaultValue: newDateStr }});
+        userEvent.type(screen.queryByTestId('startDateInput'), '09182021330')
+
 
         // debug();
-        // console.log(queryByTestId('startDateInput').value);
+        console.log(queryByTestId('startDateInput').value);
 
-        expect(queryByTestId('startDateInput').value).toEqual(newDate.toString());
+        expect(screen.queryByTestId('startDateInput')).toHaveValue(newDate.toString());
         // expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('0 hrs');
         // expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$0')
         
@@ -129,17 +129,17 @@ describe('<ReserveItem />', () => {
         expect(getItemFromDB).toHaveBeenLastCalledWith(itemId);
     });
 
-    test.todo('should render component with itemName, itemDesc, itemCost, and exchangeMethodCosts') //, () => {
-    //     const fakeItemId = "12345678"
+    test('should render component with itemName, itemDesc, itemCost, and exchangeMethodCosts', () => {
+        const fakeItemId = "12345678"
 
         
 
-    //     render(<ReserveItem currentRentalItem={fakeItemId} />);
+        render(<ReserveItem currentRentalItem={fakeItemId} />);
 
-    //     expect(getItemFromDB).toHaveBeenCalled();
-    //     expect(getItemFromDB).toHaveBeenLastCalledWith(fakeItemId);
-    //     expect(getItemFromDB).toHaveReturnedWith(fakeItemDetails);
-    // });
+        expect(getItemFromDB).toHaveBeenCalled();
+        expect(getItemFromDB).toHaveBeenLastCalledWith(fakeItemId);
+        expect(getItemFromDB).toHaveReturnedWith(fakeItemDetails);
+    });
 
     test.todo('clicking Reserve fires the AddReservation function to add the res. the db') //, () => {
         

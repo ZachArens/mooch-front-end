@@ -1,4 +1,6 @@
-import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, formatShortDate} from "../rentalFunctions";
+import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, 
+    formatShortDate, formatCurrency,
+    finalFormatCurrency} from "../rentalFunctions";
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -87,4 +89,57 @@ describe('formatShortDate', () => {
         expect(formatShortDate(input)).toBe("5/23/2021");
 
     })
-})
+});
+
+describe('formatCurrency', () => {
+    test('returns a number if matching currency format not including $', () => {
+        let inputString = '34.50';
+
+        expect(formatCurrency(inputString)).toBe('34.50');
+    });
+
+    test('removes additional zeroes in front of other digits', () => {
+        let inputString = '034.50';
+
+        expect(formatCurrency(inputString)).toBe('34.50');
+    });
+
+    
+
+    test('adds a zero if . is first', () => {
+        let inputString = '.34';
+
+        expect(formatCurrency(inputString)).toBe('0.34');
+    });
+
+    test('removes digits until only 2 digits behind .', () => {
+        let inputString = '34.507586';
+        expect(formatCurrency(inputString)).toBe('34.50');
+
+    });
+
+    test('throws error if non-digit', () => {
+        let inputString = 'thirty-four';
+
+        function runInvalidInput() {
+            formatCurrency(inputString)
+        } ;
+
+        expect(runInvalidInput).toThrow();
+        expect(runInvalidInput).toThrowError('must be a currency value');
+    });
+});
+
+describe('finalFormatCurrency', () => {
+    test('trims . if . is last', () => {
+        let inputString = '34.';
+
+        expect(finalFormatCurrency(inputString)).toBe(34);
+    });
+
+    test('returns as a number from string', () => {
+        let inputString = '034.507586.'
+        expect(finalFormatCurrency(inputString)).toBe(34.50);
+
+    })
+});

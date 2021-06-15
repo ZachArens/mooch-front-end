@@ -67,4 +67,47 @@ const formatShortDate = (date) => {
     return date.toLocaleDateString(language);
 }
 
-export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, formatShortDate};
+const formatCurrency = (input) => {
+    //check only digits and decimal
+    if(input.match(/^[0-9.]+$/)) {
+        //check if ok format and return
+        if (input.match(/^[1-9.]+[0-9]+[.]{1}[0-9]{1,2}$/)) {
+            // console.log('match ok');
+            return input;
+        } 
+        //if not check if starts with zeroes and remove
+        while (input.startsWith('0')) {
+            // console.log('match startsWith 0');
+            input = input.slice(1, input.length);
+        }
+        
+        //check if ends with decimal and remove
+        while (input.startsWith('.')) {
+            // console.log('match startsWith .');
+            input = input.replace('.', '0.');
+        }
+        //check if more that 2 digits behind decimal and shorten
+        while (input.match(/^[0-9.]+[.]{1}[0-9]{3,}$/)) {
+            input = input.substr(0, input.length-1);
+        }
+
+        return input;
+    } else {
+        throw 'must be a currency value';
+    }
+
+    
+}
+
+const finalFormatCurrency = (input) => {
+    //check if ends with decimal and remove
+    while (input.endsWith('.')) {
+        // console.log('match endsWith .');
+        input = input.substr(0, input.length-1);
+    }
+    input = formatCurrency(input);
+    return parseFloat(input);
+
+}
+
+export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, formatShortDate, formatCurrency, finalFormatCurrency};

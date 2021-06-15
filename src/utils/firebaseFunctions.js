@@ -1,6 +1,7 @@
-import firebase, {db, auth} from './firebase';
+import firebase, {db, storage, auth} from './firebase';
+import { v4 as uuid } from 'uuid';
 
-export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions) => {
+export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions, photos) => {
     // console.log("add item to db: " + exchangeOptions.delivery);
     
     await firebase
@@ -15,7 +16,8 @@ export const AddRentalItem = async(ownerId, title, description, itemRate, exchan
                         delivery: exchangeOptions.delivery,
                         meetup: exchangeOptions.meetup,
                         pickup: exchangeOptions.pickup
-                    }
+                    },
+                    photos: [...photos]
                 })
                 .then((docRef) => {
                     console.log("success writing document:", docRef.id);
@@ -24,6 +26,37 @@ export const AddRentalItem = async(ownerId, title, description, itemRate, exchan
                 .catch((error) => {
                     console.error(error);
                 });
+}
+
+export const addPhotosToFB = async (currentUser, file, updatePhotoState) => {
+    const fbImages = storage.ref(currentUser);
+        
+    console.log('process file ', file);
+    const id = uuid();
+    // let photosInStorage = [];
+    try {                    
+        //https://firebase.google.com/docs/storage/web/upload-files
+
+        var uploadTask = fbImages.child(id).put(file);
+
+        uploadTask.on('state_changed',
+                (snapshot) => {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            }, (error) => {
+                console.log('photo upload unsuccessful: ', error.message);
+            },
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    console.log('url of imageUpload: ', downloadURL);
+                    const photoEntry = ({id: id, url: downloadURL});
+                    updatePhotoState(photoEntry);
+                    // photosInStorage.push(photoEntry);
+                })
+            });
+    } catch (e) {
+        console.log('error', e);
+    }
 }
 
 //TODO - need to remove unsubscribe from a firebase get - it does not need to be closed.
@@ -81,7 +114,7 @@ export const getItemFromDB = (itemId) => {
 
 
 export const AddReservation = async(reservation) => {
-    await firebase
+    return await firebase
                 .firestore()
                 .collection('reservations')
                 .add({
@@ -92,7 +125,7 @@ export const AddReservation = async(reservation) => {
                     totalCost: reservation.totalCost,
                     deliveryCost: reservation.deliveryCost,
                     rentalCost: reservation.rentalCost,
-                    renterId: reservation.renterId,
+                    lenderId: reservation.renterId,
                     rentalItemId: reservation.rentalItemId,
                     ownerId: reservation.ownerId
                 })

@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import Login from './components/Login/login';
-import AddItem from './components/addItem';
+import AddItem from './components/AddEditItems/addItem';
 import ReserveItem from './components/reserveItem';
 import Home from './components/home';
 import MyRentals from "./components/MyRentals/myRentals";
@@ -88,7 +88,7 @@ class App extends Component {
                                 </li>
                                 <li className="nav-item">
                                     {this.state.currentUser && <NavLink to="/" onClick={this.logout} className="nav-link">Signed in as {this.state.currentUser} - Logout</NavLink>}
-                                    {!this.state.currentUser && <NavLink to="/login" className="nav-link">Login</NavLink>}
+                                    {!this.state.currentUser && <NavLink to="/login" className="nav-link" data-testid="loginNav">Login</NavLink>}
                                 </li>
                                 <li className="nav-item">
                                     <NavLink to="/addItems" className="nav-link">Temp-Add Items</NavLink>

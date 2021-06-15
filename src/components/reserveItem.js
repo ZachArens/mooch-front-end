@@ -11,9 +11,7 @@ import { getItemFromDB, AddReservation } from '../utils/firebaseFunctions';
 
 function ReserveItem(currentRentalItem, currentUser) {
     
-    const today = new Date();
-    let tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    
     const history = useHistory();
     const [exchangeMethod, setExchangeMethod] = useState('');
     const [ownerId, setOwnerId] = useState('');
@@ -26,8 +24,8 @@ function ReserveItem(currentRentalItem, currentUser) {
     const [itemName, setItemName] = useState("")
     const [itemDescription, setItemDescription] = useState("");
     const [itemId, setItemId] = useState(currentRentalItem);
-    const [startDateTime, setStartDateTime] = useState(today);
-    const [endDateTime, setEndDateTime] = useState(tomorrow);
+    const [startDateTime, setStartDateTime] = useState(new Date());
+    const [endDateTime, setEndDateTime] = useState(new Date().setUTCDate(new Date().getUTCDate() + 1));
 
 
     const updateExchangeMethod = (e) => {
@@ -52,58 +50,94 @@ function ReserveItem(currentRentalItem, currentUser) {
             }
 
             setExchangeMethod(value);
+            updateCalculations();
             
         }
     }
 
-    const updateStartDateTime = (e) => {
-
-        const incomingStartDateTime = new Date(e.target.value);
-        let newEndDateTime = null;
-        //set default endDateTime to be equal or greater to new start date
-        if (endDateTime > incomingStartDateTime ) {
-            //FIXME
-            setEndDateTime(incomingStartDateTime);
-            newEndDateTime = incomingStartDateTime;
-        } else {
-            newEndDateTime = endDateTime;
-        }
-
-        setStartDateTime(incomingStartDateTime);
-
-        const calcTotalTime = hoursTimeDifference(incomingStartDateTime, newEndDateTime);
-        const calcRentalCost = calcTotalTime * unitCost;
-        console.log(incomingStartDateTime);
-        console.log("calc time difference: " + calcTotalTime, "state time difference: " + totalTime, "calcRentalCost: " + calcRentalCost);
+    const updateCalculations = () => {
+        
+        const calcTotalTime = startDateTime && endDateTime ? hoursTimeDifference(startDateTime, endDateTime) : 0;
+        const calcRentalCost = unitCost ? calcTotalTime * unitCost: 0;
         setTotalTime(calcTotalTime);
         setRentalCost(calcRentalCost);
-        setTotalCost(calcRentalCost + deliveryCost);
+        if (deliveryCost) {setTotalCost(calcRentalCost + deliveryCost);} else {setTotalCost(calcRentalCost)}
+        
+        console.log(endDateTime ? `endDateTime: ${endDateTime}`: 'endDateTime null');
+        console.log(startDateTime ? `startDateTime: ${startDateTime}`: 'startDateTime null');
+        console.log(unitCost ? `unitCost: ${unitCost}`: 'unitCost null');
+        console.log(deliveryCost ? `deliveryCost: ${deliveryCost}`: 'deliveryCost null');
+    
+        console.log("calc time difference: " + calcTotalTime, "state time difference: " + totalTime, "calcRentalCost: " + calcRentalCost);
+        console.log('calc Rental cost: ', calcRentalCost, 'calc TotalCost: ', calcRentalCost + deliveryCost);
+    
+    }
+
+    const updateStartDate = (e) => {
+
+        const incomingStartDate = new Date(e.target.value);
+        let newEndDate = null;
+        //set default endDateTime to be equal or greater to new start date
+        if (endDateTime > incomingStartDate ) {
+            //FIXME
+            newEndDate = incomingStartDate;
+        } else {
+            newEndDate = endDateTime;
+        }
+
+        //set startDateTime or create if null
+        let newDate = null;
+        if (startDateTime) {
+            console.log('using old date');
+            newDate = new Date(startDateTime);
+        } else {
+            console.log('using new date');
+            newDate = new Date();
+        }
+        console.log('endDate', endDateTime, 'incomingStartDate', incomingStartDate)
+
+
+        console.log(newDate);
+        //set new date but keep time
+        newDate.setUTCFullYear(incomingStartDate.getUTCFullYear(), 
+            incomingStartDate.getUTCMonth(), 
+            incomingStartDate.getUTCDate());
+
+        setStartDateTime(newDate);
+        console.log(
+            'set new start: ', newDate
+        )
+        setEndDateTime(newEndDate);
+        console.log('set new end: ', newEndDate);
+
+        updateCalculations();
 
     }
 
-    const updateEndDateTime = (e) => {
+    const updateEndDate = (e) => {
 
         const incomingEndDateTime = new Date(e.target.value);
         
         //check that endDateTime is greater than startDateTime and setState
         //compare milliseconds (+)
-        if (+startDateTime < +incomingEndDateTime) {
-            //FIXME
-            
+        //set startDateTime or create if null
+        let newDate = null;
+        if (endDateTime) {
+            console.log('using old date');
+            newDate = new Date(endDateTime);
         } else {
-            //FIXME - send error message instead
-            //console.log('The end date must be later than the start date.');
+            console.log('using new date');
+            newDate = new Date();
         }
-        
-        setTotalTime(hoursTimeDifference(startDateTime, incomingEndDateTime));
-        console.log("unitCost: " + unitCost);
-        console.log("totalTime: " + totalTime);
-        setRentalCost(totalTime * unitCost);
-        console.log(endDateTime);
-        console.log("rentalCost: " + rentalCost)
 
-        setTotalCost(rentalCost + deliveryCost);
-        setEndDateTime(incomingEndDateTime);
+        //set new date but keep time
+        newDate.setUTCFullYear(incomingEndDateTime.getUTCFullYear(), 
+            incomingEndDateTime.getUTCMonth(), 
+            incomingEndDateTime.getUTCDate());
+        
+        setEndDateTime(newDate);
+
+        updateCalculations();
     }
 
     const reserveItem = (e) => {
@@ -143,6 +177,8 @@ function ReserveItem(currentRentalItem, currentUser) {
 
     const loadItemDetails = async () => {
 
+        
+
         const itemDetails = await getItemFromDB(currentRentalItem.currentRentalItem);
 
         // console.log(itemDetails);
@@ -154,11 +190,7 @@ function ReserveItem(currentRentalItem, currentUser) {
             setUnitCost(itemDetails.costHourly);
             setDeliveryOptions(itemDetails.deliveryOptions);
         }
-        
-        
-        // console.log("name: " + itemName, "desc: " + itemDescription, "cost: " + unitCost);
 
-        // console.log ('using effect to load Item Details');
     }
 
     useEffect(() => {
@@ -180,9 +212,14 @@ function ReserveItem(currentRentalItem, currentUser) {
                         />
             </div>
             <div className="row">
-                    <ReserveDetails setExMeth={updateExchangeMethod.bind(this)} exchangeMethod={exchangeMethod} 
-                    startDateTime={startDateTime} endDateTime={endDateTime}
-                    updateStartDateTime={updateStartDateTime.bind(this)} updateEndDateTime={updateEndDateTime.bind(this)} />
+                    <ReserveDetails 
+                        updateExchangeMethod={updateExchangeMethod.bind(this)} 
+                        exchangeMethod={exchangeMethod} 
+                        startDateTime={startDateTime} 
+                        endDateTime={new Date()}
+                        updateStartDate={updateStartDate.bind(this)} 
+                        updateEndDate={updateEndDate.bind(this)} 
+                        />
                     <TotalBox 
                         total_cost={totalCost} 
                         delivery_cost={deliveryCost} 

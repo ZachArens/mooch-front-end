@@ -83,7 +83,7 @@ class MyRentals extends React.Component {
                     loading={this.state.reservationsLoading} />
 
                 <h1>My Items</h1>
-                <button onClick={this.goAddItem}>+</button>
+                <button data-testid="addItemButton" onClick={this.goAddItem}>+</button>
                 <MyItemsList myItems={this.state.myItems} loading={this.state.itemsLoading}/>
             </div>
         );

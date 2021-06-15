@@ -1,6 +1,6 @@
 import React from 'react';
 import ItemCard from "./itemCard";
-import { Route } from 'react-router-dom';
+// import { Route } from 'react-router-dom';
 import { GetRentalItems } from '../utils/firebaseFunctions';
 
 // import {GetRentalItems} from '../utils/firebaseFunctions'
@@ -47,8 +47,13 @@ class ItemGrid extends React.Component {
             // console.log(this.state.rentalItemsList);
             gridItems = this.state.rentalItemsList.map((card) =>
             
-            <ItemCard  key={card.id} id={card.id} updateCurrentItem={this.props.updateCurrentItem} title={card.itemName} 
-                description={card.itemDesc} itemRate={card.costHourly} />
+                <ItemCard  key={card.id} id={card.id} 
+                    photo={card.photos ? card.photos[0] : undefined} 
+                    updateCurrentItem={this.props.updateCurrentItem} 
+                    title={card.itemName} 
+                    description={card.itemDesc} 
+                    itemRate={card.costHourly} 
+                />
             );
         } else {
             gridItems = <ItemCard />;

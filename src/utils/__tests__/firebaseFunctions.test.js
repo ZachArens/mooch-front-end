@@ -1,10 +1,70 @@
-// import {db} from '../utils/firebase';
+// import firestore from '../firebase';
+import firebase from 'firebase';
 import { AddRentalItem, AddReservation, getItemFromDB, GetRentalItems } from '../firebaseFunctions';
 import faker from 'faker';
 // import { mockGoogleCloudFirestore } from 'firestore-jest-mock';
 
+firebase.initializeTestApp({
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    auth: {uid: "alice", email: "alice@example.com"}
+})
 
-test.todo('this file still needs a test');
+describe('AddReservation', () => {
+    test('adds a reservation to the database', async () => {
+        const getRandNumber = () => {
+            return Math.floor(Math.random()*10000/100);
+        }
+
+        const soon = faker.date.soon()
+        let reservation = {
+            itemName: faker.commerce.productName(), 
+            startDateTime: soon, 
+            endDateTime: faker.date.future(0, soon),
+            exchangeMethod: {pickup: getRandNumber(), meetup: getRandNumber(), delivery: getRandNumber()}, 
+            totalCost: getRandNumber(),
+            deliveryCost: getRandNumber(),
+            rentalCost: getRandNumber(),
+            renterId: "alice",
+            rentalItemId: faker.random.alphaNumeric(25),
+            ownerId: faker.random.alphaNumeric(20)
+        }
+        try {
+            const docId = await AddReservation(reservation);
+            expect(docId).toBeTruthy();
+            console.log(docId);
+
+            const fbItem = db.collection('reservations').doc(docId);
+            
+            const fbItemEntry = await fbItem.get().then((doc) => {
+                if (doc.exists) {
+                    console.log('doc exists');
+                    return doc.data();
+                } else {
+                    console.log('no such document for test');
+                    return null;
+                }
+            }). catch((error) => {
+                console.log("Error getting document", error);
+            });
+
+            console.log(fbItemEntry.itemName);
+
+            expect(fbItemEntry).toBeTruthy();
+            // expect(fbItemEntry).toEqual(reservation);
+
+            // reservation.itemName = 'test';
+
+            // expect(fbItemEntry).not.toEqual(reservation); 
+        } catch (e) {
+            console.log(e.message);
+        }
+
+        
+
+
+
+    }, 20000);
+})
 
 // mockGoogleCloudFirestore({
 //     database: {

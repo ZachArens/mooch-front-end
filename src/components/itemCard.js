@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { addPhotosToFB } from '../utils/firebaseFunctions';
 import { textAbbreviator } from '../utils/rentalFunctions';
 
 
@@ -11,6 +12,7 @@ class ItemCard extends React.Component {
             <Link to={`/reserveItem`} 
                 onClick={(e) => {this.props.updateCurrentItem(this.props.id)}} 
                 className="card col-sm-3">
+                <img src={this.props.photo ? this.props.photo.url : ''} />
 
                 {/* <img src={this.props.url} className="card-img-top" alt={this.props.altText}/> */}
                 <div className="card-body" data-testid="rentalItemCard">
