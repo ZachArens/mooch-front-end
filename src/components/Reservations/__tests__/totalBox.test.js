@@ -1,7 +1,7 @@
 import React from 'react';
 import {render, cleanup} from '@testing-library/react';
-import TotalBox from '../components/totalBox';
-import {rentalTimeAsString} from "../utils/rentalFunctions";
+import TotalBox from '../totalBox';
+import {rentalTimeAsString} from "../../../utils/rentalFunctions";
 
 afterEach(()=> {
     cleanup();

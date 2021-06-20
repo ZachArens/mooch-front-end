@@ -1,12 +1,14 @@
-import firebase, {db, auth} from './firebase';
+import firebase, {db, storage, auth} from './firebase';
+import { v4 as uuid } from 'uuid';
 
-export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions) => {
-    // console.log("add item to db: " + exchangeOptions.delivery);
+export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions, photos, itemId) => {
+    console.log("add item to db: " + itemId);
     
     await firebase
                 .firestore()
                 .collection('rentalItems')
-                .add({
+                .doc(itemId)
+                .set({
                     ownerId: ownerId,
                     itemName: title, 
                     itemDesc: description, 
@@ -15,15 +17,47 @@ export const AddRentalItem = async(ownerId, title, description, itemRate, exchan
                         delivery: exchangeOptions.delivery,
                         meetup: exchangeOptions.meetup,
                         pickup: exchangeOptions.pickup
-                    }
+                    },
+                    photos: [...photos]
                 })
-                .then((docRef) => {
-                    console.log("success writing document:", docRef.id);
-                    return docRef.id;
-                })
+                // .then((docRef) => {
+                //     console.log("success writing document:", docRef.id);
+                //     return docRef.id;
+                // })fd
                 .catch((error) => {
                     console.error(error);
                 });
+}
+
+export const addPhotosToFB = async (currentUser, file, updatePhotoState) => {
+    const fbImages = storage.ref(currentUser);
+        
+    console.log('process file ', file);
+    const id = uuid();
+    // let photosInStorage = [];
+    try {                    
+        //https://firebase.google.com/docs/storage/web/upload-files
+
+        var uploadTask = fbImages.child(id).put(file);
+
+        uploadTask.on('state_changed',
+                (snapshot) => {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            }, (error) => {
+                console.log('photo upload unsuccessful: ', error.message);
+            },
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    console.log('url of imageUpload: ', downloadURL);
+                    const photoEntry = ({id: id, url: downloadURL});
+                    updatePhotoState(photoEntry);
+                    // photosInStorage.push(photoEntry);
+                })
+            });
+    } catch (e) {
+        console.log('error', e);
+    }
 }
 
 //TODO - need to remove unsubscribe from a firebase get - it does not need to be closed.
@@ -81,28 +115,43 @@ export const getItemFromDB = (itemId) => {
 
 
 export const AddReservation = async(reservation) => {
-    await firebase
-                .firestore()
-                .collection('reservations')
-                .add({
+    console.log('reserving');
+    const reservationId = reservation.reservationId ? reservation.reservationId : uuid();
+    
+    return await db.collection('reservations').doc(reservationId)
+                .set({
                     itemName: reservation.itemName, 
+                    itemDesc: reservation.itemDescription,
                     startDateTime: reservation.startDateTime, 
                     endDateTime: reservation.endDateTime,
-                    exchangeMethod: reservation.exchangeMethod, 
+                    selectedExchangeMethod: reservation.selectedExchangeMethod,
+                    exchangeOptions: reservation.exchangeOptions, 
                     totalCost: reservation.totalCost,
-                    deliveryCost: reservation.deliveryCost,
+                    exchangeCost: reservation.exchangeCost,
+                    costHourly: reservation.unitCost,
                     rentalCost: reservation.rentalCost,
-                    renterId: reservation.renterId,
+                    lenderId: reservation.renterId,
                     rentalItemId: reservation.rentalItemId,
                     ownerId: reservation.ownerId
                 })
                 .then((docRef) => {
-                    console.log("success writing document:", docRef.id);
-                    return docRef.id;
+                    console.log(docRef);
+                    console.log("success writing document:");
+                    return null;//docRef.id;
                 })
                 .catch((error) => {
                     console.error(error);
                 });
+}
+
+export const deleteMyReservation = async (reservationId) => {
+    return db.collection('reservations').doc(reservationId).delete()
+    .then(() => {
+        console.log('Document ' + reservationId + 'deleted successfully');
+    })
+    .catch((error) => {
+        console.error('Error removing document: ' + reservationId, error);
+    });
 }
 
 export const getMyReservations = async (userId) => {
@@ -112,15 +161,12 @@ export const getMyReservations = async (userId) => {
 
     let reservationList = [];
 
-    console.log('received reservationList: '+ reservationList);
-
     const query = db.collection('reservations').where('lenderId', '==', userId);
 
     const unsubscribe = await query.get().then((querySnapshot) => {
         // console.log("queried")
         querySnapshot.forEach((doc) => {
             const entry = {"id": doc.id, ...doc.data()};
-            console.log(`entry: ${entry.startDateTime}`);
             reservationList.push(entry);
         });
     })
@@ -129,43 +175,10 @@ export const getMyReservations = async (userId) => {
         console.log("Error getting documents:" + error);
     });
 
-    const notes = {
-
-    
-    // const observer = await query.onSnapshot(querySnapshot => {
-    //     querySnapshot.docChanges().forEach(change => {
-    //         console.log('change');
-    //         console.log(change.doc.id);
-    //         console.log(change.type);
-    //         if (change.type === 'added') {
-    //           console.log('New city: ', change.doc.data());
-    //           const entry = {"id": change.doc.id, ...change.doc.data()};
-    //           reservationList.push(entry);
-    //         }
-    //         if (change.type === 'modified') {
-    //           console.log('Modified city: ', change.doc.data());
-    //           const entry = {"id": change.doc.id, ...change.doc.data()};
-    //           const index = reservationList.findIndex(res => res.id === change.doc.id)
-    //           reservationList[index] = entry;
-    //         }
-    //         if (change.type === 'removed') {
-    //           console.log('Removed city: ', change.doc.data());
-    //           const entry = {"id": change.doc.id, ...change.doc.data()};
-    //           const index = reservationList.findIndex(res => res.id === change.doc.id)
-    //           reservationList[index] = entry;
-    //           reservationList.splice(index, 1);
-    //         }
-    //       })
-
-    // }, err => {
-    //     console.log(`Encountered error: ${err}`);
-    // });
-    }
-
     for (let entry in reservationList) {
 
         const reservation = reservationList[entry];
-        console.log('date conversion entry' + reservation);
+        console.log('date conversion entry ' + reservation.id);
 
 
         if (reservation.startDateTime) {

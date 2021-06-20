@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/storage';
 import 'firebase/functions';
 
 let firebaseConfig = {
@@ -18,14 +19,15 @@ firebase.initializeApp(firebaseConfig);
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-export const db = firebase.firestore();
-export const auth = firebase.auth();
-export const functions = firebase.functions();
+let db = firebase.firestore();
+let auth = firebase.auth();
+let storage = firebase.storage();
+let functions = firebase.functions();
 
 
 // // eslint-disable-next-line no-restricted-globals
 // if (process.env.FIRESTORE_EMULATOR === true) {
-//     console.log('firestore emulator:', process.env.FIRESTORE_EMULATOR_HOST);
+    // console.log('firestore emulator:', process.env.FIRESTORE_EMULATOR_HOST);
     // db.useEmulator('localhost', 8085);
     // auth.useEmulator('http://localhost:9099/', { disableWarnings: true });
     // functions.useEmulator('localhost', 5001);
@@ -33,5 +35,5 @@ export const functions = firebase.functions();
 //     console.log(process.env.FIRESTORE_EMULATOR_HOST);
 //     console.log('emulator not registered');
 // }
-
+export {db, auth, storage, functions}
 export default firebase;

@@ -5,7 +5,7 @@ import SubmitButtons from '../submitButtons';
 import LoginForm from './loginForm';
 import CreateLogin from './createLogin';
 
-
+//FIXME - uncaught error in login rejection
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -60,6 +60,8 @@ class Login extends React.Component {
 
         let userId = await loginWithEmailAndPass(this.state.email, this.state.password);
 
+        // //FIXME - temp fix for auth problem
+        // let userId = 'aQqcGAeDGafhOSQWeXDFA2klpuH2';
         this.props.setCurrentUser(userId);
     }
 
