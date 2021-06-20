@@ -28,7 +28,7 @@ describe('<MyRentaledOutList />', () => {
         rerender(<MyRentedOutList myReservations={myReservations} loading={false}/>);
         
         for (let entry in myReservations) {
-            expect(queryByText(myReservations[entry].itemName)).toBeTruthy;
+            expect(getAllByTestId('itemName')[entry].innerHTML).toBe(myReservations[entry].itemName);
             expect(getAllByTestId('dueSummary')[entry].innerHTML)
             .toBe("Due " + formatShortDate(myReservations[entry].endDateTime));
         }

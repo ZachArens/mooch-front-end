@@ -1,6 +1,7 @@
 import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, 
     formatShortDate, formatCurrency,
-    finalFormatCurrency} from "../rentalFunctions";
+    finalFormatCurrency, displayTime, updateCalculations, 
+    getNewTime, getNewDate} from "../rentalFunctions";
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -143,3 +144,100 @@ describe('finalFormatCurrency', () => {
 
     })
 });
+
+describe('displayTime', () => {
+    test('takes in date and returns a string - HH:mm', () => {
+
+        let time = new Date();
+        let hours = '13';
+        let minutes = '45';
+        time.setHours(hours);
+        time.setMinutes(minutes);
+        expect(displayTime(time)).toBe(`13:45`);
+    });
+
+    test('if hours and time are single digit, inserts a 0', () => {
+        let time = new Date();
+        let hours = '3';
+        let minutes = '5';
+        time.setHours(hours);
+        time.setMinutes(minutes);
+        expect(displayTime(time)).toBe(`03:05`);
+    });
+});
+
+describe('updateCalculations', () => {
+    test('returns correct time for totalTime', () => {
+        const date1 = new Date(2021, 10, 15, 12, 30);
+        const date2 = new Date(2021, 10, 16, 14, 30);
+        const date3 = new Date(2021, 10, 23, 15, 0);
+        const date4 = new Date(2021, 11, 23, 15, 0);
+
+        expect(updateCalculations(date1, date2, 0, 0).totalTime).toBe(hoursTimeDifference(date1, date2));
+        expect(updateCalculations(date1, date3, 0, 0).totalTime).toBe(hoursTimeDifference(date1, date3));
+        expect(updateCalculations(date2, date3, 0, 0).totalTime).toBe(hoursTimeDifference(date2, date3));
+        expect(updateCalculations(date3, date4, 0, 0).totalTime).toBe(hoursTimeDifference(date3, date4));
+        expect(updateCalculations('', date4, 0, 0).totalTime).toBe(0);
+        expect(updateCalculations(date3, '', 0, 0).totalTime).toBe(0);
+    });
+
+    test('returns correct cost for totalCost', () => {
+        const date1 = new Date(2021, 10, 15, 12, 30);
+        const date2 = new Date(2021, 10, 16, 14, 30);
+
+        expect(updateCalculations(date1, date2, 4, 12).totalCost).toBe(hoursTimeDifference(date1, date2)*4 + 12);
+        expect(updateCalculations(date1, date2, 6.50, 0).totalCost).toBe(hoursTimeDifference(date1, date2)*6.50);
+        expect(updateCalculations('', date2, 4, 13).totalCost).toBe(13);
+        expect(updateCalculations(date1, '', 4, 13).totalCost).toBe(13);
+        expect(updateCalculations(date1, date2, 0, 13).totalCost).toBe(13);
+        expect(updateCalculations(date1, date2, 4, 0).totalCost).toBe(hoursTimeDifference(date1, date2) * 4);
+    });
+
+    test('returns correct cost for rentalCost', () => {
+        const date1 = new Date(2021, 10, 15, 12, 30);
+        const date2 = new Date(2021, 10, 16, 14, 30);
+
+        expect(updateCalculations(date1, date2, 4, 0).rentalCost).toBe(hoursTimeDifference(date1, date2)*4);
+        expect(updateCalculations(date1, date2, 6.50, 0).rentalCost).toBe(hoursTimeDifference(date1, date2)*6.50);
+        expect(updateCalculations('', date2, 4, 0).rentalCost).toBe(0);
+        expect(updateCalculations(date1, '', 4, 0).rentalCost).toBe(0);
+        expect(updateCalculations(date1, date2, 0, 0).rentalCost).toBe(0);
+    });
+});
+
+describe('getNewTime', () => {
+    test('updates new time given previous date', () => {
+        const date1 = new Date(2021, 10, 15, 12, 30);
+        const date2 = new Date(2021, 10, 15, 14, 30);
+        const incomingTime = '14:30';
+
+        expect(getNewTime(incomingTime, date1)).toEqual(date2);
+    });
+
+    test('updates new time given no original date', () => {
+        let date2 = new Date();
+        date2.setHours(14);
+        date2.setMinutes(30);
+        const incomingTime = '14:30';
+
+        expect(getNewTime(incomingTime, '')).toEqual(date2);
+    })
+});
+
+describe('getNewDate', () => {
+    test('updates new date given previous date', () => {
+        const date1 = new Date(2021, 5, 19, 12, 30);
+        const date2 = new Date(2021, 5, 21, 12, 30);
+        const incomingDate = '2021-06-21';
+
+        expect(getNewDate(incomingDate, date1)).toEqual(date2);
+    });
+
+    test('updates new date given no original date', () => {
+        let date2 = new Date();
+        date2.setUTCFullYear(2021, 5, 21);
+        const incomingDate = '2021-06-21';
+
+        expect(getNewDate(incomingDate, '')).toEqual(date2);
+    });
+})

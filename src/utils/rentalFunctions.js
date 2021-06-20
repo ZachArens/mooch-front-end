@@ -34,7 +34,9 @@ const rentalTimeAsString = (totalHours) => {
     }
     if (days > 0 && hours > 0) {
         return `${dayString}, ${hourString}`;
-    } else {
+    } else if (days === 0 && hours === 0) {
+        return '0 hrs'
+    }   else {
         return `${dayString}${hourString}`;
     }
 }
@@ -110,4 +112,65 @@ const finalFormatCurrency = (input) => {
 
 }
 
-export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, formatShortDate, formatCurrency, finalFormatCurrency};
+const displayTime = (incomingDate) => {
+    let hours = incomingDate.getHours();
+    hours = hours.toString().length < 2 ? `0${hours.toString()}` : hours ;
+    let minutes = incomingDate.getMinutes();
+    minutes = minutes.toString().length < 2 ? `0${minutes.toString()}` : minutes ;
+    return `${hours}:${minutes}`;
+}
+
+const updateCalculations = (startDateTime, endDateTime, unitCost, exchangeCost) => {
+    // console.log('start: ', startDateTime, 'end: ', endDateTime);
+    
+    let totalTime = startDateTime && endDateTime ? hoursTimeDifference(startDateTime, endDateTime) : 0;
+    let rentalCost = unitCost ? totalTime * unitCost: 0;
+
+    let totalCost;
+
+    if (exchangeCost) {
+        totalCost = rentalCost + exchangeCost;
+    } else {
+        totalCost = rentalCost;
+    }
+
+    return {totalTime, totalCost, rentalCost}
+}
+
+const getNewTime = (incomingTime, originalDate) => {
+    //set startDateTime or create if null
+    let newDate;
+    if (originalDate) {
+        newDate = new Date(originalDate);
+    } else {
+        newDate = new Date();
+    }
+    
+    newDate.setHours(incomingTime.substr(0,2));
+    newDate.setMinutes(incomingTime.substr(3,2));
+
+    return newDate;
+}
+
+const getNewDate = (inputDate, originalDate) => {
+    const incomingDate = new Date(inputDate);
+
+    let newDate;
+    if (originalDate) {
+        newDate = new Date(originalDate);
+    } else {
+        newDate = new Date();
+    }
+
+    newDate.setUTCFullYear(incomingDate.getUTCFullYear(), 
+            incomingDate.getUTCMonth(), 
+            incomingDate.getUTCDate());
+
+    return newDate;
+
+}
+
+export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, 
+    textAbbreviator, formatShortDate, formatCurrency, finalFormatCurrency,
+    displayTime, updateCalculations, getNewTime, getNewDate
+};

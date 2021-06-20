@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {displayTime} from '../../utils/rentalFunctions';
 
 export default class ReserveDetails extends Component {
 
@@ -13,15 +14,15 @@ export default class ReserveDetails extends Component {
 
         const exchangeLabel = () => {
             // console.log('run exchange label');
-            if (this.props.exchangeMethod) {
-                if (this.props.exchangeMethod === 'delivery') {
-                    return 'Delivery';
+            if (this.props.selectExchangeMethod) {
+                if (this.props.selectExchangeMethod === 'delivery') {
+                    return `Delivery $${this.props.exchangeOptions.delivery}`;
                 } 
-                if (this.props.exchangeMethod === 'meetup') {
-                    return 'Public Meetup';
+                if (this.props.selectExchangeMethod === 'meetup') {
+                    return `Public Meet-Up $${this.props.exchangeOptions.meetup}`;
                 }
-                if (this.props.exchangeMethod === 'pickup') {
-                    return 'Pick Up';
+                if (this.props.selectExchangeMethod === 'pickup') {
+                    return `Pick-Up $${this.props.exchangeOptions.pickup}`;
                 }
             } 
             return 'Select Exchange Method'
@@ -67,9 +68,8 @@ export default class ReserveDetails extends Component {
 
                     <label htmlFor="startTime">Start Time
                         <input type="time" id="startTime" data-testid="startTimeInput" 
-                    // this.props.startDate ? this.props.startDate : 
-                    value={this.props.startDateTime ? this.props.startDateTime.toISOString().substr(11, 15): ''} 
-                    onChange={(e) => {this.props.updateStartTime(e)}}/>
+                            value={this.props.startDateTime ? displayTime(this.props.startDateTime): ''} 
+                            onChange={(e) => {this.props.updateTime(e)}}/>
                     </label>
                     
                     <label htmlFor="endDate">End Date
@@ -81,8 +81,8 @@ export default class ReserveDetails extends Component {
 
                     <label htmlFor="endTime">End Time
                         <input type="time" id="endTime" data-testid="endTimeInput" 
-                        value={this.props.endDateTime ? this.props.endDateTime.toISOString().substr(11, 15): ''} 
-                        onChange={(e) => {this.props.updateEndTime(e)}}
+                        value={this.props.endDateTime ? displayTime(this.props.endDateTime): ''} 
+                        onChange={(e) => {this.props.updateTime(e)}}
                         />
                     </label>
                     
