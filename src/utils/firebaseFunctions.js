@@ -1,15 +1,13 @@
 import firebase, {db, storage, auth} from './firebase';
 import { v4 as uuid } from 'uuid';
 
-export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions, photos, itemId) => {
-    console.log("add item to db: " + itemId);
+export const AddRentalItem = async(title, description, itemRate, exchangeOptions) => {
+    // console.log("add item to db: " + exchangeOptions.delivery);
     
     await firebase
                 .firestore()
                 .collection('rentalItems')
-                .doc(itemId)
-                .set({
-                    ownerId: ownerId,
+                .add({
                     itemName: title, 
                     itemDesc: description, 
                     costHourly: itemRate,
@@ -93,6 +91,7 @@ export const GetRentalItems = async(userId) => {
     return [ unsubscribe, rentalItemsList ];
 
 
+    // return {unsubscribe, rentalItemsList};
 }
 
 export const getItemFromDB = (itemId) => {
@@ -115,13 +114,10 @@ export const getItemFromDB = (itemId) => {
 
 
 export const AddReservation = async(reservation) => {
-    console.log('reserving');
-    const reservationId = reservation.reservationId ? reservation.reservationId : uuid();
-    
-    return await db.collection('reservations').doc(reservationId)
-                .set({
-                    itemName: reservation.itemName, 
-                    itemDesc: reservation.itemDescription,
+    await firebase
+                .firestore()
+                .collection('reservations')
+                .add({
                     startDateTime: reservation.startDateTime, 
                     endDateTime: reservation.endDateTime,
                     selectedExchangeMethod: reservation.selectedExchangeMethod,
@@ -130,9 +126,8 @@ export const AddReservation = async(reservation) => {
                     exchangeCost: reservation.exchangeCost,
                     costHourly: reservation.unitCost,
                     rentalCost: reservation.rentalCost,
-                    lenderId: reservation.renterId,
-                    rentalItemId: reservation.rentalItemId,
-                    ownerId: reservation.ownerId
+                    ownerId: reservation.ownerId,
+                    rentalItemId: reservation.rentalItemId
                 })
                 .then((docRef) => {
                     console.log(docRef);
@@ -143,59 +138,6 @@ export const AddReservation = async(reservation) => {
                     console.error(error);
                 });
 }
-
-export const deleteMyReservation = async (reservationId) => {
-    return db.collection('reservations').doc(reservationId).delete()
-    .then(() => {
-        console.log('Document ' + reservationId + 'deleted successfully');
-    })
-    .catch((error) => {
-        console.error('Error removing document: ' + reservationId, error);
-    });
-}
-
-export const getMyReservations = async (userId) => {
-    if (userId.length < 1) {
-        return null;
-    }
-
-    let reservationList = [];
-
-    const query = db.collection('reservations').where('lenderId', '==', userId);
-
-    const unsubscribe = await query.get().then((querySnapshot) => {
-        // console.log("queried")
-        querySnapshot.forEach((doc) => {
-            const entry = {"id": doc.id, ...doc.data()};
-            reservationList.push(entry);
-        });
-    })
-    .catch((error) => {
-        //TODO - security, do not publish error details to console
-        console.log("Error getting documents:" + error);
-    });
-
-    for (let entry in reservationList) {
-
-        const reservation = reservationList[entry];
-        console.log('date conversion entry ' + reservation.id);
-
-
-        if (reservation.startDateTime) {
-            console.log('converting start date');
-            reservation.startDateTime = new Date(reservation.startDateTime.seconds * 1000);
-        }
-
-        if (reservation.endDateTime) {
-            reservation.endDateTime = new Date(reservation.endDateTime.seconds * 1000);
-        }
-    }
-
-    return [unsubscribe, reservationList];
-
-}
-
-
 
 export const loginWithEmailAndPass = async (email, password) => {
     //https://firebase.google.com/docs/auth/web/password-auth
@@ -222,7 +164,7 @@ export const createUserWithEmailandPass = (email, password) => {
             return userCredential.user.uid;
         })
         .catch((error) => {
-            return error.message;
+            this.setState({errMsg: error.message});
         });
 }
 
@@ -234,22 +176,4 @@ export const getCurrentUserId = () => {
     } else {
         return null;
     }
-}
-
-export const addUserDetails = async (userDetails) => {
-    await firebase
-    .firestore()
-    .collection('userProfiles').doc(userDetails.uid)
-    .set({
-        fullName: userDetails.fullName, 
-        streetAddress: userDetails.streetAddress,
-        city: userDetails.city, 
-        st: userDetails.st,
-        zip: userDetails.zip, 
-        phone: userDetails.phone,
-    })
-    .catch((error) => {
-        console.error(error);
-    });
-
 }

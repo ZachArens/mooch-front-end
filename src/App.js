@@ -4,7 +4,7 @@ import Login from './components/Login/login';
 import AddItem from './components/AddEditItems/addItem';
 import ReserveItem from './components/Reservations/reserveItem';
 import Home from './components/home';
-import MyRentals from "./components/MyRentals/myRentals";
+import MyRentals from "./components/myRentals";
 import './App.scss';
 import 'bootstrap';
 import {BrowserRouter as Router, NavLink, Route, Switch} from "react-router-dom";
@@ -112,9 +112,7 @@ class App extends Component {
                         <Login setCurrentUser={this.setCurrentUser} returnTo='/'/>
                     </Route>
                     <Route path="/addItems">
-                        {this.state.currentUser && <AddItem currentUser={this.state.currentUser}/>}
-                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/addItems' />}
-
+                        <AddItem/>
                     </Route>
                     <Route path="/reserveItem">
                         {this.state.currentUser && <ReserveItem currentRentalItem={this.state.currentRentalItem} 
