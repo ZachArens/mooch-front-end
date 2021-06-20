@@ -19,8 +19,12 @@ describe('<Login />', () => {
         expect(queryAllByRole('input')).toBe(2);
     });
 
-    test('<Login /> logs a user in', () => {
-        const {queryByTestId} = render(<Login />);
+    test.skip('<Login /> logs a user in', () => {
+        const {queryByTestId} = render(
+            <MemoryRouter>
+                <Login/>
+            </MemoryRouter>
+        );
 
         const email = "test@testemail.com";
         const password = "1234asdfas"
@@ -40,11 +44,26 @@ describe('<Login />', () => {
 
     });
 
-    test('<Login /> can create a new user login', () => {
-        const {queryByTestId} = render(<Login />);
+    test.skip('<Login /> can create a new user login', () => {
+        const {queryByTestId, debug} = render(
+            <MemoryRouter>
+                <Login/>
+            </MemoryRouter>
+        );
 
-        const email = "test@testemail.com";
-        const password = "1234asdfas"
+        const fakeUser = {
+            uid: "user123",
+            email: "test@testemail.com",
+            password: "1234asdfas",
+            fullName: "Testy Testerson",
+            streetAddress: "123 Sample Data Dr.",
+            city: "Testerville",
+            st: "TX",
+            zip: "12345",
+            phone: "555-555-5555"
+        };
+
+        fireEvent.click(queryByTestId('loginOrCreateButton'));
 
         fireEvent.click(queryByTestId(loginOrCreateButton));
 

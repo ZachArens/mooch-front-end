@@ -1,20 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 <<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
+<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
+=======
+>>>>>>> login-needs-fixing:src/tests/addItem.test.js
 import AddItem from '../addItem';
 import { MemoryRouter } from 'react-router-dom';
 import {render, fireEvent} from '@testing-library/react';
 import { AddRentalItem } from '../../../utils/firebaseFunctions';
+<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
 =======
 import AddItem from '../components/addItem';
 
 import {render, fireEvent} from '@testing-library/react';
 >>>>>>> parent of d9c3eff (updated myRentedOutList to retrieve items from firebase and built tests for component):src/tests/addItem.test.js
+=======
+>>>>>>> login-needs-fixing:src/tests/addItem.test.js
 // import '@testing-library/react/dont-cleanup-after-each';
 
 //TODO - need more help or research on mocking to isolate from firebase and editTitleDesc
 
 <<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
+<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
+=======
+>>>>>>> login-needs-fixing:src/tests/addItem.test.js
 jest.mock('../../../utils/firebaseFunctions');
 
 describe('<AddItem />', () => {
