@@ -5,7 +5,7 @@ import SubmitButtons from '../submitButtons';
 import LoginForm from './loginForm';
 import CreateLogin from './createLogin';
 
-
+//FIXME - uncaught error in login rejection
 class Login extends React.Component {
     constructor(props) {
         super(props);
