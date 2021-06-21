@@ -115,18 +115,25 @@ class App extends Component {
                         <AddItem/>
                     </Route>
                     <Route path="/reserveItem">
-                        {this.state.currentUser && <ReserveItem currentRentalItem={this.state.currentRentalItem} 
+                        
+                        {<ReserveItem currentRentalItem={this.state.currentRentalItem} 
                         currentUser={this.state.currentUser}
                         reservation={undefined} />}
-                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/reserveItem' />}
+                        {/* {this.state.currentUser && <ReserveItem currentRentalItem={this.state.currentRentalItem} 
+                        currentUser={this.state.currentUser}
+                        reservation={undefined} />} */}
+                        {/* {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/reserveItem' />} */}
 
                     </Route>
                     <Route path="/myRentals">
-                        {this.state.currentUser && 
+                        {<MyRentals currentUser={this.state.currentUser} 
+                            updateCurrentItem={this.state.currentRentalItem}
+                            />}
+                        {/* {this.state.currentUser && 
                             <MyRentals currentUser={this.state.currentUser} 
                             updateCurrentItem={this.state.currentRentalItem}
                             />}
-                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/myRentals' />}
+                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/myRentals' />} */}
                         
                     </Route>
                     <Route path="/">

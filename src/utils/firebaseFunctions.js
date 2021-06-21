@@ -215,10 +215,9 @@ export const loginWithEmailAndPass = async (email, password) => {
     });
 };
 
-export const createUserWithEmailandPass = (email, password) => {
-    let user = null;
+export const createUserWithEmailandPass = async (email, password) => {
     //create user in firebase.auth
-    auth.createUserWithEmailAndPassword(email, password)
+    return auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
             return userCredential.user.uid;
         })

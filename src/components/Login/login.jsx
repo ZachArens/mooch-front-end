@@ -84,7 +84,7 @@ class Login extends React.Component {
 
        let userId = createUserWithEmailandPass(this.state.email, this.state.password);
 
-       this.props.setCurrentUser("user123");
+       this.props.setCurrentUser(userId.uid);
         // console.log(`logged in as ${this.state.user}`); //.displayName} - ${user.uid}`);
         //Add display name to auth token
         //FIXME - need to test if working

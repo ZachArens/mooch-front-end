@@ -19,10 +19,10 @@ firebase.initializeApp(firebaseConfig);
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-export const db = firebase.firestore();
-export const auth = firebase.auth();
-export const storage = firebase.storage();
-export const functions = firebase.functions();
+let db = firebase.firestore();
+let auth = firebase.auth();
+let storage = firebase.storage();
+let functions = firebase.functions();
 
 
 // // eslint-disable-next-line no-restricted-globals
