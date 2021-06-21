@@ -27,7 +27,7 @@ describe('<MyItemsList />', () => {
         rerender(<MyItemsList myItems={myItems} loading={false}/>);
         
         for (let entry in myItems) {
-            expect(getAllByTestId('itemName')[entry].innerHTML).toBe(myItems[entry].itemName);
+            expect(queryByText(myItems[entry].itemName)).toBeTruthy;
             expect(queryByText(myItems[entry].itemDesc)).toBeTruthy();
             expect(queryByText(myItems[entry].costHourly)).toBeTruthy();
         }

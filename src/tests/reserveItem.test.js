@@ -1,9 +1,11 @@
 import React from 'react';
 import {fireEvent, cleanup, render, queryAllByTestId} from '@testing-library/react';
+import { screen } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 
 import ReserveItem from '../components/reserveItem';
 import {AddReservation, getItemFromDB} from '../utils/firebaseFunctions.js';
-import { get } from 'jquery';
 
 const fakeItemDetails = {
         itemId: "12345abcdef",
@@ -81,6 +83,25 @@ describe('<ReserveItem />', () => {
         // console.log(queryByTestId('startDateInput').value);
 
         // expect(queryByTestId('startDateInput').value).toEqual(newDate.toString());
+    });
+    
+    test('updating start date-time should update component', () => {
+
+        //updating start date-time should update displayed start date-time, total time label, and recalculate rentalCost and totalCost
+
+        const {getByTestId, queryByTestId, debug, rerender} = render(<ReserveItem currentRentalItem={fakeItemDetails.itemId} />);
+        let newDate = new Date();
+        newDate.setDate(newDate.getDate() + 3);
+        const newDateStr = newDate.toISOString().substr(0,10);
+
+        
+        userEvent.type(screen.queryByTestId('startDateInput'), '09182021330')
+
+
+        // debug();
+        console.log(queryByTestId('startDateInput').value);
+
+        expect(screen.queryByTestId('startDateInput')).toHaveValue(newDate.toString());
         // expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('0 hrs');
         // expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$0')
         
@@ -90,16 +111,26 @@ describe('<ReserveItem />', () => {
         // debug();
     });
 
+    test.todo('updating end date-time should update component');
+
+        //updating end date-time should update displayed end date-time, total time label, and recalculate rentalCost and totalCost
+
+    test.todo('reserve button should not fire if the required data for a reservation is not completed');
+
     //thanks Dr. Kurmas!
     test('the mock setup', () => {
         // console.log("Testing the mock setup.");
-
+        AddReservation.mockImplementation(() => { 
+            // console.log("Running mock AddReservation");
+            return 'Yup';
+        });
         // console.log(AddReservation);
 
-        AddReservation('Tokyo');
+        let answer = AddReservation('Tokyo');
 
         expect(AddReservation).toHaveBeenCalled();
         expect(AddReservation).toHaveBeenLastCalledWith("Tokyo");
+        expect(answer).toBe('Yup');
 
     });
 
@@ -114,19 +145,19 @@ describe('<ReserveItem />', () => {
         expect(getItemFromDB).toHaveBeenLastCalledWith(itemId);
     });
 
-    // test('renders and sets the itemName, itemDesc, itemCost, and exchangeMethodCosts', () => {
-    //     const fakeItemId = "12345678"
+    test('should render component with itemName, itemDesc, itemCost, and exchangeMethodCosts', () => {
+        const fakeItemId = "12345678"
 
         
 
-    //     render(<ReserveItem currentRentalItem={fakeItemId} />);
+        render(<ReserveItem currentRentalItem={fakeItemId} />);
 
-    //     expect(getItemFromDB).toHaveBeenCalled();
-    //     expect(getItemFromDB).toHaveBeenLastCalledWith(fakeItemId);
-    //     expect(getItemFromDB).toHaveReturnedWith(fakeItemDetails);
-    // });
+        expect(getItemFromDB).toHaveBeenCalled();
+        expect(getItemFromDB).toHaveBeenLastCalledWith(fakeItemId);
+        expect(getItemFromDB).toHaveReturnedWith(fakeItemDetails);
+    });
 
-    // test('clicking Reserve fires the AddReservation function to add the res. the db', () => {
+    test.todo('clicking Reserve fires the AddReservation function to add the res. the db') //, () => {
         
     //     let start = new Date(2021, 0, 17);
     //     let end = new Date(2021, 0, 19);
@@ -171,68 +202,4 @@ describe('<ReserveItem />', () => {
 
     // });
 
-    
-
-    // test('updates startDate values when startDate is updated', () => {
-        
-    //     const {getByTestId, debug} = render (<ReserveItem />);
-        
-    //     let today = new Date()
-    //     let todayStr = today.toString();
-    //     let startDate = new Date(2021, 7, 13);
-        
-
-    //     const startDateField = getByTestId('startDateInput');
-        
-
-    //     expect(startDateField.defaultValue).toEqual(todayStr);
-
-    //     let newDate = new Date();
-    //     let newDateStr = newDate.toString();
-    //     console.log(newDateStr);
-    //     console.log(startDateField.defaulValue);
-
-    //     fireEvent.change(startDateField, {
-    //         target: {defaulValue: newDateStr},
-    //     });
-        
-    //     debug();
-    //     expect(startDateField.defaultValue).toEqual(newDateStr);
-    //     //expect(fireEvent.change(startDateField, { target: { value: dateText } })).toBeTruthy();
-
-    //     //console.log(startDateField.target.value);
-    //     //expect(startDateField.defaultValue).toBe(newDateStr);
-
-    // });
-
-    // test('updates endDate values when endDate is updated', () => {
-    //     const {getByTestId} = render(<ReserveItem />);
-        
-    //     let tomorrow = new Date();
-    //     tomorrow.setDate(tomorrow.getDate() + 1);
-    //     let tomorrowStr = tomorrow.toString();
-    //     let endDate = new Date(2021, 7, 13);
-
-    //     const endDateField = getByTestId('endDateInput');
-    //     // debug();
-
-    //     expect(endDateField.defaultValue).toEqual(tomorrowStr);
-
-    //     let dateText = "2021-10-24"
-    //     let newDate = new Date(dateText);
-    //     let newDateStr = newDate.toString();
-
-    //     //expect(fireEvent.change(endDateField, { target: { value: dateText } })).toBeTruthy();
-
-    //     //expect(endDateField.defaultValue).toBe(newDateStr);
-
-    //     //check that it does not update end date if less than start date
-    //     dateText = "2021-03-24"
-    //     let newDate2 = new Date(dateText);
-    //     let newDateStr2 = newDate2.toString();
-
-    //     expect(fireEvent.change(endDateField, { target: { value: dateText } })).toBeTruthy();
-    //     expect(endDateField.defaultValue).not.toBe(newDateStr2);
-
-    // });
 });

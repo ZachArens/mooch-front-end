@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {rentalTimeAsString} from "../../utils/rentalFunctions";
+import {rentalTimeAsString} from "../utils/rentalFunctions";
 
 export default class TotalBox extends Component {
 
@@ -17,7 +17,7 @@ export default class TotalBox extends Component {
                             <td data-testid="rentalCostLabel">{`$${this.props.rental_cost}`}</td>
                         </tr>
                         <tr>
-                            <td data-testid="exchangeCostLabel">{this.props.selectedExchangeMethod}</td>
+                            <td data-testid="exchangeCostLabel">Delivery</td>
                             <td data-testid="exchangeCost">{`$${this.props.delivery_cost}`}</td>
                         </tr>
                         <tr>

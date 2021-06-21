@@ -1,29 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
-<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
-=======
->>>>>>> login-needs-fixing:src/tests/addItem.test.js
+
 import AddItem from '../addItem';
+
 import { MemoryRouter } from 'react-router-dom';
 import {render, fireEvent} from '@testing-library/react';
 import { AddRentalItem } from '../../../utils/firebaseFunctions';
-<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
-=======
-import AddItem from '../components/addItem';
 
-import {render, fireEvent} from '@testing-library/react';
->>>>>>> parent of d9c3eff (updated myRentedOutList to retrieve items from firebase and built tests for component):src/tests/addItem.test.js
-=======
->>>>>>> login-needs-fixing:src/tests/addItem.test.js
 // import '@testing-library/react/dont-cleanup-after-each';
 
 //TODO - need more help or research on mocking to isolate from firebase and editTitleDesc
 
-<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
-<<<<<<< HEAD:src/components/AddEditItems/__tests__/addItem.test.js
-=======
->>>>>>> login-needs-fixing:src/tests/addItem.test.js
 jest.mock('../../../utils/firebaseFunctions');
 
 describe('<AddItem />', () => {
@@ -38,7 +25,7 @@ describe('<AddItem />', () => {
         );
     });
 
-    test.skip('can call AddRentalItem to add an item to the database', () => {
+    test('can call AddRentalItem to add an item to the database', () => {
         const fakeItem = {
             ownerId: "user123",
             title: "Example Item",
@@ -59,7 +46,7 @@ describe('<AddItem />', () => {
         fireEvent.change(getByPlaceholderText("Title"), { target: {value: fakeItem.title}});
         fireEvent.change(getByPlaceholderText("Enter a description here"), { target: {value: fakeItem.description}});
         fireEvent.change(getByTestId("itemRate"), { target: {value: fakeItem.hourlyRate}});
-        expect(getByTestId("itemRate")).toHaveValue(fakeItem.hourlyRate.toString());
+        expect(getByTestId("itemRate")).toHaveValue(fakeItem.hourlyRate);
         fireEvent.change(getByTestId("deliveryCost"), { target: {value: fakeItem.deliveryFee}});
         fireEvent.change(getByTestId("meetupCost"), { target: {value: fakeItem.meetupFee}});
         fireEvent.change(getByTestId("pickupCost"), { target: {value: fakeItem.pickupFee}});
@@ -73,7 +60,7 @@ describe('<AddItem />', () => {
 
     });
 
-    test.skip('allows a value for title of 25 chars or less', () => {
+    test('allows a value for title of 25 chars or less', () => {
         const {getByPlaceholderText,getByTestId} = render(
             <MemoryRouter>
                 <AddItem />
@@ -100,14 +87,8 @@ describe('<AddItem />', () => {
             fireEvent.change(title, { target: {defaultValue: notOkText[text] }});
             expect(message.innerHTML).toContain('The title may not be greater than  25 characters.');
         }
-=======
-test("renders without crashing", () => {
-    // const div = document.createElement("div");
-    // ReactDOM.render(<AddItem />, div);
-
-    render(<AddItem />);
+    });
 });
->>>>>>> parent of d9c3eff (updated myRentedOutList to retrieve items from firebase and built tests for component):src/tests/addItem.test.js
 
 describe('addItem validates and sanitizes all values for text inputs', () => {
 

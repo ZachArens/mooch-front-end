@@ -2,14 +2,14 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import EditTitleDesc from "./editTitleDesc";
 import SubmitButtons from '../submitButtons';
-import {storage} from "../../utils/firebase";
-import { AddRentalItem as AddToDB, addPhotosToFB, getItemFromDB} from "../../utils/firebaseFunctions";
+// import firebase from "../utils/firebase";
+import { AddRentalItem as AddToDB, addPhotosToFB} from "../../utils/firebaseFunctions";
 import {formatCurrency, finalFormatCurrency} from '../../utils/rentalFunctions';
 import SimpleReactValidator from 'simple-react-validator';
 import '../../styles/addItem.scss';
 
 import AddPhoto from './addPhoto';
-
+// import {storage} from '../../utils/firebase';
 
 
 //TEMPLATE from SimpleReactValidator documentation
@@ -131,9 +131,7 @@ class AddItem extends React.Component {
                 this.state.description, 
                 this.state.itemRate, 
                 this.state.exchangeOptions,
-                this.state.photos,
-                this.props.currentItem
-                );
+                this.state.photos);
             this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
 
             const { history } = this.props;
@@ -142,8 +140,6 @@ class AddItem extends React.Component {
             this.validator.showMessages();
             this.forceUpdate();
         }
-
-        this.props.updateSelectedId('');
 
     }
 
@@ -159,35 +155,12 @@ class AddItem extends React.Component {
         photos: []
         } );
 
-        this.props.updateSelectedId('');
-
         const { history } = this.props;
         if (history) history.push('/myRentals');
     }
 
-    async componentDidMount() {
-        if (this.props.currentItem) {
-            const itemDetails = await getItemFromDB(this.props.currentItem);
-
-            console.log(itemDetails);
-            let photos = [];
-
-            if (itemDetails.photos) {
-                photos = [...itemDetails.photos]
-            }
-
-            this.setState({
-                ownerId: itemDetails.ownerId,
-                title: itemDetails.itemName,
-                description: itemDetails.itemDesc,
-                itemRate: itemDetails.costHourly,
-                exchangeOptions: itemDetails.exchangeOptions,
-                photos: photos
-            })
-        }
-    }
-
     render() {
+        console.log('photos state: ', this.state.photos);
         return(
             <form className="container" >
 
@@ -218,7 +191,7 @@ class AddItem extends React.Component {
                         uploadPhoto={this.uploadPhoto}
                         deletePhoto={this.deletePhoto}
                     />
-                    <SubmitButtons submitTitle={!this.props.currentItem ? "Add" : "Edit"}
+                    <SubmitButtons submitTitle="Add" 
                         cancelTitle="Cancel"
                         submitFn={this.onSubmit.bind(this)}
                         cancelFn={this.clearForm.bind(this)}

@@ -5,7 +5,7 @@ export default class AddPhoto extends Component {
 
     render() {        
         let images;
-        // console.log(this.props.photos.length);
+        console.log(this.props.photos.length);
         if (this.props.photos.length > 0) {
             
             images = this.props.photos.map((image) => 

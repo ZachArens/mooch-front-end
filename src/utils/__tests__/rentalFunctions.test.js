@@ -1,17 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> login-needs-fixing
 import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, 
     formatShortDate, formatCurrency,
     finalFormatCurrency, displayTime, updateCalculations, 
     getNewTime, getNewDate} from "../rentalFunctions";
-<<<<<<< HEAD
-=======
-import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator} from "../rentalFunctions";
->>>>>>> parent of d9c3eff (updated myRentedOutList to retrieve items from firebase and built tests for component)
-=======
->>>>>>> login-needs-fixing
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -92,7 +82,6 @@ describe('textAbbreviator', () => {
     });
 
 });
-<<<<<<< HEAD
 
 describe('formatShortDate', () => {
     test('accepts a js date type and returns date formatted MM/DD/YYYY for rentalSummary', () => {
@@ -251,10 +240,4 @@ describe('getNewDate', () => {
 
         expect(getNewDate(incomingDate, '')).toEqual(date2);
     });
-<<<<<<< HEAD
-})
-=======
->>>>>>> parent of d9c3eff (updated myRentedOutList to retrieve items from firebase and built tests for component)
-=======
-})
->>>>>>> login-needs-fixing
+});

@@ -3,6 +3,7 @@ import MyRentedOutList from "./myRentedOutList";
 import MyItemsList from './myItemsList';
 import { GetRentalItems, getMyReservations } from "../../utils/firebaseFunctions";
 import { withRouter } from 'react-router-dom';
+import faker from 'faker';
 
 let unsubscribeReservations = null;
 let unsubscribeItems = null;
@@ -24,7 +25,6 @@ class MyRentals extends React.Component {
     }
 
     goAddItem = () => {
-        // this.props.updateCurrentItem('');
         const { history } = this.props;
         if (history) history.push('/addItems');
     }
@@ -80,16 +80,11 @@ class MyRentals extends React.Component {
             <div>
                 <h1>Things I've Rented Out</h1>
                 <MyRentedOutList myReservations={this.state.myReservations} 
-                    loading={this.state.reservationsLoading} 
-                    currentUser={this.props.currentUser}/>
+                    loading={this.state.reservationsLoading} />
 
                 <h1>My Items</h1>
                 <button data-testid="addItemButton" onClick={this.goAddItem}>+</button>
-                <MyItemsList myItems={this.state.myItems} 
-                    loading={this.state.itemsLoading}
-                    currentUser={this.props.currentUser}
-                    updateCurrentItem={this.props.updateCurrentItem}
-                    />
+                <MyItemsList myItems={this.state.myItems} loading={this.state.itemsLoading}/>
             </div>
         );
     }

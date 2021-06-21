@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import Login from './components/Login/login';
 import AddItem from './components/AddEditItems/addItem';
-import ReserveItem from './components/Reservations/reserveItem';
+import ReserveItem from './components/reserveItem';
 import Home from './components/home';
 import MyRentals from "./components/myRentals";
 import './App.scss';
@@ -20,22 +20,15 @@ class App extends Component {
     this.state = {
       currentUser: "",
       currentRentalItem: "",
-      currentReservation: '',
     };
 
     this.updateCurrentItem = this.updateCurrentItem.bind(this);
-    this.updateCurrentReservation = this.updateCurrentReservation.bind(this);
     this.setCurrentUser = this.setCurrentUser.bind(this);
     this.logout = this.logout.bind(this);
   }
 
   updateCurrentItem = (rentalItemId) => {
     this.setState({currentRentalItem: rentalItemId});
-  }
-
-  updateCurrentReservation = (reservationId) => {
-    this.setState({currentReservation: reservationId});
-    console.log(this.state.currentReservation);
   }
 
   setCurrentUser = (userId) => {
@@ -115,25 +108,14 @@ class App extends Component {
                         <AddItem/>
                     </Route>
                     <Route path="/reserveItem">
-                        
-                        {<ReserveItem currentRentalItem={this.state.currentRentalItem} 
-                        currentUser={this.state.currentUser}
-                        reservation={undefined} />}
-                        {/* {this.state.currentUser && <ReserveItem currentRentalItem={this.state.currentRentalItem} 
-                        currentUser={this.state.currentUser}
-                        reservation={undefined} />} */}
-                        {/* {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/reserveItem' />} */}
+                        {this.state.currentUser && <ReserveItem currentRentalItem={this.state.currentRentalItem} 
+                        currentUser={this.state.currentUser}/>}
+                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/reserveItem' />}
 
                     </Route>
                     <Route path="/myRentals">
-                        {<MyRentals currentUser={this.state.currentUser} 
-                            updateCurrentItem={this.state.currentRentalItem}
-                            />}
-                        {/* {this.state.currentUser && 
-                            <MyRentals currentUser={this.state.currentUser} 
-                            updateCurrentItem={this.state.currentRentalItem}
-                            />}
-                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/myRentals' />} */}
+                        {this.state.currentUser && <MyRentals currentUser={this.state.currentUser} />}
+                        {!this.state.currentUser && <Login setCurrentUser= {this.setCurrentUser} returnTo='/myRentals' />}
                         
                     </Route>
                     <Route path="/">

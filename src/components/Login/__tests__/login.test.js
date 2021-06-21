@@ -19,7 +19,7 @@ describe('<Login />', () => {
         expect(queryAllByRole('input')).toBe(2);
     });
 
-    test.skip('<Login /> logs a user in', () => {
+    test('<Login /> logs a user in', () => {
         const {queryByTestId} = render(
             <MemoryRouter>
                 <Login/>
@@ -30,11 +30,11 @@ describe('<Login />', () => {
         const password = "1234asdfas"
 
         fireEvent.change(queryByTestId("email"), {
-            target: {value: email},
+            target: {defaultValue: email},
         });
 
         fireEvent.change(queryByTestId("password"), {
-            target: {value: password},
+            target: {defaultValue: password},
         });
 
         fireEvent.click(queryByTestId(submitButton));
@@ -44,7 +44,7 @@ describe('<Login />', () => {
 
     });
 
-    test.skip('<Login /> can create a new user login', () => {
+    test('<Login /> can create a new user login', () => {
         const {queryByTestId, debug} = render(
             <MemoryRouter>
                 <Login/>
