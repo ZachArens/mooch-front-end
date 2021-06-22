@@ -4,7 +4,7 @@ import {storage} from '../../utils/firebase';
 import EditTitleDesc from "./editTitleDesc";
 import SubmitButtons from '../submitButtons';
 // import firebase from "../utils/firebase";
-import { AddRentalItem as AddToDB, addPhotosToFB, getItemFromDB} from "../../utils/firebaseFunctions";
+import { AddRentalItem as AddToDB, addPhotosToFB} from "../../utils/firebaseFunctions";
 import {formatCurrency, finalFormatCurrency} from '../../utils/rentalFunctions';
 import SimpleReactValidator from 'simple-react-validator';
 import '../../styles/addItem.scss';
@@ -128,13 +128,14 @@ class AddItem extends React.Component {
         if (this.validator.allValid()) {
             //FIXME - need test to display correct error message
             // console.log('adding item for: ', this.props.currentUser);
-            AddToDB(this.props.currentUser, 
+            AddToDB(this.props.currentItem ? this.props.currentItem.ownerId : this.props.currentUser, 
                 this.state.title, 
                 this.state.description, 
                 this.state.itemRate, 
                 this.state.exchangeOptions,
                 this.state.photos,
-                this.props.currentItem);
+                this.currentItem ? this.props.currentItem.id : undefined
+                );
             this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
 
             const { history } = this.props;

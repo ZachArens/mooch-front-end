@@ -2,13 +2,14 @@ import firebase, {db, storage, auth} from './firebase';
 import { v4 as uuid } from 'uuid';
 
 export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions, photos, itemId) => {
-    // console.log("add item to db: " + exchangeOptions.delivery);
-    const thisItemId = itemId ? itemId : undefined;
-    await firebase
+    console.log("add item to db: " + itemId);
+    if (itemId) {
+        console.log('updating');
+        await firebase
                 .firestore()
                 .collection('rentalItems')
-                .doc(thisItemId)
-                .set({
+                .doc(itemId)
+                .update({
                     ownerId: ownerId,
                     itemName: title, 
                     itemDesc: description, 
@@ -27,6 +28,33 @@ export const AddRentalItem = async(ownerId, title, description, itemRate, exchan
                 .catch((error) => {
                     console.error(error);
                 });
+    } else {
+        console.log('adding');
+
+        await firebase
+                .firestore()
+                .collection('rentalItems')
+                .add({
+                    ownerId: ownerId,
+                    itemName: title, 
+                    itemDesc: description, 
+                    costHourly: itemRate,
+                    exchangeOptions: {
+                        delivery: exchangeOptions.delivery,
+                        meetup: exchangeOptions.meetup,
+                        pickup: exchangeOptions.pickup
+                    },
+                    photos: [...photos]
+                })
+                // .then((docRef) => {
+                //     console.log("success writing document:", docRef.id);
+                //     return docRef.id;
+                // })fd
+                .catch((error) => {
+                    console.error(error);
+                });
+    }
+    
 }
 
 export const addPhotosToFB = async (currentUser, file, updatePhotoState) => {
@@ -61,7 +89,7 @@ export const addPhotosToFB = async (currentUser, file, updatePhotoState) => {
 }
 
 //TODO - need to remove unsubscribe from a firebase get - it does not need to be closed.
-export const GetRentalItems = async(userId) => {
+export const GetRentalItems = async( updateRentalItems, userId ) => {
 
     let rentalItems;
     //TODO - need unsubscribe
@@ -73,27 +101,21 @@ export const GetRentalItems = async(userId) => {
 
     // const rentalItems = db.collection("rentalItems").limit(24);
 
-    let rentalItemsList = [];
-    const unsubscribe = await rentalItems.get().then((querySnapshot) => {
+    return rentalItems.onSnapshot((snapshot) => {
         // console.log("queried")
-        querySnapshot.forEach((doc) => {
-            const entry = {"id": doc.id, ...doc.data()};
+        let rentalItemsList = [];
+        snapshot.docChanges().forEach((change) => {
+            const entry = {"id": change.doc.id, ...change.doc.data()};
             // console.log(`entry: ${entry.id}`);
-            rentalItemsList.push(entry);
+            const index = rentalItemsList.indexOf(change.doc.id)
+            if (index > -1) {
+                rentalItemsList[index] = entry;
+            } else {
+                rentalItemsList.push(entry);
+            }
         });
-
-    })
-    .catch((error) => {
-        //TODO - security, do not publish error details to console
-        console.log("Error getting documents:" + error);
-        // return { () => {}, [] };
+        updateRentalItems(rentalItemsList);
     });
-
-
-    return [ unsubscribe, rentalItemsList ];
-
-
-    // return {unsubscribe, rentalItemsList};
 }
 
 export const getItemFromDB = (itemId) => {
@@ -152,64 +174,39 @@ export const getMyReservations = async (userId) => {
     const unsubscribe = await query.get().then((querySnapshot) => {
         // console.log("queried")
         querySnapshot.forEach((doc) => {
-            const entry = {"id": doc.id, ...doc.data()};
+            let entry = {"id": doc.id, ...doc.data()};
             console.log(`entry: ${entry.startDateTime}`);
+            
+            if (entry.startDateTime) {
+                console.log('converting start date');
+                entry.startDateTime = new Date(entry.startDateTime.seconds * 1000);
+            }
+
+            if (entry.endDateTime) {
+                entry.endDateTime = new Date(entry.endDateTime.seconds * 1000);
+            }
+            
             reservationList.push(entry);
+
+
         });
-    })
-    .catch((error) => {
-        //TODO - security, do not publish error details to console
-        console.log("Error getting documents:" + error);
     });
 
-    const notes = {
+    // for (let entry in reservationList) {
 
-    
-    // const observer = await query.onSnapshot(querySnapshot => {
-    //     querySnapshot.docChanges().forEach(change => {
-    //         console.log('change');
-    //         console.log(change.doc.id);
-    //         console.log(change.type);
-    //         if (change.type === 'added') {
-    //           console.log('New city: ', change.doc.data());
-    //           const entry = {"id": change.doc.id, ...change.doc.data()};
-    //           reservationList.push(entry);
-    //         }
-    //         if (change.type === 'modified') {
-    //           console.log('Modified city: ', change.doc.data());
-    //           const entry = {"id": change.doc.id, ...change.doc.data()};
-    //           const index = reservationList.findIndex(res => res.id === change.doc.id)
-    //           reservationList[index] = entry;
-    //         }
-    //         if (change.type === 'removed') {
-    //           console.log('Removed city: ', change.doc.data());
-    //           const entry = {"id": change.doc.id, ...change.doc.data()};
-    //           const index = reservationList.findIndex(res => res.id === change.doc.id)
-    //           reservationList[index] = entry;
-    //           reservationList.splice(index, 1);
-    //         }
-    //       })
-
-    // }, err => {
-    //     console.log(`Encountered error: ${err}`);
-    // });
-    }
-
-    for (let entry in reservationList) {
-
-        const reservation = reservationList[entry];
-        console.log('date conversion entry' + reservation);
+    //     const reservation = reservationList[entry];
+    //     console.log('date conversion entry' + reservation);
 
 
-        if (reservation.startDateTime) {
-            console.log('converting start date');
-            reservation.startDateTime = new Date(reservation.startDateTime.seconds * 1000);
-        }
+    //     if (reservation.startDateTime) {
+    //         console.log('converting start date');
+    //         reservation.startDateTime = new Date(reservation.startDateTime.seconds * 1000);
+    //     }
 
-        if (reservation.endDateTime) {
-            reservation.endDateTime = new Date(reservation.endDateTime.seconds * 1000);
-        }
-    }
+    //     if (reservation.endDateTime) {
+    //         reservation.endDateTime = new Date(reservation.endDateTime.seconds * 1000);
+    //     }
+    // }
 
     return [unsubscribe, reservationList];
 

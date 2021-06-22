@@ -1,10 +1,7 @@
 import React from 'react';
 import RentalSummary from "./rentalSummary";
-import { getMyReservations } from '../../utils/firebaseFunctions';
 import { formatShortDate } from '../../utils/rentalFunctions';
 import ReserveItem from '../Reservations/reserveItem';
-
-let unsubscribe = null;
 
 class MyRentedOutList extends React.Component {
     constructor(props) {

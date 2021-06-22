@@ -56,6 +56,8 @@ function ReserveItem(props) {
                     setExchangeCost(exchangeOptions.meetup);
                     setSelectedExchangeMethod('meetup');
                     break;
+                default:
+                    alert('Not a valid exchange option');
             }
 
             // console.log('selectedExchangeMethod: ', selectedExchangeMethod);
@@ -163,6 +165,8 @@ function ReserveItem(props) {
 
     const loadItemDetails = async () => {
 
+        //need to update to load from passed ItemDetails not FB request
+
         const itemDetails = await getItemFromDB(props.currentRentalItem);
         // console.log(itemDetails);
 
@@ -205,7 +209,7 @@ function ReserveItem(props) {
 
         // console.log('end: ', endDateTime, 'start: ', startDateTime);
         
-    }, [props.rentalItemId, props.reservation ]);
+    }, [props.rentalItemId, props.reservation, loadFromCurrentReservation,loadItemDetails, loading ]);
 
     
         

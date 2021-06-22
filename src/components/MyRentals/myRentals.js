@@ -3,12 +3,9 @@ import MyRentedOutList from "./myRentedOutList";
 import MyItemsList from './myItemsList';
 import { GetRentalItems, getMyReservations } from "../../utils/firebaseFunctions";
 import { withRouter } from 'react-router-dom';
-import faker from 'faker';
-
-let unsubscribeReservations = null;
-let unsubscribeItems = null;
 
 //TODO - need to make only available to logged in user or forward to login screen
+let unsubscribeItems;
 
 class MyRentals extends React.Component {
 
@@ -22,11 +19,19 @@ class MyRentals extends React.Component {
         };
 
         this.goAddItem = this.goAddItem.bind(this);
+        this.updateRentalItems = this.updateRentalItems.bind(this);
     }
 
     goAddItem = () => {
         const { history } = this.props;
         if (history) history.push('/addItems');
+    }
+
+    updateRentalItems = (rentalItemsList) => {
+        this.setState(prevState => ({
+            myItems: [...prevState.myItems, ...rentalItemsList],
+            itemsLoading: false
+        }));
     }
 
     async componentDidMount() {
@@ -35,7 +40,7 @@ class MyRentals extends React.Component {
             try {
                 await getMyReservations(this.props.currentUser).then(([unsubscribe, reservationList]) => {
                     // console.log('running getMyReservations');
-                    unsubscribeReservations = unsubscribe;
+                    // unsubscribeReservations = unsubscribe;
                     // console.log("returned with: " + reservationList);
                     this.setState({
                         myReservations: [...reservationList], 
@@ -48,15 +53,7 @@ class MyRentals extends React.Component {
             }
 
             try {
-                await GetRentalItems(this.props.currentUser).then(([unsubscribe, rentalItemsList]) => {
-                    unsubscribeItems = unsubscribe;
-
-                    // console.log(rentalItemsList[0]);
-                    this.setState({
-                        myItems: [...rentalItemsList], 
-                        itemsLoading: false
-                    });
-                } )
+                unsubscribeItems = await GetRentalItems(this.updateRentalItems, this.props.currentUser);
 
             } catch (e) {
                 console.log('getMyItems...Catch');
@@ -69,7 +66,10 @@ class MyRentals extends React.Component {
 
     componentWillUnmount() {
         // unsubscribeReservations();
-        // unsubscribeItems();
+        if (unsubscribeItems) {
+            unsubscribeItems();
+        }
+        
     }
 
     render() {

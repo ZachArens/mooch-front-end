@@ -11,8 +11,20 @@ class ItemGrid extends React.Component {
         super(props);
 
         //TODO - Add loader;
-        this.state = {rentalItemsList: [], loading: true}
+        this.state = {
+            itemsList: [], 
+            loading: true
+        }
+        this.updateRentalItems = this.updateRentalItems.bind(this);
+    }
 
+    updateRentalItems = (rentalItemsList) => {
+        console.log('list in Item Grid', rentalItemsList);
+        this.setState(prevState => ({
+            itemsList: [...prevState.itemsList, ...rentalItemsList],
+            loading: false
+        }));
+        
     }
 
 
@@ -20,12 +32,7 @@ class ItemGrid extends React.Component {
     async componentDidMount() {
         
         try {
-            await GetRentalItems().then(([unsubscribe, rentalItemsList]) => {
-                unsubscribe = unsubscribe;
-                this.setState({
-                    rentalItemsList: rentalItemsList, loading: false
-                });
-            });
+            unsubscribe = await GetRentalItems(this.updateRentalItems);
         } catch (e) {
             console.log(e);
         }
@@ -45,7 +52,7 @@ class ItemGrid extends React.Component {
 
         if (!this.state.loading) {
             // console.log(this.state.rentalItemsList);
-            gridItems = this.state.rentalItemsList.map((card) =>
+            gridItems = this.state.itemsList.map((card) =>
             
                 <ItemCard  key={card.id} id={card.id} 
                     photo={card.photos ? card.photos[0] : undefined} 
