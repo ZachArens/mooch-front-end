@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Login from './components/Login/login';
 import AddItem from './components/AddEditItems/addItem';
 import ReserveItem from './components/Reservations/reserveItem';
-import Home from './components/home';
+import Home from './components/Home/home';
 import MyRentals from "./components/MyRentals/myRentals";
 import './App.scss';
 import 'bootstrap';

@@ -4,13 +4,13 @@ import { AddRentalItem, AddReservation, getItemFromDB, GetRentalItems } from '..
 import faker from 'faker';
 // import { mockGoogleCloudFirestore } from 'firestore-jest-mock';
 
-firebase.initializeTestApp({
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    auth: {uid: "alice", email: "alice@example.com"}
-})
+// firebase.initializeTestApp({
+//     projectId: process.env.REACT_APP_PROJECT_ID,
+//     auth: {uid: "alice", email: "alice@example.com"}
+// })
 
-describe('AddReservation', () => {
-    test('adds a reservation to the database', async () => {
+describe.skip('AddReservation', () => {
+    test.skip('adds a reservation to the database', async () => {
         const getRandNumber = () => {
             return Math.floor(Math.random()*10000/100);
         }

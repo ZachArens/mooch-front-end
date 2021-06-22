@@ -1,5 +1,5 @@
 import React from 'react';
-import ItemCard  from '../components/itemCard';
+import ItemCard  from '../itemCard';
 
 import { render, cleanup, debug } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';

@@ -238,6 +238,7 @@ describe('getNewDate', () => {
         date2.setUTCFullYear(2021, 5, 21);
         const incomingDate = '2021-06-21';
 
-        expect(getNewDate(incomingDate, '')).toEqual(date2);
+        expect(getNewDate(incomingDate, '').toISOString().substr(0,15)).toBe(date2.toISOString().substr(0,15));
     });
 });
+

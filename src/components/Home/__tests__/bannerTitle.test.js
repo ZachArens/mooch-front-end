@@ -1,6 +1,6 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import BannerTitle from '../components/bannerTitle';
+import BannerTitle from '../bannerTitle';
 
 test('<BannerTitle />', () => {
     const tree = renderer.create(<BannerTitle />)

@@ -104,9 +104,6 @@ class AddItem extends React.Component {
         }).catch((error) => {
             console.log('issue deleting photo', error);
         });
-        // TODO - adjust state after deleting
-        //https://stackoverflow.com/questions/36326612/delete-item-from-state-array-in-react
-        // console.log('deleting photo...')
         const array = this.state.photos;
         const newArray = array.filter(photo => (photo.id !== imageId));
         // console.log(newArray);
@@ -128,18 +125,23 @@ class AddItem extends React.Component {
         if (this.validator.allValid()) {
             //FIXME - need test to display correct error message
             // console.log('adding item for: ', this.props.currentUser);
-            AddToDB(this.props.currentItem ? this.props.currentItem.ownerId : this.props.currentUser, 
-                this.state.title, 
-                this.state.description, 
-                this.state.itemRate, 
-                this.state.exchangeOptions,
-                this.state.photos,
-                this.currentItem ? this.props.currentItem.id : undefined
-                );
-            this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
+            try {
+                AddToDB(this.props.currentItem ? this.props.currentItem.ownerId : this.props.currentUser, 
+                    this.state.title, 
+                    this.state.description, 
+                    this.state.itemRate, 
+                    this.state.exchangeOptions,
+                    this.state.photos,
+                    this.currentItem ? this.props.selectedId : undefined
+                    );
+                this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
 
-            const { history } = this.props;
-            if (history) history.push('/myRentals');
+                const { history } = this.props;
+                if (history) history.push('/myRentals');  
+            } catch (error) {
+                this.setState({message: 'There was trouble add/updating your item.'})
+            }
+            
         } else {
             this.validator.showMessages();
             this.forceUpdate();

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { addPhotosToFB } from '../utils/firebaseFunctions';
-import { textAbbreviator } from '../utils/rentalFunctions';
+import { textAbbreviator } from '../../utils/rentalFunctions';
 
 
 class ItemCard extends React.Component {

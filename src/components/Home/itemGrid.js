@@ -1,7 +1,7 @@
 import React from 'react';
 import ItemCard from "./itemCard";
 // import { Route } from 'react-router-dom';
-import { GetRentalItems } from '../utils/firebaseFunctions';
+import { GetRentalItems } from '../../utils/firebaseFunctions';
 
 // import {GetRentalItems} from '../utils/firebaseFunctions'
 let unsubscribe = null;

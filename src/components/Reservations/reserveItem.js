@@ -113,12 +113,12 @@ function ReserveItem(props) {
 
     }
 
-    const reserveItem = (e) => {
+    const reserveItem = async (e) => {
         //TODO - set reserveDetails to state and firebase
         // console.log('reservingItem');
 
         if (!startDateTime || !endDateTime || exchangeCost < 0 || totalTime < 1) {
-            // console.log('missing something: ', 'startDateTime: ', startDateTime, 'endDateTime: ', endDateTime, 'exchangeCost: ',exchangeCost, 'totalTime: ',totalTime);
+            console.log('missing something: ', 'startDateTime: ', startDateTime, 'endDateTime: ', endDateTime, 'exchangeCost: ',exchangeCost, 'totalTime: ',totalTime);
             return null;
         }
         // console.log(`startDateTime: ${startDateTime}`, `endDateTime: ${endDateTime}`,
@@ -143,14 +143,18 @@ function ReserveItem(props) {
         };
 
         // console.log('reserving: ', newReservation);
-
-        AddReservation(newReservation);
-        
-        if (props.reservation) {
-            props.selectReservation('');
-        } else {
-            history.push('/myRentals');
+        try {
+            await AddReservation(newReservation);
+            
+            if (props.reservation) {
+                props.selectReservation('');
+            } else {
+                history.push('/myRentals');
+            }
+        } catch (error) {
+            console.log('error adding reservation: ', error.message);
         }
+        
         
     }
 

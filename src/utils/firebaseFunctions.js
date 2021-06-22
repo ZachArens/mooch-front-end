@@ -118,6 +118,13 @@ export const GetRentalItems = async( updateRentalItems, userId ) => {
     });
 }
 
+export const deleteItemFromDB = async (rentalItem) => {
+    db.collection('rentalItems')
+        .doc(rentalItem.id)
+        .delete();
+
+}
+
 export const getItemFromDB = (itemId) => {
     if (itemId.length < 1) {
         return null;
@@ -138,12 +145,13 @@ export const getItemFromDB = (itemId) => {
 
 
 export const AddReservation = async(reservation) => {
-    // const reservationId = reservation.reservationId ? reservation.reservationId : undefined;
-    return await firebase
+
+    if (reservation.reservationId) {
+        return await firebase
                 .firestore()
                 .collection('reservations')
                 .doc(reservation.reservationId)
-                .set({
+                .update({
                     itemName: reservation.itemName, 
                     itemDesc: reservation.itemDescription,
                     startDateTime: reservation.startDateTime, 
@@ -158,6 +166,28 @@ export const AddReservation = async(reservation) => {
                     rentalItemId: reservation.rentalItemId,
                     ownerId: reservation.ownerId
                 });
+    } else {
+        return await firebase
+                .firestore()
+                .collection('reservations')
+                .add({
+                    itemName: reservation.itemName, 
+                    itemDesc: reservation.itemDescription,
+                    startDateTime: reservation.startDateTime, 
+                    endDateTime: reservation.endDateTime,
+                    selectedExchangeMethod: reservation.selectedExchangeMethod,
+                    exchangeOptions: reservation.exchangeOptions, 
+                    totalCost: reservation.totalCost,
+                    exchangeCost: reservation.exchangeCost,
+                    costHourly: reservation.unitCost,
+                    rentalCost: reservation.rentalCost,
+                    lenderId: reservation.renterId,
+                    rentalItemId: reservation.rentalItemId,
+                    ownerId: reservation.ownerId
+                });
+    }
+    
+    
 }
 
 export const getMyReservations = async (userId) => {

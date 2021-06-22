@@ -10,8 +10,8 @@ function delay(time) {
     });
  }
 
-describe('e2e test for main page', () => {
-    test('loads the main page correctly', async () => {
+describe.skip('e2e test for main page', () => {
+    test.skip('loads the main page correctly', async () => {
         let browser = await puppeteer.launch();
         // let browser = await puppeteer.launch({headless: false});
 
@@ -42,7 +42,7 @@ describe('e2e test for main page', () => {
         
     });
 
-    test('can click on and enter login information', async () => {
+    test.skip('can click on and enter login information', async () => {
         let browser = await puppeteer.launch();
         //  let browser = await puppeteer.launch({headless: false, slowMo: 75});
         try {
@@ -102,7 +102,7 @@ describe('e2e test for main page', () => {
         
     }, 100000);
 
-    test.only('Enter new item', async () => {
+    test.skip('Enter new item', async () => {
         let browser = await puppeteer.launch();
         //  let browser = await puppeteer.launch({headless: false, slowMo: 75});
         try {
