@@ -1,5 +1,6 @@
 import React from 'react';
-// import FireAuthWidget from '../utils/fireAuthWidget';
+import { withRouter } from 'react-router-dom';
+
 
 // import firebase, { auth } from '../../utils/firebase';
 import {createUserWithEmailandPass, loginWithEmailAndPass} from '../../utils/firebaseFunctions';
@@ -48,18 +49,23 @@ class Login extends React.Component {
         } else {
             this.signUp(e);
         }
+
+        
     }
 
     submitEmailPass = async (e) => {
         e.preventDefault();
         // console.log("email: " + this.state.email);
         // console.log("password: " + this.state.password);
-
-        let userId = await loginWithEmailAndPass(this.state.email, this.state.password);
-
-        // //FIXME - temp fix for auth problem
-        // let userId = 'aQqcGAeDGafhOSQWeXDFA2klpuH2';
-        this.props.setCurrentUser(userId);
+        try {
+            let userId = await loginWithEmailAndPass(this.state.email, this.state.password);
+            this.props.setCurrentUser(userId);
+            const { history } = this.props;
+            if (history) history.push(this.props.returnTo);
+        } catch (error) {
+            this.setState({errMsg: error.message});
+        }
+        
     }
 
     signUp = async (e) => {
@@ -82,9 +88,23 @@ class Login extends React.Component {
             return null;
         }
 
-       let userId = createUserWithEmailandPass(this.state.email, this.state.password);
+        let userId;
 
-       this.props.setCurrentUser(userId.uid);
+        try {
+            userId = await createUserWithEmailandPass(this.state.email, this.state.password);
+            console.log(userId);
+            this.props.setCurrentUser(userId);
+            const { history } = this.props;
+            if (history) history.push(this.props.returnTo);
+        } catch (error) {
+            this.setState({
+                errMsg: error.message,
+            })
+        }
+
+       
+
+       
         // console.log(`logged in as ${this.state.user}`); //.displayName} - ${user.uid}`);
         //Add display name to auth token
         //FIXME - need to test if working
@@ -158,4 +178,4 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);

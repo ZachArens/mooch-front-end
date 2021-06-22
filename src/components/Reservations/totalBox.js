@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {rentalTimeAsString} from "../utils/rentalFunctions";
+import {rentalTimeAsString} from "../../utils/rentalFunctions";
 
 export default class TotalBox extends Component {
 

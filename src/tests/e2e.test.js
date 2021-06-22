@@ -102,7 +102,7 @@ describe('e2e test for main page', () => {
         
     }, 100000);
 
-    test('Enter new item', async () => {
+    test.only('Enter new item', async () => {
         let browser = await puppeteer.launch();
         //  let browser = await puppeteer.launch({headless: false, slowMo: 75});
         try {

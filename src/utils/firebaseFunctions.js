@@ -1,13 +1,14 @@
 import firebase, {db, storage, auth} from './firebase';
 import { v4 as uuid } from 'uuid';
 
-export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions, photos) => {
+export const AddRentalItem = async(ownerId, title, description, itemRate, exchangeOptions, photos, itemId) => {
     // console.log("add item to db: " + exchangeOptions.delivery);
-    
+    const thisItemId = itemId ? itemId : undefined;
     await firebase
                 .firestore()
                 .collection('rentalItems')
-                .add({
+                .doc(thisItemId)
+                .set({
                     ownerId: ownerId,
                     itemName: title, 
                     itemDesc: description, 
@@ -19,10 +20,10 @@ export const AddRentalItem = async(ownerId, title, description, itemRate, exchan
                     },
                     photos: [...photos]
                 })
-                .then((docRef) => {
-                    console.log("success writing document:", docRef.id);
-                    return docRef.id;
-                })
+                // .then((docRef) => {
+                //     console.log("success writing document:", docRef.id);
+                //     return docRef.id;
+                // })fd
                 .catch((error) => {
                     console.error(error);
                 });
@@ -115,27 +116,25 @@ export const getItemFromDB = (itemId) => {
 
 
 export const AddReservation = async(reservation) => {
+    // const reservationId = reservation.reservationId ? reservation.reservationId : undefined;
     return await firebase
                 .firestore()
                 .collection('reservations')
-                .add({
+                .doc(reservation.reservationId)
+                .set({
                     itemName: reservation.itemName, 
+                    itemDesc: reservation.itemDescription,
                     startDateTime: reservation.startDateTime, 
                     endDateTime: reservation.endDateTime,
-                    exchangeMethod: reservation.exchangeMethod, 
+                    selectedExchangeMethod: reservation.selectedExchangeMethod,
+                    exchangeOptions: reservation.exchangeOptions, 
                     totalCost: reservation.totalCost,
-                    deliveryCost: reservation.deliveryCost,
+                    exchangeCost: reservation.exchangeCost,
+                    costHourly: reservation.unitCost,
                     rentalCost: reservation.rentalCost,
                     lenderId: reservation.renterId,
                     rentalItemId: reservation.rentalItemId,
                     ownerId: reservation.ownerId
-                })
-                .then((docRef) => {
-                    console.log("success writing document:", docRef.id);
-                    return docRef.id;
-                })
-                .catch((error) => {
-                    console.error(error);
                 });
 }
 
@@ -226,12 +225,6 @@ export const loginWithEmailAndPass = async (email, password) => {
         console.log(`logged in as ${userCredential.user.displayName} - ${userCredential.user.uid}`);
 
         return userCredential.user.uid;
-    })
-    .catch((error) => {
-        this.setState({
-            errMsg: error.message
-        });
-        console.log(error.message);
     });
 };
 
@@ -254,4 +247,22 @@ export const getCurrentUserId = () => {
     } else {
         return null;
     }
+}
+
+export const addUserDetails = async (userDetails) => {
+    await firebase
+    .firestore()
+    .collection('userProfiles').doc(userDetails.uid)
+    .set({
+        fullName: userDetails.fullName, 
+        streetAddress: userDetails.streetAddress,
+        city: userDetails.city, 
+        st: userDetails.st,
+        zip: userDetails.zip, 
+        phone: userDetails.phone,
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+
 }

@@ -2,9 +2,9 @@
 import React, { Component } from 'react';
 import Login from './components/Login/login';
 import AddItem from './components/AddEditItems/addItem';
-import ReserveItem from './components/reserveItem';
+import ReserveItem from './components/Reservations/reserveItem';
 import Home from './components/home';
-import MyRentals from "./components/myRentals";
+import MyRentals from "./components/MyRentals/myRentals";
 import './App.scss';
 import 'bootstrap';
 import {BrowserRouter as Router, NavLink, Route, Switch} from "react-router-dom";
@@ -52,12 +52,14 @@ class App extends Component {
       unsubscribeAuthState = auth.onAuthStateChanged((currentUser) => {
           if (currentUser) {
               this.setState({currentUser: currentUser.uid});
-              console.log("App user logged in: " + this.state.currentUser)
+              
           }
       })
   }
 
   componentWillUnmount() {
+
+    console.log("App user logged in: " + this.state.currentUser)
 
     if (unsubscribeAuthState) {
         unsubscribeAuthState();
@@ -105,7 +107,7 @@ class App extends Component {
                         <Login setCurrentUser={this.setCurrentUser} returnTo='/'/>
                     </Route>
                     <Route path="/addItems">
-                        <AddItem/>
+                        <AddItem currentUser={this.state.currentUser} />
                     </Route>
                     <Route path="/reserveItem">
                         {this.state.currentUser && <ReserveItem currentRentalItem={this.state.currentRentalItem} 

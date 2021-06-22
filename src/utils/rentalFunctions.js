@@ -34,6 +34,8 @@ const rentalTimeAsString = (totalHours) => {
     }
     if (days > 0 && hours > 0) {
         return `${dayString}, ${hourString}`;
+    } else if ( days === 0 && hours ===0 ) {
+        return '0 hours'
     } else {
         return `${dayString}${hourString}`;
     }

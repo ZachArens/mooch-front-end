@@ -1,9 +1,10 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import {storage} from '../../utils/firebase';
 import EditTitleDesc from "./editTitleDesc";
 import SubmitButtons from '../submitButtons';
 // import firebase from "../utils/firebase";
-import { AddRentalItem as AddToDB, addPhotosToFB} from "../../utils/firebaseFunctions";
+import { AddRentalItem as AddToDB, addPhotosToFB, getItemFromDB} from "../../utils/firebaseFunctions";
 import {formatCurrency, finalFormatCurrency} from '../../utils/rentalFunctions';
 import SimpleReactValidator from 'simple-react-validator';
 import '../../styles/addItem.scss';
@@ -52,7 +53,7 @@ class AddItem extends React.Component {
 
         if (name === "itemRate") {
             try {
-                console.log('trying')
+                // console.log('trying')
                 value = formatCurrency(value);
                 this.setState({[name]: value, message: ""});
             } catch (e) {
@@ -61,11 +62,11 @@ class AddItem extends React.Component {
             }
         } else if (name === "delivery" || name === "meetup" || name === "pickup") {
             try {
-                console.log('trying')
+                // console.log('trying')
                 value = formatCurrency(value);
                 this.setState((prevState) => ({exchangeOptions: {...prevState.exchangeOptions, [name]: value }, message: ""}));
             } catch (e) {
-                console.log('caught')
+                // console.log('caught')
                 this.setState({message: `${name} e.message`});
             }
         } else {
@@ -126,12 +127,14 @@ class AddItem extends React.Component {
 
         if (this.validator.allValid()) {
             //FIXME - need test to display correct error message
+            // console.log('adding item for: ', this.props.currentUser);
             AddToDB(this.props.currentUser, 
                 this.state.title, 
                 this.state.description, 
                 this.state.itemRate, 
                 this.state.exchangeOptions,
-                this.state.photos);
+                this.state.photos,
+                this.props.currentItem);
             this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
 
             const { history } = this.props;
@@ -140,7 +143,11 @@ class AddItem extends React.Component {
             this.validator.showMessages();
             this.forceUpdate();
         }
+        if (this.props.currentItem) {
+            this.props.updateSelectedId('');
+        }
 
+        
     }
 
     clearForm = (e) => {
@@ -155,12 +162,33 @@ class AddItem extends React.Component {
         photos: []
         } );
 
+        this.props.updateSelectedId('');
+
         const { history } = this.props;
         if (history) history.push('/myRentals');
     }
 
+    async componentDidMount() {
+        if (this.props.currentItem) {
+            // const itemDetails = await getItemFromDB(this.props.currentItem);
+
+            let photos = [];
+
+            if (this.props.currentItem.photos) {
+                photos = [...this.props.currentItem.photos]
+            }
+
+            this.setState({
+                title: this.props.currentItem.itemName,
+                description: this.props.currentItem.itemDesc,
+                itemRate: this.props.currentItem.costHourly,
+                exchangeOptions: this.props.currentItem.exchangeOptions,
+                photos: photos
+            })
+        }
+    }
+
     render() {
-        console.log('photos state: ', this.state.photos);
         return(
             <form className="container" >
 

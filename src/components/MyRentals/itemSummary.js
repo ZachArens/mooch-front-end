@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function ItemSummary(props) {
     return (
-        <div className="row" >
+        <div className="row" onClick={(e) => {props.updateSelectedId(props.id)}}>
             <img className="col-md-2" width='auto' src={props.photo ? props.photo.url : ''} />
             <h5 className="col-md-2">{props.title ? props.title: ""}</h5>
             <h5 className="col-md-4">{props.description ? props.description : ""}</h5>
