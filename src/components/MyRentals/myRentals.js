@@ -98,7 +98,7 @@ class MyRentals extends React.Component {
 
         return(
             <div>
-                <h1>Things I've Rented Out</h1>
+                <h1>My Reservations</h1>
                 <MyRentedOutList myReservations={this.state.myReservations} 
                     loading={this.state.reservationsLoading} />
 

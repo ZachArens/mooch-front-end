@@ -134,7 +134,7 @@ class Login extends React.Component {
             hasLogin: !prevState.hasLogin,
             buttonText
         }));
-        console.log('updated state to: ' + this.state.hasLogin)
+        // console.log('updated state to: ' + this.state.hasLogin)
         
 
     }

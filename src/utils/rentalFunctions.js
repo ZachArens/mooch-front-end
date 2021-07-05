@@ -95,7 +95,7 @@ const formatCurrency = (input) => {
 
         return input;
     } else {
-        throw 'must be a currency value';
+        throw new Error('must be a currency value');
     }
 
     
@@ -121,18 +121,23 @@ const displayTime = (incomingDate) => {
 }
 
 const updateCalculations = (startDateTime, endDateTime, unitCost, exchangeCost) => {
-    // console.log('start: ', startDateTime, 'end: ', endDateTime);
+    // console.log('running update Calculations - start: ', 
+    //     startDateTime, 'end: ', endDateTime, 'costHourly: ', unitCost, 'exchangeCost: ', exchangeCost);
     
     let totalTime = startDateTime && endDateTime ? hoursTimeDifference(startDateTime, endDateTime) : 0;
     let rentalCost = unitCost ? totalTime * unitCost: 0;
 
+    // console.log('totalTime: ', totalTime, 'rentalCost: ', rentalCost);
+
     let totalCost;
 
     if (exchangeCost) {
-        totalCost = rentalCost + exchangeCost;
+        totalCost = rentalCost + Number(exchangeCost);
     } else {
         totalCost = rentalCost;
     }
+
+    // console.log('totalCost: ', totalCost)
 
     return {totalTime, totalCost, rentalCost}
 }
@@ -170,7 +175,15 @@ const getNewDate = (inputDate, originalDate) => {
 
 }
 
+const isDate = (inputObject) => {
+    if (Object.prototype.toString.call(inputObject) === '[object Date]') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, 
     textAbbreviator, formatShortDate, formatCurrency, finalFormatCurrency,
-    displayTime, updateCalculations, getNewTime, getNewDate
+    displayTime, updateCalculations, getNewTime, getNewDate, isDate
 };

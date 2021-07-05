@@ -139,6 +139,7 @@ class AddItem extends React.Component {
                 const { history } = this.props;
                 if (history) history.push('/myRentals');  
             } catch (error) {
+                //TODO - if firebase rejects -show error message and prevent duplicate items in list
                 this.setState({message: 'There was trouble add/updating your item.'})
             }
             
@@ -219,6 +220,7 @@ class AddItem extends React.Component {
                     <AddPhoto currentUser={this.props.currentUser}
                         loading={this.state.loading}
                         photos={this.state.photos}
+                        title={this.state.title}
                         uploadPhoto={this.uploadPhoto}
                         deletePhoto={this.deletePhoto}
                     />

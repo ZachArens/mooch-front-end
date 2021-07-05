@@ -32,84 +32,111 @@ function ReserveItem(props) {
 
     const updateExchangeMethod = (e) => {
         const value = e.target.value;
-        console.log('value: ', value);
+        let selectedOption;
+        let newExchangeCost;
+        // console.log('value: ', value);
         if (!loading) {
             switch (value) {
                 case "delivery": 
                     // console.log('clicked: delivery');
-                    setSelectedExchangeMethod('delivery');
-                    setExchangeCost(exchangeOptions.delivery);
-                    // console.log('exchange cost set: ', exchangeCost);
-
-                    // console.log('selectedExchangeMethod set: ', selectedExchangeMethod);
+                    selectedOption = 'delivery';
+                    newExchangeCost = exchangeOptions.delivery;
+                    // console.log('exchange cost set: ', newExchangeCost);
+                    // console.log('selectedExchangeMethod set: ', selectedOption);
 
                     break;
                 case "pickup":
                     // console.log('clicked: pickup');
-                    setSelectedExchangeMethod('pickup');
-                    setExchangeCost(exchangeOptions.pickup);
+                    selectedOption = 'pickup';
+                    newExchangeCost = exchangeOptions.pickup;
+                    // console.log('exchange cost set: ', newExchangeCost);
+                    // console.log('selectedExchangeMethod set: ', selectedOption);
                     
                     break;
                 case "meetup":
-                    // console.log('clicked: pickup');
-
-                    setExchangeCost(exchangeOptions.meetup);
-                    setSelectedExchangeMethod('meetup');
+                    // console.log('clicked: meetup');
+                    selectedOption = 'meetup';
+                    newExchangeCost = exchangeOptions.meetup;
+                    // console.log('exchange cost set: ', newExchangeCost);
+                    // console.log('selectedExchangeMethod set: ', selectedOption);
+                    break;
+                case "":
+                    // console.log('clicked: blank');
+                    selectedOption = '';
+                    newExchangeCost = 0;
+                    // console.log('exchange cost set: ', newExchangeCost);
+                    // console.log('selectedExchangeMethod set: ', selectedOption);
                     break;
                 default:
                     alert('Not a valid exchange option');
             }
 
             // console.log('selectedExchangeMethod: ', selectedExchangeMethod);
-            runUpdateCalcs();
+
+            const newCalcs = updateCalculations(startDateTime, endDateTime, unitCost, newExchangeCost);
+            setExchangeCost(newExchangeCost);
+            setSelectedExchangeMethod(selectedOption);
+            setTotalTime(newCalcs.totalTime);
+            setRentalCost(newCalcs.rentalCost);
+            setTotalCost(newCalcs.totalCost);
         }
         
         
-    }
-
-    const runUpdateCalcs = () => {
-        const newCalcs = updateCalculations(startDateTime, endDateTime, unitCost, exchangeCost);
-        setTotalTime(newCalcs.totalTime);
-        setRentalCost(newCalcs.rentalCost);
-        setTotalCost(newCalcs.totalCost);
-        // console.log('updated');
     }
 
     const updateStartDate = (e) => {
 
         //set startDateTime or create if null
         let newDate = getNewDate(e.target.value, startDateTime);
-
+        let newCalcs;
         //set default endDateTime to be equal or greater to new start date
         if (endDateTime < newDate ) {
             setEndDateTime(newDate);
             // console.log('updated endDate from start date');
-        } 
+            newCalcs = updateCalculations(newDate, newDate, unitCost, exchangeCost);
+        } else {
+            newCalcs = updateCalculations(newDate, endDateTime, unitCost, exchangeCost);
+        }
 
+        //FIXME - race condition - maybe passing updated values as parameters or may useState hook
         setStartDateTime(newDate);
-        runUpdateCalcs();
+        setTotalTime(newCalcs.totalTime);
+        setRentalCost(newCalcs.rentalCost);
+        setTotalCost(newCalcs.totalCost);
 
     }
 
     const updateEndDate = (e) => {
 
-        setEndDateTime(getNewDate(e.target.value, endDateTime));
-        runUpdateCalcs();
+        const newDate = getNewDate(e.target.value, endDateTime)
+        const newCalcs = updateCalculations(startDateTime, newDate, unitCost, exchangeCost);
+        
+        setEndDateTime(newDate);
+        setTotalTime(newCalcs.totalTime);
+        setRentalCost(newCalcs.rentalCost);
+        setTotalCost(newCalcs.totalCost);
     }
 
     const updateTime = (e) => {
 
         const newDate = getNewTime(e.target.value);
+        let newCalcs;
 
         if (e.target.id === 'startTime') {
             setStartDateTime(newDate);
+            newCalcs = updateCalculations(newDate, endDateTime, unitCost, exchangeCost);
+        
         }
 
         if (e.target.id === 'endTime') {
             setEndDateTime(newDate);
+            newCalcs = updateCalculations(newDate, endDateTime, unitCost, exchangeCost);
         }
         
-        runUpdateCalcs();
+        setEndDateTime(newDate);
+        setTotalTime(newCalcs.totalTime);
+        setRentalCost(newCalcs.rentalCost);
+        setTotalCost(newCalcs.totalCost);
 
     }
 
@@ -117,44 +144,45 @@ function ReserveItem(props) {
         //TODO - set reserveDetails to state and firebase
         // console.log('reservingItem');
 
-        if (!startDateTime || !endDateTime || exchangeCost < 0 || totalTime < 1) {
-            console.log('missing something: ', 'startDateTime: ', startDateTime, 'endDateTime: ', endDateTime, 'exchangeCost: ',exchangeCost, 'totalTime: ',totalTime);
-            return null;
-        }
-        // console.log(`startDateTime: ${startDateTime}`, `endDateTime: ${endDateTime}`,
-        //  `exchangeOptions: ${exchangeOptions}`, `totalCost: ${totalCost}`, 
-        //  `rentalCost: ${rentalCost}`, `totalTime: ${totalTime}`, `currentUser: ${props.currentUser}`);
-        
-        const newReservation = {
-            itemName,
-            itemDescription,
-            renterId: props.reservation ? props.reservation.lenderId : props.currentUser,
-            ownerId,
-            startDateTime, 
-            endDateTime,
-            exchangeOptions, 
-            selectedExchangeMethod, 
-            totalCost, 
-            exchangeCost, 
-            unitCost,
-            rentalCost,
-            rentalItemId: props.reservation ? props.reservation.rentalItemId : props.currentRentalItem,
-            reservationId: props.reservation ? props.reservation.id : ''
-        };
-
-        // console.log('reserving: ', newReservation);
-        try {
-            await AddReservation(newReservation);
+        if (startDateTime && endDateTime && exchangeCost && totalTime > 1) {
+            // console.log(`startDateTime: ${startDateTime}`, `endDateTime: ${endDateTime}`,
+            //  `exchangeOptions: ${exchangeOptions}`, `totalCost: ${totalCost}`, 
+            //  `rentalCost: ${rentalCost}`, `totalTime: ${totalTime}`, `currentUser: ${props.currentUser}`);
             
-            if (props.reservation) {
-                props.selectReservation('');
-            } else {
-                history.push('/myRentals');
+            const newReservation = {
+                itemName,
+                itemDescription,
+                renterId: props.reservation ? props.reservation.lenderId : props.currentUser,
+                ownerId,
+                startDateTime, 
+                endDateTime,
+                exchangeOptions, 
+                selectedExchangeMethod, 
+                totalCost, 
+                exchangeCost, 
+                unitCost,
+                rentalCost,
+                rentalItemId: props.reservation ? props.reservation.rentalItemId : props.currentRentalItem,
+                reservationId: props.reservation ? props.reservation.id : ''
+            };
+
+            // console.log('reserving: ', newReservation);
+            try {
+                await AddReservation(newReservation);
+                
+                if (props.reservation) {
+                    props.selectReservation('');
+                } else {
+                    history.push('/myRentals');
+                }
+            } catch (error) {
+                // console.log('error adding reservation: ', error.message);
             }
-        } catch (error) {
-            console.log('error adding reservation: ', error.message);
+
+        } else {
+            // console.log('missing something: ', 'startDateTime: ', startDateTime, 'endDateTime: ', endDateTime, 'exchangeCost: ',exchangeCost, 'totalTime: ',totalTime);
+
         }
-        
         
     }
 
@@ -167,53 +195,62 @@ function ReserveItem(props) {
         
     }
 
-    const loadItemDetails = async () => {
+    
 
-        //need to update to load from passed ItemDetails not FB request
-
-        const itemDetails = await getItemFromDB(props.currentRentalItem);
-        // console.log(itemDetails);
-
-        if (itemDetails) {
-            setOwnerId(itemDetails.ownerId);
-            setItemName(itemDetails.itemName);
-            setItemDescription(itemDetails.itemDesc);
-            setUnitCost(itemDetails.costHourly);
-            setExchangeOptions(itemDetails.exchangeOptions);
-            setLoading(false);
-        } 
-
-    }
-
-    const loadFromCurrentReservation = () => {
-        // console.log('running loadFromCurrent...');
-        const reservation = props.reservation
-        setOwnerId(reservation.ownerId ? reservation.ownerId : '');
-        setExchangeOptions(reservation.exchangeOptions ? reservation.exchangeOptions : '');
-        setTotalTime(reservation.totalTime ? reservation.totalTime : '');
-        setTotalCost(reservation.totalCost ? reservation.totalCost : '');
-        setUnitCost(reservation.unitCost ? reservation.unitCost : '');
-        setRentalCost(reservation.rentalCost ? reservation.rentalCost : '');
-        setExchangeCost(reservation.exchangeCost ? reservation.exchangeCost : '');
-        setItemName(reservation.itemName ? reservation.itemName : '');
-        setItemDescription(reservation.itemDescription ? reservation.itemDescription : '');
-        setStartDateTime(reservation.startDateTime ? reservation.startDateTime : '');
-        setEndDateTime(reservation.endDateTime ? reservation.endDateTime : '');
-        setLoading(false);
-    }
+    
 
     useEffect(() => {
+        const loadFromCurrentReservation = () => {
+            const { reservation } = props;
+            // console.log('running loadFromCurrent...', reservation);
+            setOwnerId(reservation.ownerId ? reservation.ownerId : '');
+            setExchangeOptions(reservation.exchangeOptions ? reservation.exchangeOptions : '');
+            setTotalTime(reservation.totalTime ? reservation.totalTime : '');
+            setTotalCost(reservation.totalCost ? reservation.totalCost : '');
+            setUnitCost(reservation.unitCost ? reservation.unitCost : '');
+            setRentalCost(reservation.rentalCost ? reservation.rentalCost : '');
+            setExchangeCost(reservation.exchangeCost ? reservation.exchangeCost : '');
+            setItemName(reservation.itemName ? reservation.itemName : '');
+            setItemDescription(reservation.itemDesc ? reservation.itemDesc : '');
+            setStartDateTime(reservation.startDateTime ? reservation.startDateTime : '');
+            setEndDateTime(reservation.endDateTime ? reservation.endDateTime : '');
+            setSelectedExchangeMethod(reservation.selectedExchangeMethod ? reservation.selectedExchangeMethod : '');
+            setLoading(false);
+        }
+
+        const loadItemDetails = async () => {
+
+            //need to update to load from passed ItemDetails not FB request
+    
+            const itemDetails = await getItemFromDB(props.currentRentalItem);
+            // console.log('in loadItemDetails');
+    
+            if (itemDetails) {
+                setOwnerId(itemDetails.ownerId);
+                setItemName(itemDetails.itemName);
+                setItemDescription(itemDetails.itemDesc);
+                setUnitCost(itemDetails.costHourly);
+                setExchangeOptions(itemDetails.exchangeOptions);
+                setLoading(false);
+            } 
+    
+        }
+
         if (loading) {
+            // console.log('loading...')
             if (props.reservation) {
+                // console.log('loadFromCurrent');
                 loadFromCurrentReservation();
             } else {
+                // console.log('loadFromDetails');
+
                 loadItemDetails();
             }
         }
 
         // console.log('end: ', endDateTime, 'start: ', startDateTime);
-        
-    }, [props.rentalItemId, props.reservation, loadFromCurrentReservation,loadItemDetails, loading ]);
+        // props.rentalItemId, props.reservation, props.currentRentalItem,
+    }, [props, loading]);
 
     
         

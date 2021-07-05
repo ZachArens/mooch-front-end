@@ -13,6 +13,7 @@ export default class AddPhoto extends Component {
                     key={image.id} 
                     id={image.id}
                     url={image.url}
+                    title={this.state.title}
                     deletePhoto={this.props.deletePhoto}
                 />
 

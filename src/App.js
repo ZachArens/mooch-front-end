@@ -32,7 +32,7 @@ class App extends Component {
   }
 
   setCurrentUser = (userId) => {
-    console.log(userId);
+    // console.log(userId);
     this.setState({currentUser: userId});
   }
 
@@ -42,7 +42,7 @@ class App extends Component {
         this.setState({
             currentUser: null
         });
-        console.log("logged out");
+        // console.log("logged out");
     })
   }
 
@@ -59,7 +59,7 @@ class App extends Component {
 
   componentWillUnmount() {
 
-    console.log("App user logged in: " + this.state.currentUser)
+    // console.log("App user logged in: " + this.state.currentUser)
 
     if (unsubscribeAuthState) {
         unsubscribeAuthState();

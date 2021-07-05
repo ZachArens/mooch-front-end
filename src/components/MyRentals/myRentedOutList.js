@@ -45,7 +45,7 @@ class MyRentedOutList extends React.Component {
         }
 
         return(
-            <div className="container">
+            <div className="container" data-testid='reservationList'>
                 { this.props.loading && <div className="loader">Loading...</div>}
                 { !this.props.loading && rentedItems }
             </div>

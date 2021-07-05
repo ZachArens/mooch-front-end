@@ -49,4 +49,21 @@ describe('<TotalBox />', () => {
         expect(queryByText(`$42.99`)).toBeTruthy();
 
     });
+
+    test('receives selectedExchangeMethod and relabels exchangeCostLabel dynamically', () => {
+        const {queryByText, rerender, debug} = render (<TotalBox selectedExchangeMethod='Exchange'/>);
+        expect(queryByText(`Exchange`)).toBeTruthy();
+
+        rerender (<TotalBox selectedExchangeMethod='delivery'/>);
+        expect(queryByText(`Delivery`)).toBeTruthy();
+
+        rerender (<TotalBox selectedExchangeMethod='meetup'/>);
+        expect(queryByText(`Meet-Up`)).toBeTruthy();
+
+        rerender (<TotalBox selectedExchangeMethod='pickup'/>);
+        expect(queryByText(`Pick-Up`)).toBeTruthy();
+
+        rerender (<TotalBox selectedExchangeMethod=''/>);
+        expect(queryByText(`Exchange`)).toBeTruthy();
+    })
 });

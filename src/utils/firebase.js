@@ -24,16 +24,16 @@ let auth = firebase.auth();
 let storage = firebase.storage();
 let functions = firebase.functions();
 
+export const runningEmulator = false;
 
-// // eslint-disable-next-line no-restricted-globals
-// if (process.env.FIRESTORE_EMULATOR === true) {
-    // console.log('firestore emulator:', process.env.FIRESTORE_EMULATOR_HOST);
-    // db.useEmulator('localhost', 8085);
-    // auth.useEmulator('http://localhost:9099/', { disableWarnings: true });
-    // functions.useEmulator('localhost', 5001);
-// } else {
-//     console.log(process.env.FIRESTORE_EMULATOR_HOST);
-//     console.log('emulator not registered');
-// }
+if (runningEmulator) {
+
+    auth.useEmulator("http://localhost:9099");
+    db.useEmulator('localhost', 8080);
+    functions.useEmulator('localhost', 5001);
+    console.log("Mooch using emulator");
+}
+
+
 export {db, auth, storage, functions}
 export default firebase;

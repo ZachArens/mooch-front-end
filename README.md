@@ -68,3 +68,20 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `yarn build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+Utilizing Firebase
+
+Getting started
+
+    -Create a Firebase project
+    -Run CL: firebase init
+    -Update environmental variables for src/utils/firebase.js 
+    -For emulator - include emulator installation at firebase init
+        -If not included in firebase init, may use init emulators
+
+Run the emulator
+    -CL: firebase emulators:start
+    -set runningEmulator to true in src/utils/firebase.js
+
+

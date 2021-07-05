@@ -2,9 +2,11 @@ import React from 'react';
 import {fireEvent, cleanup, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
+import { displayTime, hoursTimeDifference } from '../../../utils/rentalFunctions';
 
 import ReserveItem from '../reserveItem';
 import {AddReservation, getItemFromDB} from '../../../utils/firebaseFunctions';
+import { fake } from 'faker';
 
 const fakeItemDetails = {
         itemId: "12345abcdef",
@@ -14,13 +16,26 @@ const fakeItemDetails = {
         itemDesc: "11' Board with Paddle and leash.  Excellent beginner and all around board", 
         exchangeOptions: {pickup: 4, meetup: 6, delivery: 8}
     }
+const today = new Date();
+const start = new Date(today.setDate(today.getDate()+ 2));
+let end = new Date(today.setDate(today.getDate() + 4));
+end.setHours(end.getHours() + 4);
+
+// console.log('fakeReservation: start: ', start, ' end:', end);
 
 const fakeReservation = {
     itemId: "12345abcdef",
     ownerId: "zxy987", 
     lenderId: "asdgfwe3245",
     itemName: "Stand Up Paddle Board", 
-    exchangeCost: "8", 
+    exchangeCost: 8, 
+    unitCost: 8, 
+    rentalCost: hoursTimeDifference(start, end) * 8,
+    startDateTime: start,
+    endDateTime: end,
+    totalTime: hoursTimeDifference(start, end),
+    totalCost: (hoursTimeDifference(start, end) * 8) + 8,
+    selectedExchangeMethod: 'delivery',
     itemDesc: "11' Board with Paddle and leash.  Excellent beginner and all around board", 
     exchangeOptions: {pickup: 4, meetup: 6, delivery: 8}}
 
@@ -46,10 +61,14 @@ describe('<ReserveItem />', () => {
 
     test('loadFromReservation', () => {
         const {getByTestId, queryByTestId, debug} = render(
-            <ReserveItem currentRentalItem={fakeItemDetails.itemId} 
-                reservation={fakeItemDetails}
-                currentUser={fakeItemDetails.lenderId}/>
+            <ReserveItem currentRentalItem={fakeReservation.itemId} 
+                reservation={fakeReservation}
+                currentUser={fakeReservation.lenderId}/>
             );
+        expect(getByTestId('startDateInput')).toHaveValue(fakeReservation.startDateTime.toISOString().substr(0,10));
+        expect(getByTestId('endDateInput')).toHaveValue(fakeReservation.endDateTime.toISOString().substr(0,10));
+        expect(getByTestId('startTimeInput')).toHaveValue(displayTime(fakeReservation.startDateTime));
+        expect(getByTestId('endTimeInput')).toHaveValue(displayTime(fakeReservation.endDateTime));
     })
 
     test('loadsItemDetails from addItemFromDB', async () => {
@@ -72,33 +91,72 @@ describe('<ReserveItem />', () => {
 
     });
 
-    test.skip('clicking the exchangeMethod button and selecting an option updates' + 
+    test('clicking the exchangeMethod button and selecting an option updates' + 
     ' the delivery cost, total cost and exchange method', async() => {
         
         const {getByTestId, queryByTestId, debug} = render(<ReserveItem reservation={fakeReservation} />);
+        // console.log('1st render');
         // debug();
+
+        expect(queryByTestId('startDateInput')).toHaveValue(fakeReservation.startDateTime.toISOString().substr(0,10));
+        expect(queryByTestId('endDateInput')).toHaveValue(fakeReservation.endDateTime.toISOString().substr(0,10));
+        expect(queryByTestId('dropdownButton').innerHTML).toBe('Delivery $8');
+        expect(queryByTestId('totalCost').innerHTML).toBe("$808");
+        expect(queryByTestId('exchangeCost').innerHTML).toBe('$8');
+        expect(queryByTestId('exchangeCostLabel').innerHTML).toBe('Delivery');
+        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('4 days, 4 hours');
+        expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$800');
+
+        
+        fireEvent.click(getByTestId('dropdownButton'));
+        fireEvent.click(getByTestId('meetupButton'));
+        // console.log('2nd render');
+        // debug();
+
+        expect(queryByTestId('startDateInput')).toHaveValue(fakeReservation.startDateTime.toISOString().substr(0,10));
+        expect(queryByTestId('endDateInput')).toHaveValue(fakeReservation.endDateTime.toISOString().substr(0,10));
+        expect(queryByTestId('dropdownButton').innerHTML).toBe('Public Meet-Up $6');
+        expect(queryByTestId('exchangeCostLabel').innerHTML).toBe('Meet-Up');
+        expect(queryByTestId('exchangeCost').innerHTML).toBe('$6');
+        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('4 days, 4 hours');
+        expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$800');
+        expect(queryByTestId('totalCost').innerHTML).toBe("$806");
+        
+    });
+
+    test('clicking the exchangeMethod button - test 2', () => {
+        const {getByTestId, queryByTestId, debug} = render(<ReserveItem reservation={fakeReservation} />);
+        // console.log('1st render');
+        // debug();
+
+        expect(queryByTestId('dropdownButton').innerHTML).toBe('Delivery $8');
+        expect(queryByTestId('totalCost').innerHTML).toBe("$808");
+        expect(queryByTestId('exchangeCost').innerHTML).toBe('$8');
+        expect(queryByTestId('exchangeCostLabel').innerHTML).toBe('Delivery');
+        
+        fireEvent.click(getByTestId('dropdownButton'));
+        fireEvent.click(getByTestId('pickupButton'));
+
+        expect(queryByTestId('dropdownButton').innerHTML).toBe('Pick-Up $4');
+        expect(queryByTestId('exchangeCostLabel').innerHTML).toBe('Pick-Up');
+        expect(queryByTestId('totalCost').innerHTML).toBe("$804");
+        expect(queryByTestId('exchangeCost').innerHTML).toBe('$4');
 
         fireEvent.click(getByTestId('dropdownButton'));
         fireEvent.click(getByTestId('deliveryButton'));
 
-        expect(await screen.findByTestId('dropdownButton')).toHaveTextContent('Delivery $8');
-        expect(queryByTestId('totalCost').innerHTML).toBe("$5");
-        expect(queryByTestId('exchangeCost').innerHTML).toBe('$5');
+        expect(queryByTestId('dropdownButton').innerHTML).toBe('Delivery $8');
+        expect(queryByTestId('totalCost').innerHTML).toBe("$808");
+        expect(queryByTestId('exchangeCost').innerHTML).toBe('$8');
         expect(queryByTestId('exchangeCostLabel').innerHTML).toBe('Delivery');
-
+        
         fireEvent.click(getByTestId('dropdownButton'));
-        fireEvent.click(getByTestId('meetupButton'));
+        fireEvent.click(getByTestId('blankButton'));
 
-        expect(queryByTestId('displayExMethod').innerHTML).toBe('meetup');
-        expect(queryByTestId('totalCost').innerHTML).toBe("$15");
-        expect(queryByTestId('exchangeCost').innerHTML).toBe('$15');
-
-        fireEvent.click(getByTestId('dropdownButton'));
-        fireEvent.click(getByTestId('pickupButton'));
-
-        expect(queryByTestId('displayExMethod').innerHTML).toBe('pickup');
-        expect(queryByTestId('totalCost').innerHTML).toBe("$1");
-        expect(queryByTestId('exchangeCost').innerHTML).toBe('$1');
+        expect(queryByTestId('dropdownButton').innerHTML).toBe('Select Exchange Method');
+        expect(queryByTestId('exchangeCostLabel').innerHTML).toBe('Exchange');
+        expect(queryByTestId('totalCost').innerHTML).toBe("$800");
+        expect(queryByTestId('exchangeCost').innerHTML).toBe('$0');
     });
 
     test('<reserveItem should load with startDate as today, endDate as tomorrow, rentalCost totalCost as 0, and rental time as none', () => {
@@ -145,7 +203,7 @@ describe('<ReserveItem />', () => {
         
     });
 
-    test.skip('updating start date only should leave total time as zero', () => {
+    test('updating start date past end date should leave total time and rental cost as zero', () => {
 
         //updating start date-time should update displayed start date-time, total time label, and recalculate rentalCost and totalCost
 
@@ -156,7 +214,7 @@ describe('<ReserveItem />', () => {
         const newDateStr = newDate.toISOString().substr(0,10);
 
         expect(queryByTestId('startDateInput')).toHaveValue(currentDate.toISOString().substr(0,10));
-        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('0 hours');
+        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('1 day');
         expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$0');
 
         fireEvent.change(queryByTestId("startDateInput"), {
@@ -164,33 +222,38 @@ describe('<ReserveItem />', () => {
         });
 
         // debug();
-
+        expect(queryByTestId('startDateInput')).toHaveValue(newDate.toISOString().substr(0,10));
+        expect(queryByTestId('endDateInput')).toHaveValue(newDate.toISOString().substr(0,10));
         expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('0 hours');
+        expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$0');
         
     });
 
-    test.skip('updating end date only should update total time', () => {
+    test('updating end date only should update total time', () => {
 
         //updating start date-time should update displayed start date-time, total time label, and recalculate rentalCost and totalCost
+        // console.log('enter test');
+        const {getByTestId, queryByTestId, debug, rerender} = render(<ReserveItem currentRentalItem={fakeReservation.itemId} reservation={fakeReservation}/>);
+        // console.log('first render');
+        
 
-        const {getByTestId, queryByTestId, debug, rerender} = render(<ReserveItem currentRentalItem={fakeItemDetails.itemId} />);
-        let currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() + 1);
-        let newDate = new Date(currentDate);
-        newDate.setDate(newDate.getDate() + 3);
+        expect(queryByTestId('endDateInput')).toHaveValue(fakeReservation.endDateTime.toISOString().substr(0,10));
+
+        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('4 days, 4 hours');
+        expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$800');
+
+        let newDate = new Date(fakeReservation.endDateTime);
+        newDate.setDate(newDate.getDate() + 5);
         const newDateStr = newDate.toISOString().substr(0,10);
 
-        expect(queryByTestId('endDateInput')).toHaveValue(currentDate.toISOString().substr(0,10));
-        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('0 hours');
-        expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$0');
-
-        fireEvent.change(queryByTestId("endDate"), {
+        fireEvent.change(queryByTestId("endDateInput"), {
             target: {value: newDateStr},
         });
 
-        // debug();
-
-        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('4 days');
+        expect(queryByTestId('endDateInput')).toHaveValue(newDate.toISOString().substr(0,10));
+        // console.log(newDate, fakeReservation.endDateTime);
+        expect(queryByTestId('rentalTimeLabel').innerHTML).toBe('9 days, 4 hours');
+        expect(queryByTestId('rentalCostLabel').innerHTML).toBe('$1760');
         
     });
 
@@ -225,7 +288,8 @@ describe('<ReserveItem />', () => {
     });
 
 
-    test.skip('reserve button should not fire if the required data for a reservation is not completed', () => {
+    test('reserve button should not fire if the required data for a reservation is not completed', () => {
+        
         const {getByTestId, queryByTestId, debug, rerender} = render(<ReserveItem currentRentalItem={fakeItemDetails.itemId} />);
 
         // debug();
@@ -233,6 +297,45 @@ describe('<ReserveItem />', () => {
 
         expect(AddReservation).not.toHaveBeenCalled();
 
+    });
+
+    test('reserve button should fire if the required data for a reservation is completed', () => {
+        AddReservation.mockImplementation(() => { 
+            return true;
+        });
+        
+        const selectReservation = jest.fn();
+        
+        const {getByTestId, queryByTestId, debug, rerender} = render(
+            <ReserveItem currentRentalItem={fakeReservation.itemId} 
+                reservation={fakeReservation} 
+                selectReservation={selectReservation}/>
+            );
+
+        const outputReservation = {
+            itemName: fakeReservation.itemName,
+            itemDescription: fakeReservation.itemDesc,
+            renterId: fakeReservation.lenderId,
+            ownerId: fakeReservation.ownerId,
+            startDateTime: fakeReservation.startDateTime,
+            endDateTime: fakeReservation.endDateTime,
+            exchangeOptions: fakeReservation.exchangeOptions,
+            totalCost: fakeReservation.totalCost,
+            exchangeCost: fakeReservation.exchangeCost,
+            unitCost: fakeReservation.unitCost,
+            rentalCost: fakeReservation.rentalCost,
+            rentalItemId: fakeReservation.rentalItemId,
+            reservationId: fakeReservation.reservationId,
+            selectedExchangeMethod: fakeReservation.selectedExchangeMethod
+        }
+        // debug();
+        fireEvent.click(queryByTestId('submitButton'));
+
+        expect(AddReservation).toHaveBeenCalled();
+        expect(AddReservation).toHaveBeenCalledWith(outputReservation);
+        //TODO - ensure this is function continues after returning
+        // expect(selectReservation).toHaveBeenCalled();
+        // expect(selectReservation).toHaveBeenCalledWith('');
     });
 
     //thanks Dr. Kurmas!

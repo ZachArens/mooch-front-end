@@ -20,14 +20,14 @@ describe('<ReserveDetails />', () => {
         const defaultStartDate =  new Date();
         let defaultEndDate = new Date(defaultStartDate);
         defaultEndDate.setDate(defaultEndDate.getDate()+1);
-        const selectExchangeMethod = 'delivery'
+        let selectedExchangeMethod = ''
             
-        const {queryByTestId, debug} = render (
+        const {queryByTestId, rerender, debug} = render (
             <ReserveDetails 
                 startDateTime={defaultStartDate} 
                 endDateTime={defaultEndDate}
                 exchangeOptions={{delivery: 5, meetup: 8, pickup: 2}}
-                selectExchangeMethod={selectExchangeMethod} 
+                selectedExchangeMethod={selectedExchangeMethod} 
             />);
         
         // debug();
@@ -36,7 +36,17 @@ describe('<ReserveDetails />', () => {
         expect(queryByTestId('startDateInput')).toHaveValue(defaultStartDate.toISOString().substr(0,10));
         expect(queryByTestId('endDateInput')).toHaveValue(defaultEndDate.toISOString().substr(0,10));
         expect(queryByTestId('startTimeInput')).toHaveValue(displayTime(defaultStartDate));
-        expect(queryByTestId('dropdownButton').innerHTML).toBe('Delivery $5');
+        
+        selectedExchangeMethod = 'delivery'
+
+        rerender (
+            <ReserveDetails 
+                startDateTime={defaultStartDate} 
+                endDateTime={defaultEndDate}
+                exchangeOptions={{delivery: 5, meetup: 8, pickup: 2}}
+                selectedExchangeMethod={selectedExchangeMethod} 
+            />);        
+            expect(queryByTestId('dropdownButton').innerHTML).toBe('Delivery $5');
 
     });
 
@@ -61,7 +71,7 @@ describe('<ReserveDetails />', () => {
         const updateExchangeMethod = jest.fn();
         const {queryByTestId, rerender, debug} = render (
             <ReserveDetails 
-                selectExchangeMethod={''} 
+                selectedExchangeMethod={''} 
                 exchangeOptions={{delivery: 5, meetup: 8, pickup: 2}}
                 updateExchangeMethod={updateExchangeMethod}
             />);
@@ -73,17 +83,18 @@ describe('<ReserveDetails />', () => {
         expect(updateExchangeMethod).toBeCalledTimes(1);
         rerender (
             <ReserveDetails 
-                selectExchangeMethod={'delivery'} 
+                selectedExchangeMethod={'delivery'} 
                 exchangeOptions={{delivery: 5, meetup: 8, pickup: 2}}
                 updateExchangeMethod={updateExchangeMethod}
-            />);
+            />
+        );
         expect(queryByTestId('dropdownButton').innerHTML).toBe('Delivery $5');
         fireEvent.click(dropdownButton);
         fireEvent.click(queryByTestId('pickupButton'));
         expect(updateExchangeMethod).toBeCalledTimes(2);
         rerender (
             <ReserveDetails 
-                selectExchangeMethod={'pickup'} 
+                selectedExchangeMethod={'pickup'} 
                 exchangeOptions={{delivery: 5, meetup: 8, pickup: 2}}
                 updateExchangeMethod={updateExchangeMethod}
             />);
@@ -93,7 +104,7 @@ describe('<ReserveDetails />', () => {
         expect(updateExchangeMethod).toBeCalledTimes(3);
         rerender (
             <ReserveDetails 
-                selectExchangeMethod={'meetup'} 
+                selectedExchangeMethod={'meetup'} 
                 exchangeOptions={{delivery: 5, meetup: 8, pickup: 2}}
                 updateExchangeMethod={updateExchangeMethod}
             />);

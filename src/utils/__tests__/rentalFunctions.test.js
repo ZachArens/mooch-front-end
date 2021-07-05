@@ -1,7 +1,7 @@
 import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, 
     formatShortDate, formatCurrency,
     finalFormatCurrency, displayTime, updateCalculations, 
-    getNewTime, getNewDate} from "../rentalFunctions";
+    getNewTime, getNewDate, isDate} from "../rentalFunctions";
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -203,6 +203,35 @@ describe('updateCalculations', () => {
         expect(updateCalculations(date1, '', 4, 0).rentalCost).toBe(0);
         expect(updateCalculations(date1, date2, 0, 0).rentalCost).toBe(0);
     });
+    test('returns correct total cost for update to reservation', () => {
+        const date1 = new Date(2021, 10, 15, 12, 30);
+        const date2 = new Date(2021, 10, 16, 14, 30);
+        const time = hoursTimeDifference(date1, date2);
+
+        expect(updateCalculations(date1, date2, 4, 12).totalCost).toBe(time*4 + 12);
+        expect(updateCalculations(date1, date2, '4', 12).totalCost).toBe(time*4 + 12);
+        expect(updateCalculations(date1, date2, 4, '12').totalCost).toBe(time*4 + 12);
+        expect(updateCalculations(date1, date2, 6.50, 0).totalCost).toBe(time*6.50);
+        expect(updateCalculations('', date2, 4, 13).totalCost).toBe(13);
+        expect(updateCalculations(date1, '', 4, 13).totalCost).toBe(13);
+    });
+
+    test('returns correct rental cost for update to reservation', () => {
+        const date1 = new Date(2021, 10, 15, 12, 30);
+        const date2 = new Date(2021, 10, 16, 14, 30);
+        const time = hoursTimeDifference(date1, date2);
+
+
+        expect(updateCalculations(date1, date2, 4, 0).rentalCost).toBe(time*4);
+        expect(updateCalculations(date1, date2, 6, '0').rentalCost).toBe(time*6);
+        expect(updateCalculations(date1, date2, '42', 0).rentalCost).toBe(time*42);
+        expect(updateCalculations(date1, date2, 6.50, 0).rentalCost).toBe(time*6.50);
+        expect(updateCalculations('', date2, 4, 0).rentalCost).toBe(0);
+        expect(updateCalculations(date1, '', 4, 0).rentalCost).toBe(0);
+        expect(updateCalculations(date1, date2, 0, 0).rentalCost).toBe(0);
+    });
+
+    
 });
 
 describe('getNewTime', () => {
@@ -241,4 +270,29 @@ describe('getNewDate', () => {
         expect(getNewDate(incomingDate, '').toISOString().substr(0,15)).toBe(date2.toISOString().substr(0,15));
     });
 });
+
+describe('isDate', () => {
+    test('returns true if a date object', () => {
+        const date = new Date();
+
+        expect(isDate(date)).toBeTruthy();
+
+    });
+
+    test('returns false if undefined', () => {
+        let date;
+
+        expect(isDate(date)).toBeFalsy();
+    });
+
+    test('returns false if defined but a string', () => {
+        let date = '1/2/2021';
+        expect(isDate(date)).toBeFalsy();
+    });
+
+    test('returns false if a different object than a date', () => {
+        let date = new Map();
+        expect(isDate(date)).toBeFalsy();
+    })
+})
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {displayTime} from '../../utils/rentalFunctions';
+import {displayTime, isDate} from '../../utils/rentalFunctions';
 
 export default class ReserveDetails extends Component {
 
@@ -14,18 +14,21 @@ export default class ReserveDetails extends Component {
 
         const exchangeLabel = () => {
             // console.log('run exchange label');
-            if (this.props.selectExchangeMethod) {
-                if (this.props.selectExchangeMethod === 'delivery') {
+            if (this.props.selectedExchangeMethod) {
+                if (this.props.selectedExchangeMethod === '') {
+                    return 'Select Exchange Method';
+                } 
+                if (this.props.selectedExchangeMethod === 'delivery') {
                     return `Delivery $${this.props.exchangeOptions.delivery}`;
                 } 
-                if (this.props.selectExchangeMethod === 'meetup') {
+                if (this.props.selectedExchangeMethod === 'meetup') {
                     return `Public Meet-Up $${this.props.exchangeOptions.meetup}`;
                 }
-                if (this.props.selectExchangeMethod === 'pickup') {
+                if (this.props.selectedExchangeMethod === 'pickup') {
                     return `Pick-Up $${this.props.exchangeOptions.pickup}`;
                 }
             } 
-            return 'Select Exchange Method'
+            return 'Select Exchange Method';
         }
 
         //TODO - add cost to exchange Method labels
@@ -39,49 +42,51 @@ export default class ReserveDetails extends Component {
                         {exchangeLabel()}
                     </button>
                     <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <button id="blank" className="dropdown-item" value="" 
+                        data-testid="blankButton" 
+                        onClick={(e) => {
+                            this.props.updateExchangeMethod(e);
+                        }}></button>
                         <button id="delivery" className="dropdown-item" value="delivery" 
                         data-testid="deliveryButton" 
                         onClick={(e) => {
                             this.props.updateExchangeMethod(e);
-                            exchangeLabel();
-                        }}>Delivery</button>
+                        }}>{`Delivery $${this.props.exchangeOptions ? this.props.exchangeOptions.delivery : '0'}`}</button>
                         <button id="pickup" className="dropdown-item" value="pickup" 
                         data-testid="pickupButton" 
                         onClick={(e) => {
                             this.props.updateExchangeMethod(e)
-                            exchangeLabel();
-                        }}>Pick-up</button>
+                        }}>{`Pick-Up $${this.props.exchangeOptions ? this.props.exchangeOptions.pickup : '0'}`}</button>
                         <button id="meetup" className="dropdown-item" value="meetup" data-testid="meetupButton" 
                         onClick={(e) => {
                             this.props.updateExchangeMethod(e);
-                            exchangeLabel();
-                        }}>Public Meet-up</button>
+                        }}>{`Public Meet-Up $${this.props.exchangeOptions ? this.props.exchangeOptions.meetup : '0'}`}</button>
                     </div>
                 </div>
                 <div className="scheduler">
                     <label htmlFor="startDate">Start Date
                         <input type="date" id="startDate" data-testid="startDateInput" 
                         min={new Date()}
-                        value={this.props.startDateTime ? this.props.startDateTime.toISOString().substr(0,10) : ''} 
+                        value={isDate(this.props.startDateTime) ? this.props.startDateTime.toISOString().substr(0,10) : ''} 
                         onChange={(e) => {this.props.updateStartDate(e)}}/>
                     </label>
 
                     <label htmlFor="startTime">Start Time
                         <input type="time" id="startTime" data-testid="startTimeInput" 
-                            value={this.props.startDateTime ? displayTime(this.props.startDateTime): ''} 
+                            value={isDate(this.props.startDateTime) ? displayTime(this.props.startDateTime): ''} 
                             onChange={(e) => {this.props.updateTime(e)}}/>
                     </label>
                     
                     <label htmlFor="endDate">End Date
                         <input type="date" id="endDate" data-testid="endDateInput" 
-                        value={this.props.endDateTime ? this.props.endDateTime.toISOString().substr(0, 10) : ''} 
-                        min={this.props.startDateTime ? this.props.startDateTime.toISOString().substr(0,10) : ''} 
+                        value={isDate(this.props.endDateTime) ? this.props.endDateTime.toISOString().substr(0, 10) : ''} 
+                        min={isDate(this.props.startDateTime) ? this.props.startDateTime.toISOString().substr(0,10) : ''} 
                         onChange={(e) => {this.props.updateEndDate(e)}}/>
                     </label>
 
                     <label htmlFor="endTime">End Time
                         <input type="time" id="endTime" data-testid="endTimeInput" 
-                        value={this.props.endDateTime ? displayTime(this.props.endDateTime): ''} 
+                        value={isDate(this.props.endDateTime) ? displayTime(this.props.endDateTime): ''} 
                         onChange={(e) => {this.props.updateTime(e)}}
                         />
                     </label>
