@@ -166,7 +166,9 @@ class AddItem extends React.Component {
         photos: []
         } );
 
-        this.props.updateSelectedId('');
+        if (this.props.updateSelectedId) {
+            this.props.updateSelectedId('');
+        }
 
         const { history } = this.props;
         if (history) history.push('/myRentals');

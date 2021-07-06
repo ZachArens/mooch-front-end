@@ -3,7 +3,9 @@ import { getDocument, queries, waitFor } from 'pptr-testing-library';
 
 
 import faker, { fake } from 'faker';
-
+const serveLocal = false;
+const server = serveLocal ? 'http://localhost:3000/' : 'https://moochrentalapp.web.app/';
+console.log(server);
 //https://stackoverflow.com/questions/46919013/puppeteer-wait-n-seconds-before-continuing-to-the-next-line
 function delay(time) {
     return new Promise(function(resolve) { 
@@ -18,23 +20,23 @@ describe('e2e test for main page', () => {
 
         try {
             let page = await browser.newPage();
-        await page.goto('http://localhost:3000/');
-        //make assertion
-        const { getByTestId, queryByText, getAllByText } = queries
+            await page.goto(server);
+            //make assertion
+            const { getByTestId, queryByText, getAllByText } = queries
+            
+            const $document = await getDocument(page)
+
+            const $loading = await queryByText($document, 'Loading...');
+            expect($loading).toBeTruthy();
         
-        const $document = await getDocument(page)
+            const $title = await getAllByText($document, 'Mooch');
+            expect($title.length).toBe(2);
 
-        const $loading = await queryByText($document, 'Loading...');
-        expect($loading).toBeTruthy();
-    
-        const $title = await getAllByText($document, 'Mooch');
-        expect($title.length).toBe(2);
+            const $login = await queryByText($document, 'Login');
+            expect($login).toBeTruthy();
 
-        const $login = await queryByText($document, 'Login');
-        expect($login).toBeTruthy();
-
-        const $myRentals = await queryByText($document, 'My Rentals');
-        expect($myRentals).toBeTruthy();
+            const $myRentals = await queryByText($document, 'My Rentals');
+            expect($myRentals).toBeTruthy();
         } finally {
             browser.close();
         }
@@ -49,7 +51,7 @@ describe('e2e test for main page', () => {
         try {
             
             let page = await browser.newPage();
-            await page.goto('http://localhost:3000/');
+            await page.goto(server);
 
             await page.setViewport({ width: 1366, height: 768});
 
@@ -69,7 +71,7 @@ describe('e2e test for main page', () => {
 
             await delay(1000);
 
-            expect(page.url()).toBe('http://localhost:3000/login');
+            expect(page.url()).toBe(server + 'login');
 
 
             const $email = await getByLabelText($document, 'Email');
@@ -87,7 +89,7 @@ describe('e2e test for main page', () => {
 
             expect($logout2).toBeTruthy();
 
-            expect(page.url()).toBe('http://localhost:3000/');
+            expect(page.url()).toBe(server);
 
             $logout2.click();
             await delay(1000);

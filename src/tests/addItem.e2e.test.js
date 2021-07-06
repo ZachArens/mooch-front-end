@@ -12,7 +12,7 @@ function delay(time) {
  }
 
 describe('addItem', () => {
-    test.skip('Enter new item', async () => {
+    test('Enter new item', async () => {
         let browser = await puppeteer.launch();
         //  let browser = await puppeteer.launch({headless: false, slowMo: 75});
         try {
@@ -78,7 +78,7 @@ describe('addItem', () => {
 
             const $title = await getByLabelText($document, 'Title');
             const $description = await getByLabelText($document, 'Description');
-            const $hourlyRate = await getByLabelText($document, 'Hourly Rate');
+            const $hourlyRate = await getByLabelText($document, 'Hourly Rate $');
             const $deliveryRate = await getByLabelText($document, 'Delivery');
             const $meetupRate = await getByLabelText($document, 'Public Meetup');
             const $pickupRate = await getByLabelText($document, 'Pickup');
