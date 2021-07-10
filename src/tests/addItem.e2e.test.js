@@ -112,6 +112,9 @@ describe('addItem', () => {
         }
     }, 104000);
 
-    test.todo('should allow a user to clear the information and return to the home page by clicking the cancel button');
+    test.todo('should allow a user to clear the information and return to the home page by clicking the cancel button from myRental');
+
+
+    test.todo('should allow a user to clear the information and return to the home page by clicking the cancel button edit');
 
 });   
