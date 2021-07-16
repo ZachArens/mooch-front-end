@@ -24,7 +24,7 @@ export default class TotalBox extends Component {
         }
 
         return (
-            <div>
+            <div className='totalsTable'>
                 <h3>Exchange Fees:</h3>
                 <table>
                     <tbody>

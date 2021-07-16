@@ -4,11 +4,11 @@ import '../../styles/bannerTitle.scss';
 export default class BannerTitle extends Component {
     render() {
         return (
-            <div className="title-banner">
+            <div className="title-banner container">
                 
 
-                <div className="input-group">
-                    <h1>Mooch</h1>
+                <div className="row justify-content-center">
+                    <h1 className='w-100'>Mooch</h1>
                     <input type="text" placeholder="Search"/>
                 </div>
 
