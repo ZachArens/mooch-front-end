@@ -5,7 +5,7 @@ import TotalBox from './totalBox';
 import DisplayTitleDesc from "../displayTitleDesc";
 import SubmitButtons from '../submitButtons';
 import ReserveDetails from './reserveDetails';
-import {updateCalculations, getNewTime, getNewDate} from '../../utils/rentalFunctions';
+import {updateCalculations, getNewTime, getNewDate, getDatesCollection} from '../../utils/rentalFunctions';
 import '../../styles/reserveItem.scss';
 import { getItemFromDB, AddReservation } from '../../utils/firebaseFunctions';
 
@@ -163,7 +163,8 @@ function ReserveItem(props) {
                 unitCost,
                 rentalCost,
                 rentalItemId: props.reservation ? props.reservation.rentalItemId : props.currentRentalItem,
-                reservationId: props.reservation ? props.reservation.id : ''
+                reservationId: props.reservation ? props.reservation.id : '',
+                reservationDates: getDatesCollection(startDateTime, endDateTime),
             };
 
             // console.log('reserving: ', newReservation);
@@ -176,6 +177,8 @@ function ReserveItem(props) {
                     history.push('/myRentals');
                 }
             } catch (error) {
+
+                //TODO - add error message for user
                 // console.log('error adding reservation: ', error.message);
             }
 

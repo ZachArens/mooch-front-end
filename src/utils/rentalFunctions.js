@@ -183,7 +183,24 @@ const isDate = (inputObject) => {
     }
 }
 
+const getDatesCollection = (startDate, endDate) => {
+    let collection = [];
+    let currentDate = new Date(startDate);
+    let overDate = new Date(endDate)
+    overDate.setDate(overDate.getDate() + 1);
+
+    while (currentDate.getTime() < overDate.getTime()) {
+        collection.push(currentDate);
+        let nextDate = new Date(currentDate);
+        nextDate.setDate(nextDate.getDate() + 1);
+        currentDate = new Date(nextDate);
+    }
+
+    return collection;
+}
+
 export {rentalTimeAsString, msTimeDifference, hoursTimeDifference, 
     textAbbreviator, formatShortDate, formatCurrency, finalFormatCurrency,
-    displayTime, updateCalculations, getNewTime, getNewDate, isDate
+    displayTime, updateCalculations, getNewTime, getNewDate, isDate,
+    getDatesCollection
 };

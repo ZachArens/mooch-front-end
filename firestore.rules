@@ -3,7 +3,17 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
       allow read, write: if false;
+
+      function reservationIdExists(reservationId) {
+        return exists(/databases/{database}/documents/{document}/reservations/$(reservationId));
+      }
       
+      match /rentalItems/{itemId}/reservedDates/{reservationId} {
+      	allow read: if true;
+      	allow create : if (reservationIdExists(reservationId));
+      	allow update, delete: if (resource.data.ownerId == request.auth.uid);
+      }
+
       match /rentalItems/{itemId} {
       	allow read: if true;
       	allow create : if (request.resource.data.ownerId == request.auth.uid);

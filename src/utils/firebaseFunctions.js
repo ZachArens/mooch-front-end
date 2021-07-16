@@ -147,8 +147,7 @@ export const getItemFromDB = (itemId) => {
 export const AddReservation = async(reservation) => {
 
     if (reservation.reservationId) {
-        return await firebase
-                .firestore()
+        return await db
                 .collection('reservations')
                 .doc(reservation.reservationId)
                 .update({
@@ -166,8 +165,9 @@ export const AddReservation = async(reservation) => {
                     rentalItemId: reservation.rentalItemId,
                     ownerId: reservation.ownerId
                 });
+
     } else {
-        return await firebase
+        const reservationId = await firebase
                 .firestore()
                 .collection('reservations')
                 .add({
@@ -184,7 +184,17 @@ export const AddReservation = async(reservation) => {
                     lenderId: reservation.renterId,
                     rentalItemId: reservation.rentalItemId,
                     ownerId: reservation.ownerId
+                }).then((docRef) => {
+                    return docRef.id;
                 });
+        
+        await db.collection('rentalItems')
+            .collection('reservedDates')
+            .doc(reservationId)
+            .set({
+                reservedDates: reservation.reservationDates
+            });
+
     }
     
     

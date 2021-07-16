@@ -1,7 +1,7 @@
 import {rentalTimeAsString, msTimeDifference, hoursTimeDifference, textAbbreviator, 
     formatShortDate, formatCurrency,
     finalFormatCurrency, displayTime, updateCalculations, 
-    getNewTime, getNewDate, isDate} from "../rentalFunctions";
+    getNewTime, getNewDate, isDate, getDatesCollection} from "../rentalFunctions";
 
 describe('rentalTimeAsString functions correctly', () => {
     it('presents hours in the correct format', () => {
@@ -296,3 +296,15 @@ describe('isDate', () => {
     })
 })
 
+describe('getDatesCollection', () => {
+    test('returns correct date collection', () => {
+        let startDate = new Date(2021, 10, 10);
+        let endDate = new Date(2021, 10, 13);
+        let dateCollection = [startDate, new Date(2021, 10, 11), new Date(2021, 10, 12), endDate];
+        console.log('dateCollection: ', dateCollection);
+
+        expect(getDatesCollection(startDate, endDate)).toEqual(dateCollection);
+    });
+
+
+});
