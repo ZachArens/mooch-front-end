@@ -3,6 +3,7 @@ import MyRentedOutList from "./myRentedOutList";
 import MyItemsList from './myItemsList';
 import { GetRentalItems, getMyReservations, deleteItemFromDB } from "../../utils/firebaseFunctions";
 import { withRouter } from 'react-router-dom';
+import '../../styles/myRentals.scss'
 
 //TODO - need to make only available to logged in user or forward to login screen
 let unsubscribeItems;
@@ -113,7 +114,7 @@ class MyRentals extends React.Component {
                     loading={this.state.reservationsLoading} />
 
                 <h1>My Items</h1>
-                <button data-testid="addItemButton" onClick={this.goAddItem}>+</button>
+                <button className='addItemButton' data-testid="addItemButton" onClick={this.goAddItem}>Add Item</button>
                 <MyItemsList myItems={this.state.myItems} deleteRentalItem={this.deleteRentalItem} loading={this.state.itemsLoading}/>
             </div>
         );

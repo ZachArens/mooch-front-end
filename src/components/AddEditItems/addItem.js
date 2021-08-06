@@ -197,7 +197,7 @@ class AddItem extends React.Component {
 
     render() {
         return(
-            <form className="container" >
+            <form className="container addItem" >
 
                 <div className="row">
                     {/*//TODO - fix reference to add photo img*/}
@@ -220,18 +220,23 @@ class AddItem extends React.Component {
                             updateFields={this.updateFields.bind(this)}
                             updateExchangeOptions={this.updateExchangeOptions}/>
                     </div>
-                    <AddPhoto currentUser={this.props.currentUser}
-                        loading={this.state.loading}
-                        photos={this.state.photos}
-                        title={this.state.title}
-                        uploadPhoto={this.uploadPhoto}
-                        deletePhoto={this.deletePhoto}
-                    />
-                    <SubmitButtons submitTitle="Add" 
-                        cancelTitle="Cancel"
-                        submitFn={this.onSubmit.bind(this)}
-                        cancelFn={this.clearForm.bind(this)}
-                    />
+                    <div className="col-md-5">
+                        <AddPhoto currentUser={this.props.currentUser}
+                            loading={this.state.loading}
+                            photos={this.state.photos}
+                            title={this.state.title}
+                            uploadPhoto={this.uploadPhoto}
+                            deletePhoto={this.deletePhoto}
+                        />
+                    </div>
+                    <div className="col-md-2">
+                        <SubmitButtons submitTitle="Add" 
+                            cancelTitle="Cancel"
+                            submitFn={this.onSubmit.bind(this)}
+                            cancelFn={this.clearForm.bind(this)}
+                        />
+                    </div>
+                    
                 </div>
                 
             </form>

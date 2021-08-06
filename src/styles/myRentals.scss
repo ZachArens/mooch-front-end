@@ -2,3 +2,21 @@
   border: rgba(0,0,0,0.125);
 
 }
+
+.itemCard, .rental-summary, .addItem, .reserveItem {
+  padding: 5px;
+  border: 1px solid lightgray;
+  border-radius: 2px;
+  box-shadow: 3px 3px 3px lightgray;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.itemButton {
+  width: 80px;
+}
+
+h1, .addItemButton {
+  margin-right: 15px;
+  margin-left: 15px;
+}

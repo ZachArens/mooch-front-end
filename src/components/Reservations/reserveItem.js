@@ -255,19 +255,12 @@ function ReserveItem(props) {
     
         
     return(
-        <div className="form" >
-            <div className="row top-row">
-                
+        <div className="form reserveItem" >
+            <div className="row top-row align-items-center">
                 <DisplayTitleDesc title={itemName} desc={itemDescription}
                 itemRate={unitCost} />
-
-                <SubmitButtons submitTitle={props.reservation ? "Edit" : "Reserve"} cancelTitle="Cancel"
-                        submitFn={reserveItem.bind(this)}
-                        cancelFn={quitReservation.bind(this)}
-                        />
-
             </div>
-            <div className="row">
+            <div className="row align-items-center">
                     <ReserveDetails 
                         updateExchangeMethod={updateExchangeMethod.bind(this)} 
                         selectedExchangeMethod={selectedExchangeMethod} 
@@ -278,6 +271,8 @@ function ReserveItem(props) {
                         updateEndDate={updateEndDate.bind(this)} 
                         updateTime={updateTime.bind(this)}
                         />
+            </div>
+            <div className="row align-items-center">
                     <TotalBox 
                         total_cost={totalCost} 
                         delivery_cost={exchangeCost} 
@@ -285,7 +280,12 @@ function ReserveItem(props) {
                         rental_cost={rentalCost}
                         selectedExchangeMethod={selectedExchangeMethod}
                     />
-
+            </div>
+            <div className="row align-items-center">
+                <SubmitButtons submitTitle={props.reservation ? "Edit" : "Reserve"} cancelTitle="Cancel"
+                        submitFn={reserveItem.bind(this)}
+                        cancelFn={quitReservation.bind(this)}
+                        /> 
             </div>
         </div>
     );
