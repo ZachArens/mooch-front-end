@@ -21,7 +21,7 @@ export default class MyItemsList extends Component {
             console.log(this.state.selectedId);
         } else {
             this.setState({selectedId: ''});
-            console.log(this.state.selectedId);
+            console.log('selected Id missing:', this.state.selectedId);
 
         }
         
@@ -49,7 +49,7 @@ export default class MyItemsList extends Component {
         if (!this.props.loading && this.props.myItems) {
             itemSummaries = this.props.myItems.map((summary) => {
                 if (summary.id === this.state.selectedId) {
-                    return <AddItem key={summary.id} currentUser={this.props.currentUser} 
+                    return <AddItem key={summary.id} id={summary.id} currentUser={this.props.currentUser} 
                     currentItem={summary} 
                     updateSelectedId={this.updateSelectedId} 
                     />

@@ -28,9 +28,16 @@ class MyRentals extends React.Component {
         if (history) history.push('/addItems');
     }
 
-    updateRentalItems = (rentalItemsList) => {
+    updateRentalItems = (rentalItemsList, removedItemsList) => {
+        // this.setState(prevState => ({
+        //     myItems: prevState.myItems.filter((item) => (
+        //         removedItemsList.findIndex(rmItem => (item.id === rmItem.id)) > -1 
+        //         ))
+        // }));
+
         this.setState(prevState => ({
-            myItems: [...prevState.myItems, ...rentalItemsList],
+            // ...prevState.myItems, 
+            myItems: [...rentalItemsList],
             itemsLoading: false
         }));
     }
@@ -40,9 +47,12 @@ class MyRentals extends React.Component {
         try {
             deleteItemFromDB(rentalItem);
             console.log('deleted from db');
+            console.log('myItems: ', this.state.myItems);
             this.setState(prevState => ({
                 myItems: prevState.myItems.filter((item) => (item.id !== rentalItem.id))
             }));
+            
+            console.log('my Post Items: ', this.state.myItems);
             console.log('deleted from state');
 
         } catch (error) {

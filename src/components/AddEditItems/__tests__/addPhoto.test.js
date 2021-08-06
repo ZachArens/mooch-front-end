@@ -5,9 +5,18 @@ import AddPhoto from '../addPhoto';
 const updateSelectedId = jest.fn();
 
 test('renders without crashing', () => {
-    render(<AddPhoto photos={[]} updateSelectedId={updateSelectedId}/>);
+    render(<AddPhoto photos={[]} title='Sample Title' updateSelectedId={updateSelectedId}/>);
 });
 
-test.todo('renders without photos');
+test('renders without photos', () => {
+    render(<AddPhoto photos={[]} title='Sample Title' updateSelectedId={updateSelectedId}/>);
+});
 
-test.todo('renders with correct img src');
+test('renders without title', () => {
+    render(<AddPhoto photos={[]} title={null} updateSelectedId={updateSelectedId}/>);
+});
+
+// test('renders with correct img src', () => {
+
+//     render(<AddPhoto photos={[]} title='Sample Title' updateSelectedId={updateSelectedId}/>);
+// });

@@ -56,10 +56,6 @@ describe('myRentals', () => {
 
             const $reservations = await getAllByTestId($document, 'reservation');
             expect($reservations.length).toBeGreaterThan(0);
-
-            
-
-
             
 
         } finally {

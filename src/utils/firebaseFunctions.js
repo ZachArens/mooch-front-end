@@ -104,15 +104,36 @@ export const GetRentalItems = async( updateRentalItems, userId ) => {
     return rentalItems.onSnapshot((snapshot) => {
         // console.log("queried")
         let rentalItemsList = [];
-        snapshot.docChanges().forEach((change) => {
-            const entry = {"id": change.doc.id, ...change.doc.data()};
+        let removedItemsList = [];
+        // TODO - Snapshot does not seem to update unless refreshed.
+        snapshot.forEach((doc) => {
+            const entry = {"id": doc.id, ...doc.data()};
+
+            // if (change.type === "added") {
+            //     console.log("New item: ", change.doc.data());
+            //     rentalItemsList.push(entry);
+            // }
+            // if (change.type === "modified") {
+            //     console.log("Modified item: ", change.doc.data());
+            //     removedItemsList.push(entry);
+            //     rentalItemsList.push(entry);
+            // }
+            // if (change.type === "removed") {
+            //     console.log("Removed item: ", change.doc.data());
+            //     removedItemsList.push(entry);
+            // }
+
             // console.log(`entry: ${entry.id}`);
-            const index = rentalItemsList.indexOf(change.doc.id)
-            if (index > -1) {
-                rentalItemsList[index] = entry;
-            } else {
-                rentalItemsList.push(entry);
-            }
+            console.log('change id: ', doc.id);
+            console.log('change data: ', doc.data());
+            console.log(rentalItemsList);
+            // const index = rentalItemsList.findIndex(item => item.id === change.doc.id)
+            // console.log('index: ', index)
+            // if (index > -1) {
+            //     rentalItemsList[index] = entry;
+            // } else {
+            rentalItemsList.push(entry);
+            // }
         });
         updateRentalItems(rentalItemsList);
     });

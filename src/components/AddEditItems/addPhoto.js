@@ -5,6 +5,7 @@ export default class AddPhoto extends Component {
 
     render() {        
         let images;
+        console.log('title: ', this.props.title);
         // console.log(this.props.photos.length);
         if (this.props.photos.length > 0) {
             
@@ -13,7 +14,7 @@ export default class AddPhoto extends Component {
                     key={image.id} 
                     id={image.id}
                     url={image.url}
-                    title={this.state.title}
+                    title={this.props.title}
                     deletePhoto={this.props.deletePhoto}
                 />
 

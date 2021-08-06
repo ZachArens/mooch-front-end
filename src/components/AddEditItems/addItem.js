@@ -126,16 +126,17 @@ class AddItem extends React.Component {
             //FIXME - need test to display correct error message
             // console.log('adding item for: ', this.props.currentUser);
             try {
-                AddToDB(this.props.currentItem ? this.props.currentItem.ownerId : this.props.currentUser, 
+                await AddToDB(this.props.currentItem ? this.props.currentItem.ownerId : this.props.currentUser, 
                     this.state.title, 
                     this.state.description, 
                     this.state.itemRate, 
                     this.state.exchangeOptions,
                     this.state.photos,
-                    this.currentItem ? this.props.selectedId : undefined
+                    this.props.id ? this.props.id : undefined
                     );
                 this.setState({title: "", description: "", itemRate: "", exchangeOptions: {delivery: 0, meetup: 0, pickup: 0}, message: ""});
-
+                
+                
                 const { history } = this.props;
                 if (history) history.push('/myRentals');  
             } catch (error) {

@@ -33,6 +33,8 @@ class ItemGrid extends React.Component {
         
         try {
             unsubscribe = await GetRentalItems(this.updateRentalItems);
+
+            console.log('unsubscribe assigned: ', unsubscribe);
         } catch (e) {
             console.log(e);
         }
