@@ -104,7 +104,6 @@ export const GetRentalItems = async( updateRentalItems, userId ) => {
     return rentalItems.onSnapshot((snapshot) => {
         // console.log("queried")
         let rentalItemsList = [];
-        let removedItemsList = [];
         // TODO - Snapshot does not seem to update unless refreshed.
         snapshot.forEach((doc) => {
             const entry = {"id": doc.id, ...doc.data()};
@@ -124,9 +123,7 @@ export const GetRentalItems = async( updateRentalItems, userId ) => {
             // }
 
             // console.log(`entry: ${entry.id}`);
-            console.log('change id: ', doc.id);
-            console.log('change data: ', doc.data());
-            console.log(rentalItemsList);
+            
             // const index = rentalItemsList.findIndex(item => item.id === change.doc.id)
             // console.log('index: ', index)
             // if (index > -1) {
@@ -135,14 +132,24 @@ export const GetRentalItems = async( updateRentalItems, userId ) => {
             rentalItemsList.push(entry);
             // }
         });
+        console.log('updating')
         updateRentalItems(rentalItemsList);
     });
 }
 
 export const deleteItemFromDB = async (rentalItem) => {
-    db.collection('rentalItems')
+    try {
+        await db.collection('rentalItems')
         .doc(rentalItem.id)
         .delete();
+
+        console.log('deleted in firebaseFunctions');
+    } catch (e) {
+        console.log('caught in firebaseFunctions delete: ', e);
+    }
+    
+
+    
 
 }
 

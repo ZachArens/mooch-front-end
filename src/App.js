@@ -92,9 +92,9 @@ class App extends Component {
                                     {this.state.currentUser && <NavLink to="/" onClick={this.logout} className="nav-link">Signed in as {this.state.currentUser} - Logout</NavLink>}
                                     {!this.state.currentUser && <NavLink to="/login" className="nav-link" data-testid="loginNav">Login</NavLink>}
                                 </li>
-                                <li className="nav-item">
+                                {/* <li className="nav-item">
                                     <NavLink to="/addItems" className="nav-link">Temp-Add Items</NavLink>
-                                </li>
+                                </li> */}
                                 {/* <li className="nav-item">
                                     <NavLink to="/reserveItem" className="nav-link">Temp-Reserve Items</NavLink>
                                 </li> */}

@@ -7,7 +7,7 @@ service cloud.firestore {
       match /rentalItems/{itemId} {
       	allow read: if true;
       	allow create : if (request.resource.data.ownerId == request.auth.uid);
-      	allow update, delete: if (request.resource.data.ownerId == request.auth.uid);
+      	allow update, delete: if (resource.data.ownerId == request.auth.uid);
       }
       
       match /userProfiles/{uid} {
